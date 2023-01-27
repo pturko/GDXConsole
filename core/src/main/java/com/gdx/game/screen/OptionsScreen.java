@@ -3,18 +3,11 @@ package com.gdx.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.gdx.GdxGame;
-import com.gdx.engine.service.ConsoleServiceImpl;
 
-public class MenuScreen extends BaseScreen {
+public class OptionsScreen extends BaseScreen {
 
-    private ConsoleServiceImpl consoleService;
-
-    public MenuScreen(GdxGame gdxGame) {
+    public OptionsScreen(GdxGame gdxGame) {
         super(gdxGame);
-
-        consoleService = ConsoleServiceImpl.getInstance();
-        consoleService.cmd("ver 1.0");
-        consoleService.cmd("screen options");
     }
 
     @Override

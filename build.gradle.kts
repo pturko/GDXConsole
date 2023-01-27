@@ -62,6 +62,7 @@ project(":core") {
         implementation("ch.qos.logback:logback-classic:$logbackVersion")
         testImplementation("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
 
+        implementation("org.apache.commons:commons-lang3:3.12.0")
         implementation("com.google.code.gson:gson:2.8.5")
         compileOnly("org.projectlombok:lombok:1.18.24")
         annotationProcessor("org.projectlombok:lombok:1.18.24")
