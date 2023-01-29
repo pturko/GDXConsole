@@ -2,19 +2,30 @@ package com.gdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.gdx.GdxGame;
 import com.gdx.engine.service.ConsoleServiceImpl;
+import com.gdx.engine.service.ResourceLoaderServiceImpl;
 
 public class MenuScreen extends BaseScreen {
 
     private ConsoleServiceImpl consoleService;
+    private ResourceLoaderServiceImpl resourceLoaderService;
+
+    private Texture texture;
 
     public MenuScreen(GdxGame gdxGame) {
         super(gdxGame);
 
         consoleService = ConsoleServiceImpl.getInstance();
         consoleService.cmd("ver 1.0");
-        consoleService.cmd("screen options");
+        consoleService.cmd("resources load");
+        initResources();
+    }
+
+    private void initResources() {
+        resourceLoaderService = ResourceLoaderServiceImpl.getInstance();
+        texture = resourceLoaderService.getTexture("ok");
     }
 
     @Override
@@ -30,6 +41,8 @@ public class MenuScreen extends BaseScreen {
         spriteBatch.begin();
 
         spriteBatch.setColor(250,250,250,0.3f);
+
+        spriteBatch.draw(texture, 380, 300);
 
         spriteBatch.end();
     }

@@ -1,4 +1,7 @@
 {
   "version": "1.0",
-  "profile": "dev"
+  "profile": "dev",
+  "consoleConfig": {
+    "showConsole": false
+  }
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class ConsoleServiceImpl implements ConsoleService {
 
     private static ConsoleServiceImpl consoleServiceInstance;
+    private static ResourceLoaderServiceImpl resourceLoaderService;
     private static WindowServiceImpl windowService;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
@@ -23,31 +24,40 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void cmd(String cmd) {
-        String mainCmd;
-        String secondCmd = StringUtils.EMPTY;
-        String[] cmdSplitted = Arrays.stream(cmd.split(StringUtils.SPACE))
+        String keyCmd;
+        String partOneCmd = StringUtils.EMPTY;
+        String[] cmdSplit = Arrays.stream(cmd.split(StringUtils.SPACE))
                 .map(String::trim)
                 .toArray(String[]::new);
 
-        if (cmdSplitted.length == 0) {
+        if (cmdSplit.length == 0) {
             return;
         }
 
-        mainCmd = cmdSplitted[0].toUpperCase();
-        if (cmdSplitted.length > 1) {
-            secondCmd = cmdSplitted[1];
+        keyCmd = cmdSplit[0].toUpperCase();
+        if (cmdSplit.length > 1) {
+            partOneCmd = cmdSplit[1];
         }
 
         windowService = WindowServiceImpl.getInstance();
 
-        switch (mainCmd) {
+        switch (keyCmd) {
             case "VER":
-                log.info("version: {}", secondCmd);
+            case "VERSION":
+                log.info("Version: {}", partOneCmd);
                 break;
 
             case "SCREEN":
-                windowService.show(secondCmd.toUpperCase());
-                log.info("set screen: {}", secondCmd);
+                windowService.show(partOneCmd.toUpperCase());
+                log.info("Set screen: {}", partOneCmd);
+                break;
+
+            case "RESOURCES":
+                if (partOneCmd.equalsIgnoreCase("load")) {
+                    resourceLoaderService = ResourceLoaderServiceImpl.getInstance();
+                    resourceLoaderService.loadResources();
+                    log.info("Resources loaded");
+                }
                 break;
 
             case "EXIT":

@@ -1,0 +1,22 @@
+{
+  "textures": [
+    { "name": "ok",
+      "fileName": "ok.png"
+    }
+  ],
+  "textureAtlas": [
+  ],
+  "pixmap": [
+  ],
+  "font": [
+  ],
+  "skin": [
+    { "name": "uiskin",
+      "fileName": "uiskin.json"
+    }
+  ],
+  "music": [
+  ],
+  "sound": [
+  ]
+}

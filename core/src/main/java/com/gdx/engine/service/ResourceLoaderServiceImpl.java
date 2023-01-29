@@ -1,0 +1,297 @@
+package com.gdx.engine.service;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.SerializationException;
+import com.gdx.engine.interfaces.service.ResourceLoaderService;
+import com.gdx.engine.model.AssetResources;
+import com.gdx.engine.model.asset.*;
+import com.gdx.engine.util.FileLoaderUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+public class ResourceLoaderServiceImpl implements ResourceLoaderService {
+
+    private static String asset = "asset/";
+    private static SpriteBatch batch;
+    private static AssetResources resources;
+
+    private static ResourceLoaderServiceImpl resourceLoaderServiceInstance;
+
+    private static Map<String, TextureResource> textures;
+    private static Map<String, TextureAtlasResource> textureAtlas;
+    private static Map<String, PixmapResource> pixmaps;
+    private static Map<String, FontResource> fonts;
+    private static Map<String, SkinResource> skins;
+    private static Map<String, MusicResource> music;
+    private static Map<String, SoundResource> sound;
+
+    private static final String RESOURCE_FILE = "resources";
+    private static final String RESOURCE_FILE_EXT = ".json";
+
+    private ResourceLoaderServiceImpl() {
+        serviceReset();
+    }
+
+    public void serviceReset() {
+        batch = new SpriteBatch();
+        textures = new HashMap<>();
+        textureAtlas = new HashMap<>();
+        pixmaps = new HashMap<>();
+        skins = new HashMap<>();
+        fonts = new HashMap<>();
+        music = new HashMap<>();
+        sound = new HashMap<>();
+    }
+
+    public static synchronized ResourceLoaderServiceImpl getInstance( ) {
+        if (resourceLoaderServiceInstance == null)
+            resourceLoaderServiceInstance = new ResourceLoaderServiceImpl();
+        return resourceLoaderServiceInstance;
+    }
+
+    public void loadResources() {
+        dispose();
+        serviceReset();
+        String fileResource = asset + "config/resources/" + RESOURCE_FILE + RESOURCE_FILE_EXT;
+        try {
+            resources = FileLoaderUtil.getResources(fileResource);
+        } catch (IOException e) {
+            log.error("Can't load resource file: {}", fileResource);
+        }
+
+        List<TextureResource> mTextures = resources.getTextures();
+        for (TextureResource m : mTextures) {
+            Texture texture;
+            String fileName = asset + "image/texture/" + m.getFileName();
+            try {
+                texture = new Texture(FileLoaderUtil.getFileHandle(fileName));
+            } catch (Exception e) {
+                log.error("File '{}' not found!", fileName);
+                texture = null;
+            }
+            m.setTexture(texture);
+            textures.put(m.getName(), m);
+        }
+
+        List<TextureAtlasResource> mTextureAtlases = resources.getTextureAtlas();
+        for (TextureAtlasResource m : mTextureAtlases) {
+            TextureAtlas txAtlas;
+            String fileName = asset + "image/textureAtlas/" + m.getFileName();
+            try {
+                txAtlas = new TextureAtlas(FileLoaderUtil.getFileHandle(fileName));
+            } catch (Exception e) {
+                log.error("File '{}' not found!", fileName);
+                txAtlas = null;
+            }
+            m.setTextureAtlas(txAtlas);
+            textureAtlas.put(m.getName(), m);
+        }
+
+        List<SkinResource> mSkins = resources.getSkin();
+        for (SkinResource m : mSkins) {
+            Skin skin;
+            String fileName = asset + "image/skin/" + m.getFileName();
+            try {
+                skin = new Skin(FileLoaderUtil.getFileHandle(fileName));
+            } catch (SerializationException e) {
+                log.error("Serialization Exception! {}", e);
+                skin = null;
+            } catch (Exception e) {
+                log.error("File '{}' not found!", fileName);
+                skin = null;
+            }
+            m.setSkin(skin);
+            skins.put(m.getName(), m);
+        }
+
+        List<PixmapResource> mPixmaps = resources.getPixmap();
+        for (PixmapResource m : mPixmaps) {
+            Pixmap pixmap;
+            String fileName = asset + "image/pixmap/" + m.getFileName();
+            try {
+                pixmap = new Pixmap(FileLoaderUtil.getFileHandle(fileName));
+            } catch (Exception e) {
+                log.error("File '{}' not found!", fileName);
+                pixmap = null;
+            }
+            m.setPixmap(pixmap);
+            pixmaps.put(m.getName(), m);
+        }
+
+        List<FontResource> mFont = resources.getFont();
+        for (FontResource m : mFont) {
+            BitmapFont font;
+            String fileName = asset + "font/" + m.getFileName();
+            try {
+                font = new BitmapFont(FileLoaderUtil.getFileHandle(fileName));
+            } catch (Exception e) {
+                log.error("File '{}' not found!", fileName);
+                font = null;
+            }
+            m.setFont(font);
+            fonts.put(m.getName(), m);
+        }
+    }
+
+    public Texture getTexture(String name) {
+        if (textures.get(name) != null) {
+            return textures.get(name).getTexture();
+        } else {
+            log.warn("Texture '{}' not found!", name);
+            return getDefaultTexture();
+        }
+    }
+
+    public Texture getTexture(String textureAtlasOrSkinName, String name) {
+        if (textureAtlasOrSkinName.equals(StringUtils.EMPTY) && textures.get(name) != null) {
+            return textures.get(name).getTexture();
+        } else {
+
+            //Trying to find texture from textureAtlas
+            if (textureAtlas.get(textureAtlasOrSkinName) != null) {
+                TextureAtlas txAtlas = textureAtlas.get(textureAtlasOrSkinName).getTextureAtlas();
+                if (txAtlas != null && txAtlas.findRegion(name) != null) {
+                    return extractFromTextureRegion(txAtlas.findRegion(name));
+                }
+            }
+
+            //Trying to find texture from skin
+            if (skins.get(textureAtlasOrSkinName) != null) {
+                Skin skin = skins.get(textureAtlasOrSkinName).getSkin();
+                TextureAtlas txAtlas = skin.getAtlas();
+                if (txAtlas != null && txAtlas.findRegion(name) != null) {
+                    return extractFromTextureRegion(txAtlas.findRegion(name));
+                }
+            }
+
+            if (!textureAtlasOrSkinName.equals(StringUtils.EMPTY)) {
+                log.warn("Texture '{}' from '{}' not found!", name, textureAtlasOrSkinName);
+            } else {
+                log.warn("Texture '{}' not found!", name);
+            }
+
+            return getDefaultTexture();
+        }
+    }
+
+    public Drawable getDrawable(String textureAtlasOrSkinName, String name) {
+        if (!textureAtlasOrSkinName.equals(StringUtils.EMPTY)) {
+            //Trying to find drawable from textureAtlas
+            if (textureAtlas.get(textureAtlasOrSkinName) != null) {
+                if (textureAtlas.get(textureAtlasOrSkinName) != null) {
+                    Skin skin = new Skin(textureAtlas.get(textureAtlasOrSkinName).getTextureAtlas());
+                    if (skin.getDrawable(name) != null) {
+                        return skin.getDrawable(name);
+                    }
+                }
+            }
+
+            //Trying to find drawable from skin
+            if (skins.get(textureAtlasOrSkinName) != null) {
+                Skin skin = skins.get(textureAtlasOrSkinName).getSkin();
+                if (skin != null) {
+                    return getDrawableFromSkin(skin, textureAtlasOrSkinName, name);
+                }
+            }
+        }
+
+        log.warn("Drawable '{}' not found! TextureAtlas or skin not provided", name);
+        return getDefaultDrawable();
+    }
+
+    public Skin getSkin(String skinName) {
+        if (skins.get(skinName) != null) {
+            return skins.get(skinName).getSkin();
+        } else {
+            log.warn("Skin '{}' not found!", skinName);
+            return new Skin();
+        }
+    }
+
+    public static BitmapFont getDefaultFont() {
+        return new BitmapFont();
+    }
+
+    private static Drawable getDefaultDrawable() {
+        return new Image(new Texture(getDefaultPixmap())).getDrawable();
+    }
+
+    private static Drawable getDrawableFromSkin(Skin skin, String textureAtlasOrSkinName, String name) {
+        try {
+            return skin.getDrawable(name);
+        } catch(Exception exception) {
+            log.warn("Drawable '{}' from '{}' not found!", name, textureAtlasOrSkinName);
+        }
+        return getDefaultDrawable();
+    }
+
+    private static Pixmap getDefaultPixmap() {
+        final Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.CORAL);
+        pixmap.fill();
+        return pixmap;
+    }
+
+    private static Texture getDefaultTexture() {
+        final Pixmap pixmap = new Pixmap(50, 50, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.ORANGE);
+        pixmap.fill();
+        final Texture result = new Texture(pixmap);
+        pixmap.dispose();
+        return result;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    private static Texture extractFromTextureRegion(TextureRegion textureRegion) {
+        TextureData textureData = textureRegion.getTexture().getTextureData();
+        if (!textureData.isPrepared()) {
+            textureData.prepare();
+        }
+        Pixmap pixmap = new Pixmap(
+                textureRegion.getRegionWidth(),
+                textureRegion.getRegionHeight(),
+                textureData.getFormat()
+        );
+        pixmap.drawPixmap(
+                textureData.consumePixmap(), // The other Pixmap
+                0, // The target x-coordinate (top left corner)
+                0, // The target y-coordinate (top left corner)
+                textureRegion.getRegionX(), // The source x-coordinate (top left corner)
+                textureRegion.getRegionY(), // The source y-coordinate (top left corner)
+                textureRegion.getRegionWidth(), // The width of the area from the other Pixmap in pixels
+                textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
+        );
+        return new Texture(pixmap);
+    }
+
+    public void dispose() {
+        batch = null;
+        textures.clear();
+        textureAtlas.clear();
+        pixmaps.clear();
+        skins.clear();
+        fonts.clear();
+        music.clear();
+        sound.clear();
+    }
+
+}

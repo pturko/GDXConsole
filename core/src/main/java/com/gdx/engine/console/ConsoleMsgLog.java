@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 public class ConsoleMsgLog {
 
-    private String message;
+    private final String message;
     private String logLevel;
     private Color color;
     private String date;
