@@ -18,7 +18,8 @@ public class MenuScreen extends BaseScreen {
         super(gdxGame);
 
         consoleService = ConsoleServiceImpl.getInstance();
-        consoleService.cmd("ver 1.0");
+        consoleService.cmd("ver");
+        consoleService.cmd("profile");
         consoleService.cmd("resources load");
         initResources();
     }

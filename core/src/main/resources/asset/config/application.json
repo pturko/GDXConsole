@@ -1,7 +1,17 @@
 {
   "version": "1.0",
   "profile": "dev",
+  "windowConfig": {
+    "width": 800,
+    "height": 600,
+    "showFPS": false
+  },
   "consoleConfig": {
-    "showConsole": false
+    "showConsole": false,
+    "startConsoleCmd": false
+  },
+  "audioConfig": {
+    "music": false,
+    "sound": false
   }
 }

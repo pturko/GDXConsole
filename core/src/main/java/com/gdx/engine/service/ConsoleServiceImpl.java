@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class ConsoleServiceImpl implements ConsoleService {
 
     private static ConsoleServiceImpl consoleServiceInstance;
+    private static ConfigServiceImpl configService;
     private static ResourceLoaderServiceImpl resourceLoaderService;
     private static WindowServiceImpl windowService;
 
@@ -40,11 +41,12 @@ public class ConsoleServiceImpl implements ConsoleService {
         }
 
         windowService = WindowServiceImpl.getInstance();
+        configService = ConfigServiceImpl.getInstance();
 
         switch (keyCmd) {
             case "VER":
             case "VERSION":
-                log.info("Version: {}", partOneCmd);
+                log.info("Version: {}", configService.getVersion());
                 break;
 
             case "SCREEN":
@@ -58,6 +60,10 @@ public class ConsoleServiceImpl implements ConsoleService {
                     resourceLoaderService.loadResources();
                     log.info("Resources loaded");
                 }
+                break;
+
+            case "PROFILE":
+                log.info("Profile: {}", configService.getProfileString());
                 break;
 
             case "EXIT":
