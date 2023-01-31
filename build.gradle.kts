@@ -5,6 +5,9 @@ val jUnitJupiterVersion by extra {"5.9.0"}
 val mockitoVersion by extra {"4.8.0"}
 val assertJVersion by extra {"3.23.1"}
 val logbackVersion by extra {"1.4.5"}
+val commonsLang3Version by extra {"3.12.0"}
+val gsonVersion by extra {"2.8.5"}
+val lombokVersion by extra {"1.18.24"}
 
 plugins {
     java
@@ -62,9 +65,10 @@ project(":core") {
         implementation("ch.qos.logback:logback-classic:$logbackVersion")
         testImplementation("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
 
-        implementation("org.apache.commons:commons-lang3:3.12.0")
-        implementation("com.google.code.gson:gson:2.8.5")
-        compileOnly("org.projectlombok:lombok:1.18.24")
-        annotationProcessor("org.projectlombok:lombok:1.18.24")
+        implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
+        implementation("com.google.code.gson:gson:$gsonVersion")
+        compileOnly("org.projectlombok:lombok:$lombokVersion")
+        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     }
+
 }

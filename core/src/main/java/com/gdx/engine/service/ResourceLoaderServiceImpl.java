@@ -27,11 +27,10 @@ import java.util.Map;
 @Slf4j
 public class ResourceLoaderServiceImpl implements ResourceLoaderService {
 
-    private static String asset = "asset/";
     private static SpriteBatch batch;
     private static AssetResources resources;
 
-    private static ResourceLoaderServiceImpl resourceLoaderServiceInstance;
+    private static ResourceLoaderServiceImpl resourceLoaderInstance;
 
     private static Map<String, TextureResource> textures;
     private static Map<String, TextureAtlasResource> textureAtlas;
@@ -40,6 +39,17 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
     private static Map<String, SkinResource> skins;
     private static Map<String, MusicResource> music;
     private static Map<String, SoundResource> sound;
+
+    private static final String ASSET = "asset/";
+    private static final String CONFIG_FOLDER = "config/";
+    private static final String CONFIG_CONSOLE_CMD = "consoleCmd/startup-";
+    private static final String CONFIG_RESOURCES = "resources/";
+    private static final String FONT = "font/";
+    private static final String IMAGE_PIXMAP = "image/pixmap/";
+    private static final String IMAGE_SKIN = "image/skin/";
+    private static final String IMAGE_TEXTURE = "image/texture/";
+    private static final String IMAGE_TEXTURE_ATLAS = "image/textureAtlas/";
+    private static final String SOUND = "sound/";
 
     private static final String RESOURCE_FILE = "resources";
     private static final String RESOURCE_FILE_EXT = ".json";
@@ -60,15 +70,15 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
     }
 
     public static synchronized ResourceLoaderServiceImpl getInstance( ) {
-        if (resourceLoaderServiceInstance == null)
-            resourceLoaderServiceInstance = new ResourceLoaderServiceImpl();
-        return resourceLoaderServiceInstance;
+        if (resourceLoaderInstance == null)
+            resourceLoaderInstance = new ResourceLoaderServiceImpl();
+        return resourceLoaderInstance;
     }
 
     public void loadResources() {
         dispose();
         serviceReset();
-        String fileResource = asset + "config/resources/" + RESOURCE_FILE + RESOURCE_FILE_EXT;
+        String fileResource = ASSET + CONFIG_FOLDER + CONFIG_RESOURCES + RESOURCE_FILE + RESOURCE_FILE_EXT;
         try {
             resources = FileLoaderUtil.getResources(fileResource);
         } catch (IOException e) {
@@ -78,7 +88,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         List<TextureResource> mTextures = resources.getTextures();
         for (TextureResource m : mTextures) {
             Texture texture;
-            String fileName = asset + "image/texture/" + m.getFileName();
+            String fileName = ASSET + IMAGE_TEXTURE + m.getFileName();
             try {
                 texture = new Texture(FileLoaderUtil.getFileHandle(fileName));
             } catch (Exception e) {
@@ -92,7 +102,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         List<TextureAtlasResource> mTextureAtlases = resources.getTextureAtlas();
         for (TextureAtlasResource m : mTextureAtlases) {
             TextureAtlas txAtlas;
-            String fileName = asset + "image/textureAtlas/" + m.getFileName();
+            String fileName = ASSET + IMAGE_TEXTURE_ATLAS + m.getFileName();
             try {
                 txAtlas = new TextureAtlas(FileLoaderUtil.getFileHandle(fileName));
             } catch (Exception e) {
@@ -106,7 +116,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         List<SkinResource> mSkins = resources.getSkin();
         for (SkinResource m : mSkins) {
             Skin skin;
-            String fileName = asset + "image/skin/" + m.getFileName();
+            String fileName = ASSET + IMAGE_SKIN + m.getFileName();
             try {
                 skin = new Skin(FileLoaderUtil.getFileHandle(fileName));
             } catch (SerializationException e) {
@@ -123,7 +133,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         List<PixmapResource> mPixmaps = resources.getPixmap();
         for (PixmapResource m : mPixmaps) {
             Pixmap pixmap;
-            String fileName = asset + "image/pixmap/" + m.getFileName();
+            String fileName = ASSET + IMAGE_PIXMAP + m.getFileName();
             try {
                 pixmap = new Pixmap(FileLoaderUtil.getFileHandle(fileName));
             } catch (Exception e) {
@@ -137,7 +147,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         List<FontResource> mFont = resources.getFont();
         for (FontResource m : mFont) {
             BitmapFont font;
-            String fileName = asset + "font/" + m.getFileName();
+            String fileName = ASSET + FONT + m.getFileName();
             try {
                 font = new BitmapFont(FileLoaderUtil.getFileHandle(fileName));
             } catch (Exception e) {
@@ -259,6 +269,10 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
 
     public SpriteBatch getBatch() {
         return batch;
+    }
+
+    public static String getConsoleCmdPathFile(String profileName) {
+        return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + profileName + RESOURCE_FILE_EXT;
     }
 
     private static Texture extractFromTextureRegion(TextureRegion textureRegion) {

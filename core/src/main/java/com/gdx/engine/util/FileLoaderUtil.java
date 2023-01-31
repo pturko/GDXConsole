@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.ConsoleCmd;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +21,11 @@ public class FileLoaderUtil {
     public static AssetResources getResources(String fileName) throws IOException {
         String jsonString = getFileHandle(fileName).readString();
         return new Gson().fromJson(jsonString, AssetResources.class);
+    }
+
+    public static ConsoleCmd getConsoleCmd(String fileName) {
+        String jsonString = FileLoaderUtil.getFileHandle(fileName).readString();
+        return new Gson().fromJson(jsonString, ConsoleCmd.class);
     }
 
     public static FileHandle getFileHandle(String filePath) {

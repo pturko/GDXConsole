@@ -8,7 +8,7 @@
   },
   "consoleConfig": {
     "showConsole": false,
-    "startConsoleCmd": false
+    "startConsoleCmd": true
   },
   "audioConfig": {
     "music": false,

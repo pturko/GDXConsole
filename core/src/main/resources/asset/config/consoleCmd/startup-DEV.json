@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "ver",
+    "profile",
+    "resources load",
+    "screen menu"
+  ]
+}
+

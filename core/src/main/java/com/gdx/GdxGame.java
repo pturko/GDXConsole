@@ -19,10 +19,11 @@ public class GdxGame extends Game {
 		// Initialize application configs
 		configService.updateConfigs();
 
-		//Initialize windows
+		// Initialize windows
 		windowService.init(this);
 
-		consoleService.cmd("screen menu");
+		// Running commands
+		consoleService.runCommands();
 	}
 
 	@Override

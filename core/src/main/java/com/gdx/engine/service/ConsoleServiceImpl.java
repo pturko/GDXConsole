@@ -2,6 +2,8 @@ package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
 import com.gdx.engine.interfaces.service.ConsoleService;
+import com.gdx.engine.model.config.ConsoleCmd;
+import com.gdx.engine.util.FileLoaderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,7 +14,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
     private static ConsoleServiceImpl consoleServiceInstance;
     private static ConfigServiceImpl configService;
-    private static ResourceLoaderServiceImpl resourceLoaderService;
+    private static ResourceLoaderServiceImpl resourceService;
     private static WindowServiceImpl windowService;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
@@ -42,6 +44,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
         windowService = WindowServiceImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
+        resourceService = ResourceLoaderServiceImpl.getInstance();
 
         switch (keyCmd) {
             case "VER":
@@ -56,9 +59,15 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "RESOURCES":
                 if (partOneCmd.equalsIgnoreCase("load")) {
-                    resourceLoaderService = ResourceLoaderServiceImpl.getInstance();
-                    resourceLoaderService.loadResources();
+                    resourceService.loadResources();
                     log.info("Resources loaded");
+                }
+                break;
+
+            case "CMD":
+                if (partOneCmd.equalsIgnoreCase("profile")) {
+                    runCommands();
+                    log.info("Run commands for profile: {}", configService.getProfileString());
                 }
                 break;
 
@@ -72,6 +81,15 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void runCommands() {
+        configService = ConfigServiceImpl.getInstance();
+        resourceService = ResourceLoaderServiceImpl.getInstance();
+        if (configService.getConsoleConfig().isStartConsoleCmd()) {
+            ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
+                    resourceService.getConsoleCmdPathFile(configService.getProfileString()));
+            for (String cmdScr : consoleCmd.getCmd()) {
+                cmd(cmdScr);
+            }
+        }
     }
 
     public void dispose() {}
