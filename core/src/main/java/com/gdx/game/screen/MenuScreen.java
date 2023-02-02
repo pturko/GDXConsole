@@ -41,7 +41,13 @@ public class MenuScreen extends BaseScreen {
 
         spriteBatch.draw(texture, 380, 300);
 
+        //---------- Drawing console and debug information ----------------------------
+        drawingDebug();
+
         spriteBatch.end();
+
+        //---------- Input processing ----------------------------
+        inputProcessing();
     }
 
     @Override

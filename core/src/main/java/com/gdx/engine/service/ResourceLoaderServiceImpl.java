@@ -28,6 +28,7 @@ import java.util.Map;
 public class ResourceLoaderServiceImpl implements ResourceLoaderService {
 
     private static SpriteBatch batch;
+    private static BitmapFont bitmapFont;
     private static AssetResources resources;
 
     private static ResourceLoaderServiceImpl resourceLoaderInstance;
@@ -60,6 +61,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
 
     public void serviceReset() {
         batch = new SpriteBatch();
+        bitmapFont = new BitmapFont();
         textures = new HashMap<>();
         textureAtlas = new HashMap<>();
         pixmaps = new HashMap<>();
@@ -235,7 +237,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
     }
 
     public static BitmapFont getDefaultFont() {
-        return new BitmapFont();
+        return bitmapFont;
     }
 
     private static Drawable getDefaultDrawable() {

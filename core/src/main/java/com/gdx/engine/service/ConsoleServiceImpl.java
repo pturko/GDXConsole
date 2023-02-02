@@ -1,6 +1,10 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.gdx.engine.console.ConsoleGdxLogAppender;
+import com.gdx.engine.console.ConsoleMsgLog;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
 import com.gdx.engine.util.FileLoaderUtil;
@@ -8,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 public class ConsoleServiceImpl implements ConsoleService {
@@ -16,6 +21,8 @@ public class ConsoleServiceImpl implements ConsoleService {
     private static ConfigServiceImpl configService;
     private static ResourceLoaderServiceImpl resourceService;
     private static WindowServiceImpl windowService;
+
+    private static final int CONSOLE_MAX_MESSAGES = 25;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
         if (consoleServiceInstance == null)
@@ -89,6 +96,23 @@ public class ConsoleServiceImpl implements ConsoleService {
             for (String cmdScr : consoleCmd.getCmd()) {
                 cmd(cmdScr);
             }
+        }
+    }
+
+    public void draw(SpriteBatch batch, BitmapFont font) {
+        int i = 1;
+        List<ConsoleMsgLog> commandList = ConsoleGdxLogAppender.getCommandList();
+        int maxCmdSize = (commandList.size() - 1) - CONSOLE_MAX_MESSAGES;
+        if (maxCmdSize < 0) {
+            maxCmdSize = 0;
+        }
+        for (int j = commandList.size() - 1; j >= maxCmdSize; j--) {
+            ConsoleMsgLog cmd = commandList.get(j);
+            font.setColor(cmd.getColor());
+            font.draw(batch, cmd.getDate()
+                    + " [" + cmd.getLogLevel() + "] " +
+                    cmd.getMessage(), 5, 35 + (i * 17));
+            i++;
         }
     }
 
