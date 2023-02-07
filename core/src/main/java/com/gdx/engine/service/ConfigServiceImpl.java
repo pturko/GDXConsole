@@ -22,9 +22,9 @@ public class ConfigServiceImpl implements ConfigService {
 
     private String version;
     private Profile profile;
-    private WindowConfig window;
-    private ConsoleConfig console;
-    private AudioConfig audio;
+    private WindowConfig windowConfig;
+    private ConsoleConfig consoleConfig;
+    private AudioConfig audioConfig;
 
     public static synchronized ConfigServiceImpl getInstance( ) {
         if (configServiceInstance == null) {
@@ -52,9 +52,9 @@ public class ConfigServiceImpl implements ConfigService {
     public void update(ApplicationConfig applicationConfig) {
         this.version = applicationConfig.getVersion();
         this.profile = setProfile(applicationConfig.getProfile());
-        this.window = applicationConfig.getWindowConfig();
-        this.console = applicationConfig.getConsoleConfig();
-        this.audio = applicationConfig.getAudioConfig();
+        this.windowConfig = applicationConfig.getWindowConfig();
+        this.consoleConfig = applicationConfig.getConsoleConfig();
+        this.audioConfig = applicationConfig.getAudioConfig();
     }
 
     @Override
@@ -69,17 +69,17 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public WindowConfig getWindowConfig() {
-        return window;
+        return windowConfig;
     }
 
     @Override
     public ConsoleConfig getConsoleConfig() {
-        return console;
+        return consoleConfig;
     }
 
     @Override
     public AudioConfig getAudioConfig() {
-        return audio;
+        return audioConfig;
     }
 
     public Profile setProfile(String profile) {

@@ -7,6 +7,8 @@ import com.gdx.engine.console.ConsoleGdxLogAppender;
 import com.gdx.engine.console.ConsoleMsgLog;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
+import com.gdx.engine.model.config.ConsoleConfig;
+import com.gdx.engine.state.AudioState;
 import com.gdx.engine.util.FileLoaderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,8 @@ public class ConsoleServiceImpl implements ConsoleService {
     private static ResourceLoaderServiceImpl resourceService;
     private static WindowServiceImpl windowService;
 
+    private ConsoleConfig consoleConfig;
+
     private static final int CONSOLE_MAX_MESSAGES = 25;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
@@ -36,6 +40,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     public void cmd(String cmd) {
         String keyCmd;
         String partOneCmd = StringUtils.EMPTY;
+        String partTwoCmd = StringUtils.EMPTY;
         String[] cmdSplit = Arrays.stream(cmd.split(StringUtils.SPACE))
                 .map(String::trim)
                 .toArray(String[]::new);
@@ -47,6 +52,9 @@ public class ConsoleServiceImpl implements ConsoleService {
         keyCmd = cmdSplit[0].toUpperCase();
         if (cmdSplit.length > 1) {
             partOneCmd = cmdSplit[1];
+        }
+        if (cmdSplit.length > 2) {
+            partTwoCmd = cmdSplit[2];
         }
 
         windowService = WindowServiceImpl.getInstance();
@@ -68,6 +76,33 @@ public class ConsoleServiceImpl implements ConsoleService {
                 if (partOneCmd.equalsIgnoreCase("load")) {
                     resourceService.loadResources();
                     log.info("Resources loaded");
+                }
+                break;
+
+            case "MUSIC":
+                if (partOneCmd.equalsIgnoreCase("play") && configService.getAudioConfig().isMusic()) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY, partTwoCmd);
+                }
+                if (partOneCmd.equalsIgnoreCase("playLoop") && configService.getAudioConfig().isMusic()) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY_LOOP, partTwoCmd);
+                }
+                if (partOneCmd.equalsIgnoreCase("stop")) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP, partTwoCmd);
+                }
+                if (partOneCmd.equalsIgnoreCase("stopAll")) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP_ALL, partTwoCmd);
+                }
+                break;
+
+            case "SOUND":
+                if (partOneCmd.equalsIgnoreCase("play") && configService.getAudioConfig().isSound()) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_PLAY, partTwoCmd);
+                }
+                if (partOneCmd.equalsIgnoreCase("stop")) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP, partTwoCmd);
+                }
+                if (partOneCmd.equalsIgnoreCase("stopAll")) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP_ALL, partTwoCmd);
                 }
                 break;
 

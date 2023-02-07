@@ -16,7 +16,13 @@
     }
   ],
   "music": [
+    { "name": "click",
+      "fileName": "click.mp3"
+    }
   ],
   "sound": [
+    { "name": "click",
+      "fileName": "click.mp3"
+    }
   ]
 }

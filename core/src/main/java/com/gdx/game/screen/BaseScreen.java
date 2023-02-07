@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
+import com.gdx.engine.model.config.ConsoleConfig;
 import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.ConsoleServiceImpl;
 import com.gdx.engine.service.ResourceLoaderServiceImpl;
@@ -16,7 +17,7 @@ import com.gdx.engine.service.WindowServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class BaseScreen implements Screen {
+public class BaseScreen implements Screen, InputProcessor {
 
     protected static ResourceLoaderServiceImpl resourceService;
     protected static ConfigServiceImpl configService;
@@ -29,6 +30,8 @@ public class BaseScreen implements Screen {
     protected int screenWidth;
     protected OrthographicCamera camera;
     protected SpriteBatch spriteBatch;
+
+    protected ConsoleConfig consoleConfig;
 
     protected Stage baseStage;
     protected InputMultiplexer multiplexer;
@@ -47,6 +50,8 @@ public class BaseScreen implements Screen {
         windowService = WindowServiceImpl.getInstance();
 
         windowService.setBaseScreen(this);
+
+        consoleConfig = configService.getConsoleConfig();
 
         createResources();
         cameraSetup();
@@ -86,17 +91,24 @@ public class BaseScreen implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
-    public void addInputProcessor(Stage stage) {
+    public void addStageProcessor(Stage stage) {
         multiplexer.addProcessor(stage);
+        Gdx.input.setInputProcessor(multiplexer);
+    }
+
+    public void addInputProcessor(InputProcessor inputProcessor) {
+        multiplexer.addProcessor(inputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
     }
 
     public void drawingDebug() {
         //---------- Drawing console ----------------------------
-        drawingConsole();
+        if (consoleConfig.isShowConsole()) {
+            drawingConsole();
 
-        baseStage.draw();
-        baseStage.act(Gdx.graphics.getDeltaTime());
+            baseStage.draw();
+            baseStage.act(Gdx.graphics.getDeltaTime());
+        }
     }
 
     void drawingConsole() {
@@ -141,6 +153,47 @@ public class BaseScreen implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        System.out.println(keycode);
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        return false;
     }
 
 }
