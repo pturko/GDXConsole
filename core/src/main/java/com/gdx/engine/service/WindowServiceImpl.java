@@ -7,8 +7,17 @@ import com.gdx.GdxGame;
 import com.gdx.engine.interfaces.service.WindowService;
 import com.gdx.engine.screen.ScreenItems;
 
+import com.gdx.engine.screen.TransitionScreen;
+import com.gdx.engine.screen.effects.CoolOutTransitionEffect;
+import com.gdx.engine.screen.effects.FadeInTransitionEffect;
+import com.gdx.engine.screen.effects.FadeOutTransitionEffect;
+import com.gdx.engine.screen.transition.TransitionEffect;
 import com.gdx.game.screen.BaseScreen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public final class WindowServiceImpl implements WindowService {
@@ -49,16 +58,51 @@ public final class WindowServiceImpl implements WindowService {
     }
 
     @Override
-    public void show(String screen) {
+    public void show(String nextScreen, String transitionEffectName) {
+        ScreenItems screenItem;
         if (null == gdxGame) return;
-        ScreenItems screenItem = ScreenItems.valueOf(screen);
+        try {
+            screenItem = ScreenItems.valueOf(nextScreen);
+        } catch (Exception e) {
+            log.error("Screen '{}' not found", nextScreen);
+            return;
+        }
         if (null == screenItem) return;
         if (!screens.containsKey(screenItem.ordinal())) {
             screens.put(screenItem.ordinal(), screenItem.getScreenInstance(gdxGame));
         }
-        activeScreen = screens.get(screenItem.ordinal());
+        Screen nextActiveScreen = screens.get(screenItem.ordinal());
+        if (null != transitionEffectName && !transitionEffectName.equals(StringUtils.EMPTY)) {
+            nextActiveScreen = getTransitionScreen(transitionEffectName, nextActiveScreen);
+        }
+        log.info("Set screen: {}", nextScreen);
+        gdxGame.setScreen(nextActiveScreen);
+        activeScreen = nextActiveScreen;
+    }
 
-        gdxGame.setScreen(activeScreen);
+    public Screen getTransitionScreen(String transitionEffectName, Screen nextScreen) {
+        List<TransitionEffect> effects = new ArrayList<>();
+        switch (transitionEffectName.toUpperCase()) {
+            case "FADE":
+                if (null != activeScreen) {
+                    effects.add(new FadeOutTransitionEffect(0.5f));
+                }
+                effects.add(new FadeInTransitionEffect(0.5f));
+                break;
+            case "FADEIN":
+                effects.add(new FadeOutTransitionEffect(0.5f));
+                break;
+            case "CIRCLE":
+                if (null != activeScreen) {
+                    effects.add(new CoolOutTransitionEffect(1f));
+                }
+                break;
+            default:
+                log.warn("Can't found transition effect: {}", transitionEffectName);
+        }
+
+        return new TransitionScreen(gdxGame, (BaseScreen) activeScreen,
+                (BaseScreen) nextScreen, effects);
     }
 
     public void setBaseScreen(BaseScreen baseScreen) {

@@ -4,10 +4,12 @@
   "windowConfig": {
     "width": 800,
     "height": 600,
-    "showFPS": false
+    "showFPS": true
   },
   "consoleConfig": {
     "showConsole": true,
+    "showOnError": false,
+    "showOnWarn": false,
     "startConsoleCmd": true
   },
   "audioConfig": {

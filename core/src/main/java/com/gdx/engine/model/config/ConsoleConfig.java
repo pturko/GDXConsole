@@ -8,5 +8,6 @@ import java.io.Serializable;
 public class ConsoleConfig implements Serializable {
     private boolean showConsole;
     private boolean showOnError;
+    private boolean showOnWarn;
     private boolean startConsoleCmd;
 }

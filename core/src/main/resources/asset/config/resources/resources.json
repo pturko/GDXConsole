@@ -9,6 +9,9 @@
   "pixmap": [
   ],
   "font": [
+    { "name": "sans_serif",
+      "fileName": "sans_serif.fnt"
+    }
   ],
   "skin": [
     { "name": "uiskin",

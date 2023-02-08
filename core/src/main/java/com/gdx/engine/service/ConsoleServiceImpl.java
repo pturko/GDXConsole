@@ -1,6 +1,7 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.engine.console.ConsoleGdxLogAppender;
@@ -10,6 +11,7 @@ import com.gdx.engine.model.config.ConsoleCmd;
 import com.gdx.engine.model.config.ConsoleConfig;
 import com.gdx.engine.state.AudioState;
 import com.gdx.engine.util.FileLoaderUtil;
+import com.gdx.engine.util.OperationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,6 +43,7 @@ public class ConsoleServiceImpl implements ConsoleService {
         String keyCmd;
         String partOneCmd = StringUtils.EMPTY;
         String partTwoCmd = StringUtils.EMPTY;
+        String partThreeCmd = StringUtils.EMPTY;
         String[] cmdSplit = Arrays.stream(cmd.split(StringUtils.SPACE))
                 .map(String::trim)
                 .toArray(String[]::new);
@@ -56,6 +59,9 @@ public class ConsoleServiceImpl implements ConsoleService {
         if (cmdSplit.length > 2) {
             partTwoCmd = cmdSplit[2];
         }
+        if (cmdSplit.length > 3) {
+            partThreeCmd = cmdSplit[3];
+        }
 
         windowService = WindowServiceImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
@@ -67,15 +73,55 @@ public class ConsoleServiceImpl implements ConsoleService {
                 log.info("Version: {}", configService.getVersion());
                 break;
 
+            case "INFO":
+                log.info("{}", partOneCmd);
+                break;
+
             case "SCREEN":
-                windowService.show(partOneCmd.toUpperCase());
-                log.info("Set screen: {}", partOneCmd);
+                windowService.show(partOneCmd.toUpperCase(), partTwoCmd);
                 break;
 
             case "RESOURCES":
                 if (partOneCmd.equalsIgnoreCase("load")) {
                     resourceService.loadResources();
                     log.info("Resources loaded");
+                }
+                break;
+
+            case "CONFIG":
+                if (partOneCmd.equalsIgnoreCase("console")) {
+                    if (partTwoCmd.equalsIgnoreCase("show")) {
+                        configService.getConsoleConfig().setShowConsole(
+                                OperationUtil.getBooleanValue(partThreeCmd, configService.getConsoleConfig().isShowConsole())
+                        );
+                        resetActiveScreen();
+                        log.info("display console: {}", configService.getConsoleConfig().isShowConsole());
+                    }
+                }
+                if (partOneCmd.equalsIgnoreCase("window")) {
+                    if (partTwoCmd.equalsIgnoreCase("showFPS")) {
+                        configService.getWindowConfig().setShowFPS(
+                                OperationUtil.getBooleanValue(partThreeCmd, configService.getWindowConfig().isShowFPS())
+                        );
+                        resetActiveScreen();
+                        log.info("display fps: {}", configService.getWindowConfig().isShowFPS());
+                    }
+                }
+                if (partOneCmd.equalsIgnoreCase("audio")) {
+                    if (partTwoCmd.equalsIgnoreCase("music")) {
+                        configService.getAudioConfig().setMusic(
+                                OperationUtil.getBooleanValue(partThreeCmd, configService.getAudioConfig().isMusic())
+                        );
+                        resetActiveScreen();
+                        log.info("music: {}", configService.getAudioConfig().isMusic());
+                    }
+                    if (partTwoCmd.equalsIgnoreCase("sound")) {
+                        configService.getAudioConfig().setSound(
+                                OperationUtil.getBooleanValue(partThreeCmd, configService.getAudioConfig().isSound())
+                        );
+                        resetActiveScreen();
+                        log.info("sound: {}", configService.getAudioConfig().isSound());
+                    }
                 }
                 break;
 
@@ -148,6 +194,13 @@ public class ConsoleServiceImpl implements ConsoleService {
                     + " [" + cmd.getLogLevel() + "] " +
                     cmd.getMessage(), 5, 35 + (i * 17));
             i++;
+        }
+    }
+
+    public void resetActiveScreen() {
+        Screen activeScreen = WindowServiceImpl.getInstance().getActiveScreen();
+        if (activeScreen != null) {
+            activeScreen.resume();
         }
     }
 

@@ -17,8 +17,7 @@ import com.gdx.engine.service.WindowServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class BaseScreen implements Screen, InputProcessor {
-
+public class BaseScreen implements Screen {
     protected static ResourceLoaderServiceImpl resourceService;
     protected static ConfigServiceImpl configService;
     protected static WindowServiceImpl windowService;
@@ -36,10 +35,18 @@ public class BaseScreen implements Screen, InputProcessor {
     protected Stage baseStage;
     protected InputMultiplexer multiplexer;
 
+    private String lastCmd;
     private Skin componentSkin;
     private Drawable consoleBg;
     private TextField cmdTextField;
     private BitmapFont consoleFont;
+    private BitmapFont debugFont;
+
+    private long now;
+    private int frameCount;
+    private long lastRender;
+    private static int lastFPS;
+    private final static int FPSUpdateInterval = 1;
 
     public BaseScreen(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
@@ -62,6 +69,8 @@ public class BaseScreen implements Screen, InputProcessor {
     private void createResources() {
         baseStage = new Stage();
         spriteBatch = new SpriteBatch();
+        lastCmd = StringUtils.EMPTY;
+        debugFont = resourceService.getFont("sans_serif");
     }
 
     private void cameraSetup() {
@@ -103,28 +112,60 @@ public class BaseScreen implements Screen, InputProcessor {
 
     public void drawingDebug() {
         //---------- Drawing console ----------------------------
+        drawingConsole();
+
+        //---------- Drawing FPS ----------------------------
+        drawingFPS();
+    }
+
+    void drawingConsole() {
         if (consoleConfig.isShowConsole()) {
-            drawingConsole();
+            spriteBatch.setColor(30, 30, 30, 0.5f);
+            consoleBg.draw(spriteBatch,5,5,400,480);
+            consoleService.draw(spriteBatch, consoleFont);
+
+            spriteBatch.setColor(0, 0, 0, 1f);
 
             baseStage.draw();
             baseStage.act(Gdx.graphics.getDeltaTime());
         }
     }
 
-    void drawingConsole() {
-        spriteBatch.setColor(30, 30, 30, 0.5f);
-        consoleBg.draw(spriteBatch,5,5,400,480);
-
-        consoleService.draw(spriteBatch, consoleFont);
-
-        spriteBatch.setColor(0, 0, 0, 1f);
-    }
-
     public void inputProcessing() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            consoleService.cmd(cmdTextField.getText());
-            cmdTextField.setText("");
+            lastCmd = cmdTextField.getText();
+            consoleService.cmd(lastCmd);
+            cmdTextField.setText(StringUtils.EMPTY);
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            consoleService.cmd("config window showFPS");
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            consoleService.cmd("config console show");
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            cmdTextField.setText(lastCmd);
+        }
+    }
+
+    void drawingFPS() {
+        //---------- Drawing FPS ----------------------------
+        if (configService.getWindowConfig().isShowFPS()) {
+            frameCount++;
+            now = System.nanoTime();
+            if ((now - lastRender) >= FPSUpdateInterval * 1000000000) {
+                lastFPS = frameCount / FPSUpdateInterval;
+                frameCount = 0;
+                lastRender = System.nanoTime();
+            }
+            debugFont.draw(spriteBatch, "fps:" + lastFPS, (screenWidth/2)-30, screenHeight-10);
+        }
+    }
+
+    public void resetConfig() {
+    }
+
+    public void resetResources() {
     }
 
     @Override
@@ -145,6 +186,8 @@ public class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public void resume() {
+        resetConfig();
+        resetResources();
     }
 
     @Override
@@ -153,47 +196,6 @@ public class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        System.out.println(keycode);
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 
 }
