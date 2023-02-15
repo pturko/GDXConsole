@@ -20,11 +20,14 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final String CONFIG_FILE= "asset/config/application.json"; //TODO - fix hardcode filename
 
-    private String version;
-    private Profile profile;
-    private WindowConfig windowConfig;
-    private ConsoleConfig consoleConfig;
-    private AudioConfig audioConfig;
+    private static String version;
+    private static Profile profile;
+    private static WindowConfig windowConfig;
+    private static ConsoleConfig consoleConfig;
+    private static AudioConfig audioConfig;
+    private static Box2DConfig box2DConfig;
+    private static TiledMapConfig tiledMapConfig;
+    private static DebugConfig debugConfig;
 
     public static synchronized ConfigServiceImpl getInstance( ) {
         if (configServiceInstance == null) {
@@ -50,11 +53,14 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     public void update(ApplicationConfig applicationConfig) {
-        this.version = applicationConfig.getVersion();
-        this.profile = setProfile(applicationConfig.getProfile());
-        this.windowConfig = applicationConfig.getWindowConfig();
-        this.consoleConfig = applicationConfig.getConsoleConfig();
-        this.audioConfig = applicationConfig.getAudioConfig();
+        version = applicationConfig.getVersion();
+        profile = setProfile(applicationConfig.getProfile());
+        windowConfig = applicationConfig.getWindowConfig();
+        consoleConfig = applicationConfig.getConsoleConfig();
+        audioConfig = applicationConfig.getAudioConfig();
+        box2DConfig = applicationConfig.getBox2DConfig();
+        tiledMapConfig = applicationConfig.getTiledMapConfig();
+        debugConfig = applicationConfig.getDebugConfig();
     }
 
     @Override
@@ -80,6 +86,21 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public AudioConfig getAudioConfig() {
         return audioConfig;
+    }
+
+    @Override
+    public Box2DConfig getBox2DConfig() {
+        return box2DConfig;
+    }
+
+    @Override
+    public TiledMapConfig getTiledMapConfig() {
+        return tiledMapConfig;
+    }
+
+    @Override
+    public DebugConfig getDebugConfig() {
+        return debugConfig;
     }
 
     public Profile setProfile(String profile) {

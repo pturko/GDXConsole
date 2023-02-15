@@ -1,5 +1,5 @@
 # GDXConsole
-#### LibGDX console with _LibGDX_, _BOX2D_ And _Tiled Map_
+#### LibGDX console with _LibGDX_, _BOX2D_, _BOX2DLight And _Tiled Map_
 ![build workflow](https://github.com/pturko/GDXConsole)
 
 ## Description
@@ -10,10 +10,11 @@
 ## Features
 - Dynamic resource loading
 - Built-in console
+- TiledMap support
+- Box2D and Box2DLight support
+- Modular system - enable/disable each module
 - Profile management
-- Running commands from file
-- TiledMap support (in development)
-- Box2D support (in development)
+- Running commands from file (scripting)
 
 #### Console commands
 - VER (VERSION) - version from application.json config
@@ -39,6 +40,8 @@
   - play <name>
   - stop <name>
   - stopAll <name>
+- MAP
+  - load <mapName> - loading tiled map
 - CMD <profileName> - run commands from config/startup-<profileName>.json
 - PROFILE - show active profile
 - EXIT - exit program

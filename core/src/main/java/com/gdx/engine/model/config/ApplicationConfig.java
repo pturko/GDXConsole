@@ -11,4 +11,7 @@ public class ApplicationConfig implements Serializable {
     private WindowConfig windowConfig;
     private ConsoleConfig consoleConfig;
     private AudioConfig audioConfig;
+    private Box2DConfig box2DConfig;
+    private TiledMapConfig tiledMapConfig;
+    private DebugConfig debugConfig;
 }

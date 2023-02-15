@@ -1,9 +1,6 @@
 package com.gdx.engine.interfaces.service;
 
-import com.gdx.engine.model.config.AudioConfig;
-import com.gdx.engine.model.config.ConsoleConfig;
-import com.gdx.engine.model.config.Profile;
-import com.gdx.engine.model.config.WindowConfig;
+import com.gdx.engine.model.config.*;
 
 public interface ConfigService {
     void updateConfigs();
@@ -13,4 +10,7 @@ public interface ConfigService {
     WindowConfig getWindowConfig();
     ConsoleConfig getConsoleConfig();
     AudioConfig getAudioConfig();
+    Box2DConfig getBox2DConfig();
+    TiledMapConfig getTiledMapConfig();
+    DebugConfig getDebugConfig();
 }

@@ -8,7 +8,6 @@ import com.gdx.engine.console.ConsoleGdxLogAppender;
 import com.gdx.engine.console.ConsoleMsgLog;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
-import com.gdx.engine.model.config.ConsoleConfig;
 import com.gdx.engine.state.AudioState;
 import com.gdx.engine.util.FileLoaderUtil;
 import com.gdx.engine.util.OperationUtil;
@@ -25,8 +24,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     private static ConfigServiceImpl configService;
     private static ResourceLoaderServiceImpl resourceService;
     private static WindowServiceImpl windowService;
-
-    private ConsoleConfig consoleConfig;
+    private static TiledMapServiceImpl tiledMapService;
 
     private static final int CONSOLE_MAX_MESSAGES = 25;
 
@@ -100,11 +98,11 @@ public class ConsoleServiceImpl implements ConsoleService {
                 }
                 if (partOneCmd.equalsIgnoreCase("window")) {
                     if (partTwoCmd.equalsIgnoreCase("showFPS")) {
-                        configService.getWindowConfig().setShowFPS(
-                                OperationUtil.getBooleanValue(partThreeCmd, configService.getWindowConfig().isShowFPS())
+                        configService.getDebugConfig().setShowFPS(
+                                OperationUtil.getBooleanValue(partThreeCmd, configService.getDebugConfig().isShowFPS())
                         );
                         resetActiveScreen();
-                        log.info("display fps: {}", configService.getWindowConfig().isShowFPS());
+                        log.info("display fps: {}", configService.getDebugConfig().isShowFPS());
                     }
                 }
                 if (partOneCmd.equalsIgnoreCase("audio")) {
@@ -161,6 +159,16 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "PROFILE":
                 log.info("Profile: {}", configService.getProfileString());
+                break;
+
+            case "MAP":
+                if (partOneCmd.equalsIgnoreCase("load")) {
+                    tiledMapService = TiledMapServiceImpl.getInstance();
+                    if (tiledMapService.load(partTwoCmd)) {
+                        resetActiveScreen();
+                        log.info("TiledMap '{}' successful loaded", partTwoCmd);
+                    }
+                }
                 break;
 
             case "EXIT":

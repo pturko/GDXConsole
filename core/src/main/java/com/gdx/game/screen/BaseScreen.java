@@ -1,7 +1,9 @@
 package com.gdx.game.screen;
 
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,30 +11,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
+import com.gdx.engine.model.config.CameraPositionConfig;
+import com.gdx.engine.model.config.CameraViewportConfig;
 import com.gdx.engine.model.config.ConsoleConfig;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.ConsoleServiceImpl;
-import com.gdx.engine.service.ResourceLoaderServiceImpl;
-import com.gdx.engine.service.WindowServiceImpl;
+import com.gdx.engine.model.config.WindowConfig;
+import com.gdx.engine.service.*;
 import org.apache.commons.lang3.StringUtils;
 
 
 public class BaseScreen implements Screen {
     protected static ResourceLoaderServiceImpl resourceService;
+    protected static CameraServiceImpl cameraService;
     protected static ConfigServiceImpl configService;
     protected static WindowServiceImpl windowService;
     protected static ConsoleServiceImpl consoleService;
+    protected static ConsoleConfig consoleConfig;
 
     protected GdxGame gdxGame;
 
+    protected Stage stage;
+    protected PooledEngine engine;
+
     protected int screenHeight;
     protected int screenWidth;
-    protected OrthographicCamera camera;
+    protected Camera camera;
     protected SpriteBatch spriteBatch;
 
-    protected ConsoleConfig consoleConfig;
-
-    protected Stage baseStage;
     protected InputMultiplexer multiplexer;
 
     private String lastCmd;
@@ -42,6 +46,7 @@ public class BaseScreen implements Screen {
     private BitmapFont consoleFont;
     private BitmapFont debugFont;
 
+    // FPS counter
     private long now;
     private int frameCount;
     private long lastRender;
@@ -55,10 +60,7 @@ public class BaseScreen implements Screen {
         resourceService = ResourceLoaderServiceImpl.getInstance();
         consoleService = ConsoleServiceImpl.getInstance();
         windowService = WindowServiceImpl.getInstance();
-
-        windowService.setBaseScreen(this);
-
-        consoleConfig = configService.getConsoleConfig();
+        cameraService = CameraServiceImpl.getInstance();
 
         createResources();
         cameraSetup();
@@ -67,19 +69,27 @@ public class BaseScreen implements Screen {
     }
 
     private void createResources() {
-        baseStage = new Stage();
+        stage = new Stage();
         spriteBatch = new SpriteBatch();
         lastCmd = StringUtils.EMPTY;
         debugFont = resourceService.getFont("sans_serif");
+
+        consoleConfig = configService.getConsoleConfig();
+        windowService.setBaseScreen(this);
     }
 
-    private void cameraSetup() {
-        windowService = WindowServiceImpl.getInstance();
-        screenWidth = windowService.getScreenWidth();
-        screenHeight = windowService.getScreenHeight();
+    public void cameraSetup() {
+        camera = cameraService.getCamera();
+        WindowConfig windowConfig = configService.getWindowConfig();
+        CameraPositionConfig cameraPositionConfig = windowConfig.getCameraConfig().getCameraPositionConfig();
+        CameraViewportConfig cameraViewportConfig = windowConfig.getCameraConfig().getCameraViewportConfig();
 
-        camera = windowService.getCamera();
-        camera.setToOrtho(false, screenWidth, screenHeight);
+        // Should scale the viewport with PPM
+        stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getCameraConfig().getPpm(),
+                windowConfig.getHeight()/windowConfig.getCameraConfig().getPpm());
+        camera.position.set(cameraPositionConfig.getX(), cameraPositionConfig.getY(), cameraPositionConfig.getZ());
+        camera.viewportWidth = cameraViewportConfig.getWidth();
+        camera.viewportHeight = cameraViewportConfig.getHeight();
     }
 
     private void createConsole() {
@@ -88,7 +98,7 @@ public class BaseScreen implements Screen {
         cmdTextField = new TextField(StringUtils.EMPTY, componentSkin);
         cmdTextField.setPosition(2, 15);
         cmdTextField.setSize(400, 24);
-        baseStage.addActor(cmdTextField);
+        stage.addActor(cmdTextField);
 
         consoleFont = resourceService.getDefaultFont();
         consoleBg = resourceService.getDrawable("uiskin", "default-window");
@@ -96,7 +106,7 @@ public class BaseScreen implements Screen {
 
     private void createInputProcessor() {
         multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(baseStage);
+        multiplexer.addProcessor(stage);
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -110,28 +120,10 @@ public class BaseScreen implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
-    public void drawingDebug() {
-        //---------- Drawing console ----------------------------
-        drawingConsole();
+    public void update(float delta) {
+        //---------- Drawing console and debug information ----------------------------
+        drawingDebug();
 
-        //---------- Drawing FPS ----------------------------
-        drawingFPS();
-    }
-
-    void drawingConsole() {
-        if (consoleConfig.isShowConsole()) {
-            spriteBatch.setColor(30, 30, 30, 0.5f);
-            consoleBg.draw(spriteBatch,5,5,400,480);
-            consoleService.draw(spriteBatch, consoleFont);
-
-            spriteBatch.setColor(0, 0, 0, 1f);
-
-            baseStage.draw();
-            baseStage.act(Gdx.graphics.getDeltaTime());
-        }
-    }
-
-    public void inputProcessing() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             lastCmd = cmdTextField.getText();
             consoleService.cmd(lastCmd);
@@ -148,9 +140,34 @@ public class BaseScreen implements Screen {
         }
     }
 
+    public void drawingDebug() {
+        spriteBatch.begin();
+
+        //---------- Drawing console ----------------------------
+        drawingConsole();
+
+        //---------- Drawing FPS --------------------------------
+        drawingFPS();
+
+        spriteBatch.end();
+    }
+
+    void drawingConsole() {
+        if (consoleConfig.isShowConsole()) {
+            spriteBatch.setColor(30, 30, 30, 0.5f);
+            consoleBg.draw(spriteBatch,5,5,400,480);
+            consoleService.draw(spriteBatch, consoleFont);
+
+            spriteBatch.setColor(0, 0, 0, 1f);
+
+            stage.draw();
+            stage.act(Gdx.graphics.getDeltaTime());
+        }
+    }
+
     void drawingFPS() {
         //---------- Drawing FPS ----------------------------
-        if (configService.getWindowConfig().isShowFPS()) {
+        if (configService.getDebugConfig().isShowFPS()) {
             frameCount++;
             now = System.nanoTime();
             if ((now - lastRender) >= FPSUpdateInterval * 1000000000) {
@@ -162,10 +179,9 @@ public class BaseScreen implements Screen {
         }
     }
 
-    public void resetConfig() {
-    }
-
-    public void resetResources() {
+    public void clearScreen() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
     @Override
@@ -186,8 +202,6 @@ public class BaseScreen implements Screen {
 
     @Override
     public void resume() {
-        resetConfig();
-        resetResources();
     }
 
     @Override

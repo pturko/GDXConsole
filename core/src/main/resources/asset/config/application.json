@@ -4,10 +4,22 @@
   "windowConfig": {
     "width": 800,
     "height": 600,
-    "showFPS": true
+    "fullScreen": false,
+    "cameraConfig": {
+      "ppm": 100,
+      "cameraPositionConfig": {
+        "x": 3,
+        "y": 1.5,
+        "z": 0
+      },
+      "cameraViewportConfig": {
+        "width": 6,
+        "height": 3
+      }
+    }
   },
   "consoleConfig": {
-    "showConsole": true,
+    "showConsole": false,
     "showOnError": false,
     "showOnWarn": false,
     "startConsoleCmd": true
@@ -15,5 +27,22 @@
   "audioConfig": {
     "music": true,
     "sound": true
+  },
+  "box2DConfig": {
+    "enable": true,
+    "box2DDebugRenderer": true,
+    "doSleep": true,
+    "box2DWorldGravityConfig": {
+      "x": 0,
+      "y": -12
+    }
+  },
+  "tiledMapConfig": {
+    "enable": true,
+    "rendering": true
+  },
+  "debugConfig": {
+    "showFPS": false,
+    "showHeap": false
   }
 }
