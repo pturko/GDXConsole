@@ -8,6 +8,5 @@ import java.io.Serializable;
 public class WindowConfig implements Serializable {
     private int width;
     private int height;
-    private boolean fullScreen;
     private CameraConfig cameraConfig;
 }

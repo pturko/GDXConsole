@@ -27,23 +27,13 @@ public class GameScreen extends BaseScreen {
     public void show() {
     }
 
-    public void resetConfig() {
-    }
-
-    public void resetResources() {
-    }
-
-    public void update(float delta) {
-        super.update(delta);
-    }
-
     @Override
     public void render(float delta) {
         super.render(delta);
 
-        update(delta);
         clearScreen();
         engine.update(delta);
+        update(delta);
     }
 
     @Override

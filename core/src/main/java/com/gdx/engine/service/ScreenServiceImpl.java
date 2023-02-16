@@ -1,10 +1,9 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.IntMap;
 import com.gdx.GdxGame;
-import com.gdx.engine.interfaces.service.WindowService;
+import com.gdx.engine.interfaces.service.ScreenService;
 import com.gdx.engine.screen.ScreenItems;
 
 import com.gdx.engine.screen.TransitionScreen;
@@ -20,41 +19,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public final class WindowServiceImpl implements WindowService {
+public final class ScreenServiceImpl implements ScreenService {
 
     private Screen activeScreen;
     private BaseScreen baseScreen;
 
-    private int screenWidth = 800;
-    private int screenHeight = 600;
-
-    private static OrthographicCamera camera;
-
-    private static WindowServiceImpl windowServiceInstance;
+    private static ScreenServiceImpl screenServiceInstance;
 
     private GdxGame gdxGame;
  
     private final IntMap<Screen> screens;
  
-    private WindowServiceImpl() {
+    private ScreenServiceImpl() {
         screens = new IntMap<>();
     }
  
-    public static synchronized WindowServiceImpl getInstance() {
-        if (null == windowServiceInstance) {
-            windowServiceInstance = new WindowServiceImpl();
+    public static synchronized ScreenServiceImpl getInstance() {
+        if (null == screenServiceInstance) {
+            screenServiceInstance = new ScreenServiceImpl();
         }
-        return windowServiceInstance;
+        return screenServiceInstance;
     }
 
     @Override
     public void init(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
-        camera = new OrthographicCamera();
-    }
-
-    public OrthographicCamera getCamera() {
-        return camera;
     }
 
     @Override
@@ -67,7 +56,6 @@ public final class WindowServiceImpl implements WindowService {
             log.error("Screen '{}' not found", nextScreen);
             return;
         }
-        if (null == screenItem) return;
         if (!screens.containsKey(screenItem.ordinal())) {
             screens.put(screenItem.ordinal(), screenItem.getScreenInstance(gdxGame));
         }
@@ -115,14 +103,6 @@ public final class WindowServiceImpl implements WindowService {
 
     public void dispose(Screen screen) {
         if (screen != null) screen.hide();
-    }
-
-    public int getScreenWidth() {
-        return screenWidth;
-    }
-
-    public int getScreenHeight() {
-        return screenHeight;
     }
 
 }

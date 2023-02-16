@@ -20,7 +20,7 @@ public class TiledMapServiceImpl implements TiledMapService {
 
     private static TiledMapServiceImpl tiledMapService;
     private static ConfigServiceImpl configService;
-    private static EventServiceImpl eventServiceImpl;
+    private static EventServiceImpl eventService;
 
     private TiledMapData tiledMapData;
     private TiledMap tiledMap;
@@ -31,7 +31,7 @@ public class TiledMapServiceImpl implements TiledMapService {
 
     public TiledMapServiceImpl() {
         configService = ConfigServiceImpl.getInstance();
-        eventServiceImpl = EventServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
     }
 
     public static synchronized TiledMapServiceImpl getInstance() {
@@ -71,8 +71,8 @@ public class TiledMapServiceImpl implements TiledMapService {
         tiledMapData.setPpm(configService.getWindowConfig().getCameraConfig().getPpm());
 
         // Send map events
-        eventServiceImpl.sendEvent(new MapChangedEvent(tiledMap));
-        eventServiceImpl.sendEvent(new MapDataChangedEvent(tiledMapData));
+        eventService.sendEvent(new MapChangedEvent(tiledMap));
+        eventService.sendEvent(new MapDataChangedEvent(tiledMapData));
 
         return true;
     }

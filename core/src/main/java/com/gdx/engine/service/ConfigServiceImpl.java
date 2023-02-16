@@ -2,6 +2,7 @@ package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.interfaces.service.ConfigService;
 import com.gdx.engine.model.config.*;
 import com.gdx.engine.util.FileLoaderUtil;
@@ -15,8 +16,9 @@ public class ConfigServiceImpl implements ConfigService {
 
     private static ConfigServiceImpl configServiceInstance;
     private static ApplicationConfig applicationConfig;
-    private static WindowServiceImpl windowService;
+    private static ScreenServiceImpl screenService;
     private static ConsoleServiceImpl consoleService;
+    private static EventServiceImpl eventService;
 
     private final String CONFIG_FILE= "asset/config/application.json"; //TODO - fix hardcode filename
 
@@ -37,18 +39,23 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     ConfigServiceImpl() {
-        windowService = WindowServiceImpl.getInstance();
+        screenService = ScreenServiceImpl.getInstance();
         consoleService = ConsoleServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
     }
 
     @Override
     public void updateConfigs() {
         try {
-            FileHandle fileHandle = Gdx.files.internal(CONFIG_FILE); //TODO - should be configurable external/internal
+            FileHandle fileHandle = Gdx.files.external(CONFIG_FILE); // TODO - should be configurable external/internal
             applicationConfig = FileLoaderUtil.getApplicationConfig(fileHandle);
             update(applicationConfig);
+            log.info("Config reloaded! (should be load external)");
+
+            // Sending config changed events
+            eventService.sendEvent(new ConfigChangedEvent(applicationConfig));
         } catch (IOException e) {
-            log.error("Can't update application configs");
+            log.error("Can't update application configs!");
         }
     }
 
@@ -101,6 +108,11 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public DebugConfig getDebugConfig() {
         return debugConfig;
+    }
+
+    @Override
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
     }
 
     public Profile setProfile(String profile) {

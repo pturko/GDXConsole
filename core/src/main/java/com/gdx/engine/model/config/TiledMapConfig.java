@@ -6,6 +6,5 @@ import java.io.Serializable;
 
 @Data
 public class TiledMapConfig implements Serializable {
-    private boolean enable;
     private boolean rendering;
 }

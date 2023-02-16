@@ -11,16 +11,16 @@ import com.gdx.engine.service.TiledMapServiceImpl;
 import com.gdx.engine.util.CameraUtils;
 
 public class CameraEngine extends EntitySystem {
-    private final EventServiceImpl eventServiceImpl;
+    private final EventServiceImpl eventService;
     private final Camera camera;
     private TiledMapData tiledMapData;
 
     public CameraEngine() {
         this.camera = CameraServiceImpl.getInstance().getCamera();
         this.tiledMapData = TiledMapServiceImpl.getInstance().getMapData();
-        eventServiceImpl = EventServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
 
-        eventServiceImpl.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) -> {
+        eventService.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) -> {
             this.tiledMapData = e.getTiledMapData();
         });
     }

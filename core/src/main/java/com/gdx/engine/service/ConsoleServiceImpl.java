@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.engine.console.ConsoleGdxLogAppender;
 import com.gdx.engine.console.ConsoleMsgLog;
+import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
 import com.gdx.engine.state.AudioState;
@@ -16,6 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 
 @Slf4j
 public class ConsoleServiceImpl implements ConsoleService {
@@ -23,8 +29,9 @@ public class ConsoleServiceImpl implements ConsoleService {
     private static ConsoleServiceImpl consoleServiceInstance;
     private static ConfigServiceImpl configService;
     private static ResourceLoaderServiceImpl resourceService;
-    private static WindowServiceImpl windowService;
+    private static ScreenServiceImpl screenService;
     private static TiledMapServiceImpl tiledMapService;
+    private static EventServiceImpl eventService;
 
     private static final int CONSOLE_MAX_MESSAGES = 25;
 
@@ -38,120 +45,128 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void cmd(String cmd) {
-        String keyCmd;
-        String partOneCmd = StringUtils.EMPTY;
-        String partTwoCmd = StringUtils.EMPTY;
-        String partThreeCmd = StringUtils.EMPTY;
-        String[] cmdSplit = Arrays.stream(cmd.split(StringUtils.SPACE))
-                .map(String::trim)
-                .toArray(String[]::new);
+        screenService = ScreenServiceImpl.getInstance();
+        configService = ConfigServiceImpl.getInstance();
+        resourceService = ResourceLoaderServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
 
-        if (cmdSplit.length == 0) {
+        List<String> options = Arrays.stream(cmd.split(StringUtils.SPACE))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        if (options.size() == 0) {
             return;
         }
 
-        keyCmd = cmdSplit[0].toUpperCase();
-        if (cmdSplit.length > 1) {
-            partOneCmd = cmdSplit[1];
-        }
-        if (cmdSplit.length > 2) {
-            partTwoCmd = cmdSplit[2];
-        }
-        if (cmdSplit.length > 3) {
-            partThreeCmd = cmdSplit[3];
-        }
+        Map<Integer, String> part = IntStream.range(0, options.size())
+                .boxed()
+                .collect(Collectors.toMap(Function.identity(), i -> options.get(i)));
 
-        windowService = WindowServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
-
-        switch (keyCmd) {
+        switch (options.stream().findFirst().get().toUpperCase()) {
             case "VER":
             case "VERSION":
                 log.info("Version: {}", configService.getVersion());
                 break;
 
             case "INFO":
-                log.info("{}", partOneCmd);
+                log.info("{}", part.get(1));
                 break;
 
             case "SCREEN":
-                windowService.show(partOneCmd.toUpperCase(), partTwoCmd);
+                screenService.show(part.get(1).toUpperCase(), part.get(2));
                 break;
 
             case "RESOURCES":
-                if (partOneCmd.equalsIgnoreCase("load")) {
+                if (part.get(1).equalsIgnoreCase("load")) {
                     resourceService.loadResources();
                     log.info("Resources loaded");
                 }
                 break;
 
             case "CONFIG":
-                if (partOneCmd.equalsIgnoreCase("console")) {
-                    if (partTwoCmd.equalsIgnoreCase("show")) {
+                if (part.get(1).equalsIgnoreCase("console")) {
+                    if (part.get(2).equalsIgnoreCase("show")) {
                         configService.getConsoleConfig().setShowConsole(
-                                OperationUtil.getBooleanValue(partThreeCmd, configService.getConsoleConfig().isShowConsole())
+                                OperationUtil.getBooleanValue(part.get(3), configService.getConsoleConfig().isShowConsole())
                         );
                         resetActiveScreen();
                         log.info("display console: {}", configService.getConsoleConfig().isShowConsole());
                     }
                 }
-                if (partOneCmd.equalsIgnoreCase("window")) {
-                    if (partTwoCmd.equalsIgnoreCase("showFPS")) {
+                if (part.get(1).equalsIgnoreCase("window")) {
+                    if (part.get(2).equalsIgnoreCase("showFPS")) {
                         configService.getDebugConfig().setShowFPS(
-                                OperationUtil.getBooleanValue(partThreeCmd, configService.getDebugConfig().isShowFPS())
+                                OperationUtil.getBooleanValue(part.get(3), configService.getDebugConfig().isShowFPS())
                         );
                         resetActiveScreen();
                         log.info("display fps: {}", configService.getDebugConfig().isShowFPS());
                     }
                 }
-                if (partOneCmd.equalsIgnoreCase("audio")) {
-                    if (partTwoCmd.equalsIgnoreCase("music")) {
+                if (part.get(1).equalsIgnoreCase("map")) {
+                    if (part.get(2).equalsIgnoreCase("rendering")) {
+                        configService.getTiledMapConfig().setRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getTiledMapConfig().isRendering())
+                        );
+                        resetActiveScreen();
+                        log.info("map rendering: {}", configService.getTiledMapConfig().isRendering());
+                    }
+                }
+                if (part.get(1).equalsIgnoreCase("audio")) {
+                    if (part.get(2).equalsIgnoreCase("music")) {
                         configService.getAudioConfig().setMusic(
-                                OperationUtil.getBooleanValue(partThreeCmd, configService.getAudioConfig().isMusic())
+                                OperationUtil.getBooleanValue(part.get(3), configService.getAudioConfig().isMusic())
                         );
                         resetActiveScreen();
                         log.info("music: {}", configService.getAudioConfig().isMusic());
                     }
-                    if (partTwoCmd.equalsIgnoreCase("sound")) {
+                    if (part.get(2).equalsIgnoreCase("sound")) {
                         configService.getAudioConfig().setSound(
-                                OperationUtil.getBooleanValue(partThreeCmd, configService.getAudioConfig().isSound())
+                                OperationUtil.getBooleanValue(part.get(3), configService.getAudioConfig().isSound())
                         );
                         resetActiveScreen();
                         log.info("sound: {}", configService.getAudioConfig().isSound());
                     }
                 }
+
+                if (part.get(1).equalsIgnoreCase("update")) {
+                    configService.updateConfigs();
+                    resetActiveScreen();
+                }
+
+                // Sending config changed events
+                eventService.sendEvent(new ConfigChangedEvent(configService.getApplicationConfig()));
+
                 break;
 
             case "MUSIC":
-                if (partOneCmd.equalsIgnoreCase("play") && configService.getAudioConfig().isMusic()) {
-                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("play") && configService.getAudioConfig().isMusic()) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY, part.get(2));
                 }
-                if (partOneCmd.equalsIgnoreCase("playLoop") && configService.getAudioConfig().isMusic()) {
-                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY_LOOP, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("playLoop") && configService.getAudioConfig().isMusic()) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_PLAY_LOOP, part.get(2));
                 }
-                if (partOneCmd.equalsIgnoreCase("stop")) {
-                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("stop")) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP, part.get(2));
                 }
-                if (partOneCmd.equalsIgnoreCase("stopAll")) {
-                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP_ALL, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("stopAll")) {
+                    AudioServiceImpl.getInstance().music(AudioState.MUSIC_STOP_ALL, part.get(2));
                 }
                 break;
 
             case "SOUND":
-                if (partOneCmd.equalsIgnoreCase("play") && configService.getAudioConfig().isSound()) {
-                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_PLAY, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("play") && configService.getAudioConfig().isSound()) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_PLAY, part.get(2));
                 }
-                if (partOneCmd.equalsIgnoreCase("stop")) {
-                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("stop")) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP, part.get(2));
                 }
-                if (partOneCmd.equalsIgnoreCase("stopAll")) {
-                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP_ALL, partTwoCmd);
+                if (part.get(1).equalsIgnoreCase("stopAll")) {
+                    AudioServiceImpl.getInstance().sfx(AudioState.SOUND_STOP_ALL, part.get(2));
                 }
                 break;
 
             case "CMD":
-                if (partOneCmd.equalsIgnoreCase("profile")) {
+                if (part.get(1).equalsIgnoreCase("profile")) {
                     runCommands();
                     log.info("Run commands for profile: {}", configService.getProfileString());
                 }
@@ -162,11 +177,11 @@ public class ConsoleServiceImpl implements ConsoleService {
                 break;
 
             case "MAP":
-                if (partOneCmd.equalsIgnoreCase("load")) {
+                if (part.get(1).equalsIgnoreCase("load")) {
                     tiledMapService = TiledMapServiceImpl.getInstance();
-                    if (tiledMapService.load(partTwoCmd)) {
+                    if (tiledMapService.load(part.get(2))) {
                         resetActiveScreen();
-                        log.info("TiledMap '{}' successful loaded", partTwoCmd);
+                        log.info("TiledMap '{}' successful loaded", part.get(2));
                     }
                 }
                 break;
@@ -206,7 +221,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void resetActiveScreen() {
-        Screen activeScreen = WindowServiceImpl.getInstance().getActiveScreen();
+        Screen activeScreen = ScreenServiceImpl.getInstance().getActiveScreen();
         if (activeScreen != null) {
             activeScreen.resume();
         }

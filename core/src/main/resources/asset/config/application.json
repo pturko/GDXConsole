@@ -4,7 +4,6 @@
   "windowConfig": {
     "width": 800,
     "height": 600,
-    "fullScreen": false,
     "cameraConfig": {
       "ppm": 100,
       "cameraPositionConfig": {
@@ -19,7 +18,7 @@
     }
   },
   "consoleConfig": {
-    "showConsole": false,
+    "showConsole": true,
     "showOnError": false,
     "showOnWarn": false,
     "startConsoleCmd": true
@@ -38,11 +37,10 @@
     }
   },
   "tiledMapConfig": {
-    "enable": true,
     "rendering": true
   },
   "debugConfig": {
-    "showFPS": false,
+    "showFPS": true,
     "showHeap": false
   }
 }

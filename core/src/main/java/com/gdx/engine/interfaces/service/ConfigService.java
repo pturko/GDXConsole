@@ -13,4 +13,5 @@ public interface ConfigService {
     Box2DConfig getBox2DConfig();
     TiledMapConfig getTiledMapConfig();
     DebugConfig getDebugConfig();
+    ApplicationConfig getApplicationConfig();
 }
