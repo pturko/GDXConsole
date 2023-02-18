@@ -31,16 +31,21 @@
     "enable": true,
     "box2DDebugRenderer": true,
     "doSleep": true,
+    "box2DStepConfig": {
+      "timeStep": 60,
+      "velocityIterations": 6,
+      "positionIterations": 2
+    },
     "box2DWorldGravityConfig": {
       "x": 0,
-      "y": -12
+      "y": -6
     }
   },
   "tiledMapConfig": {
     "rendering": true
   },
   "debugConfig": {
-    "showFPS": true,
+    "showFPS": false,
     "showHeap": false
   }
 }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class WindowConfig implements Serializable {
-    private int width;
-    private int height;
+    private float width;
+    private float height;
     private CameraConfig cameraConfig;
 }

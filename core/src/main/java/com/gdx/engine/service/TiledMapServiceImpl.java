@@ -7,6 +7,7 @@ import com.gdx.engine.engine.tlledmap.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
 import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;
+import com.gdx.engine.util.box2d.TiledObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,6 +22,7 @@ public class TiledMapServiceImpl implements TiledMapService {
     private static TiledMapServiceImpl tiledMapService;
     private static ConfigServiceImpl configService;
     private static EventServiceImpl eventService;
+    private static Box2DWorldImpl box2DWorld;
 
     private TiledMapData tiledMapData;
     private TiledMap tiledMap;
@@ -32,6 +34,7 @@ public class TiledMapServiceImpl implements TiledMapService {
     public TiledMapServiceImpl() {
         configService = ConfigServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
+        box2DWorld = Box2DWorldImpl.getInstance();
     }
 
     public static synchronized TiledMapServiceImpl getInstance() {
@@ -63,6 +66,9 @@ public class TiledMapServiceImpl implements TiledMapService {
         int tileWidth = tiledMap.getProperties().get("tilewidth", Integer.class);
         int tileHeight = tiledMap.getProperties().get("tileheight", Integer.class);
         assert tileWidth == tileHeight;
+
+        // Create bodies in the world according to each map layer
+        TiledObjectUtils.parseLayers(box2DWorld.getWorld(), mapLayers);
 
         // Set up tiled map data
         tiledMapData.setMapTileSize(tileWidth);

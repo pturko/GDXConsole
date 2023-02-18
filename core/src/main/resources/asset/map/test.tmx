@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="4">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="8">
  <tileset firstgid="1" name="test" tilewidth="16" tileheight="16" tilecount="1134" columns="42">
   <image source="test.jpg" width="674" height="444"/>
  </tileset>
+ <objectgroup id="2" name="Walls">
+  <object id="1" x="401.544" y="241.178" width="68.1254" height="17.0313"/>
+  <object id="2" x="384.773" y="255.876" width="95.3755" height="63.7711"/>
+ </objectgroup>
+ <objectgroup id="3" name="Box">
+  <object id="5" x="414.667" y="86.6667" width="24" height="24"/>
+ </objectgroup>
  <layer id="1" name="Background" width="60" height="20">
   <data encoding="base64" compression="zlib">
    eJylllFu20AMRCOh0nHkPUkTIPBdkh4n6XGaHMD2OdJ+RkJEdPwy3JXtj4HXWonkkEPuDv3d3W7FIOsWhuT9gr0Be4fu69m4/i+yPnX/v9XvR3mn5f/S2DWG8BE+B+O3lgO1qXGPiQ/GX/pzztdwczGqfWKET+bfoRi7o7HreDIPzLf6qeW+hSzf1FYr12FH3yuJTeqKOcl8KsdjdxtPxjvCVzyfKnVlv7HeTu+BpYfLav/QnXOmDpbf/RV1Zc+Sv+a71U/s8YL1widmlu4vdVr24tuDmV3sv2t1nMHta75rdif5frfGH5yU67E751abEaqfWzk73ZFzpnEHaiXTzhFcla/6nvrv2lEtZ7pmziaz53w4jV+iFQeto85J2ltyorGoVmp896YuU+/zSe3WZmvUU+Oe8D05aK+Tq+t55mTLubg3+9n56+ZvBuoxi0k5uDNWY6D+Xd/yDrZFz/RBvspDe5wcNP+M09WMvFr94Orr/LL/sjsb7SvfWhw6X7IzjDG2+l33eN+mHsmPd2DXv/yeaHF19ymngVjHvKnl4LTOo6M5h1UXLs98pvazc31LHZxPp2P9Va5qP+5srl5ZLOTFueb4uvnJmm05V5yP4PFzxv2Mh3X9aDi5M4p9EmfQqfvOjb2rZ5mbYa17QY1nvOfuigu/pxnPM37J2ulkC2q12Jn9E/hu4VXj6+5GqruXFa8zfss6m9ctkDfnpZ5BRZ5tnZG1XGR9of34Z8XbjHdZl/78js37dmtuM88u3+5cnoz9Vi4CP/ov/VLDmqOlnh8z/s74J2vHk7G72Kjd7K7FegQ+Af+10Ng=
   </data>
  </layer>
- <objectgroup id="2" name="Walls">
-  <object id="1" x="402.211" y="241.845" width="68.1254" height="17.0313"/>
-  <object id="2" x="384.773" y="255.876" width="95.3755" height="63.7711"/>
- </objectgroup>
 </map>

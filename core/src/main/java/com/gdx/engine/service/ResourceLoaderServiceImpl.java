@@ -99,12 +99,11 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + IMAGE_TEXTURE + m.getFileName();
             try {
                 texture = new Texture(FileLoaderUtil.getFileHandle(fileName));
+                m.setTexture(texture);
+                textures.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                texture = null;
             }
-            m.setTexture(texture);
-            textures.put(m.getName(), m);
         }
 
         List<TextureAtlasResource> mTextureAtlases = resources.getTextureAtlas();
@@ -113,12 +112,11 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + IMAGE_TEXTURE_ATLAS + m.getFileName();
             try {
                 txAtlas = new TextureAtlas(FileLoaderUtil.getFileHandle(fileName));
+                m.setTextureAtlas(txAtlas);
+                textureAtlas.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                txAtlas = null;
             }
-            m.setTextureAtlas(txAtlas);
-            textureAtlas.put(m.getName(), m);
         }
 
         List<SkinResource> mSkins = resources.getSkin();
@@ -127,15 +125,13 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + IMAGE_SKIN + m.getFileName();
             try {
                 skin = new Skin(FileLoaderUtil.getFileHandle(fileName));
+                m.setSkin(skin);
+                skins.put(m.getName(), m);
             } catch (SerializationException e) {
                 log.error("Serialization Exception! {}", e);
-                skin = null;
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                skin = null;
             }
-            m.setSkin(skin);
-            skins.put(m.getName(), m);
         }
 
         List<PixmapResource> mPixmaps = resources.getPixmap();
@@ -144,12 +140,11 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + IMAGE_PIXMAP + m.getFileName();
             try {
                 pixmap = new Pixmap(FileLoaderUtil.getFileHandle(fileName));
+                m.setPixmap(pixmap);
+                pixmaps.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                pixmap = null;
             }
-            m.setPixmap(pixmap);
-            pixmaps.put(m.getName(), m);
         }
 
         List<FontResource> mFont = resources.getFont();
@@ -158,12 +153,11 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + FONT + m.getFileName();
             try {
                 font = new BitmapFont(FileLoaderUtil.getFileHandle(fileName));
+                m.setFont(font);
+                fonts.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                font = null;
             }
-            m.setFont(font);
-            fonts.put(m.getName(), m);
         }
 
         List<MusicResource> mMusic = resources.getMusic();
@@ -172,12 +166,11 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + MUSIC + m.getFileName();
             try {
                 audio = Gdx.audio.newMusic(FileLoaderUtil.getFileHandle(fileName));
+                m.setMusic(audio);
+                music.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                audio = null;
             }
-            m.setMusic(audio);
-            music.put(m.getName(), m);
         }
 
         List<SoundResource> mSound = resources.getSound();
@@ -186,17 +179,16 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
             String fileName = ASSET + SOUND + m.getFileName();
             try {
                 audio = Gdx.audio.newSound(FileLoaderUtil.getFileHandle(fileName));
+                m.setSound(audio);
+                sound.put(m.getName(), m);
             } catch (Exception e) {
                 log.error("File '{}' not found!", fileName);
-                audio = null;
             }
-            m.setSound(audio);
-            sound.put(m.getName(), m);
         }
     }
 
     public Texture getTexture(String name) {
-        if (textures.get(name) != null) {
+        if (textures.get(name) != null && textures.get(name).getTexture() != null) {
             return textures.get(name).getTexture();
         } else {
             log.warn("Texture '{}' not found!", name);

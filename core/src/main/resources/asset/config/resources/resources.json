@@ -2,6 +2,9 @@
   "textures": [
     { "name": "ok",
       "fileName": "ok.png"
+    },
+    { "name": "box",
+      "fileName": "box.jpg"
     }
   ],
   "textureAtlas": [

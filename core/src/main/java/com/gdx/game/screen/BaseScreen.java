@@ -4,13 +4,16 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
+import com.gdx.engine.box2d.entity.item.BoxEntity;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ConsoleConfig;
@@ -27,7 +30,8 @@ public class BaseScreen implements Screen {
     protected static ConfigServiceImpl configService;
     protected static ScreenServiceImpl screenService;
     protected static ConsoleServiceImpl consoleService;
-    protected static EventServiceImpl eventServiceImpl;
+    protected static EventServiceImpl eventService;
+    protected static Box2DWorldImpl box2DService;
 
     protected static ConsoleConfig consoleConfig;
     protected static WindowConfig windowConfig;
@@ -37,13 +41,15 @@ public class BaseScreen implements Screen {
 
     protected Stage stage;
     protected PooledEngine engine;
-
-    protected int screenHeight;
-    protected int screenWidth;
+    protected World world;
+    protected float screenHeight;
+    protected float screenWidth;
     protected Camera camera;
     protected SpriteBatch spriteBatch;
 
     protected InputMultiplexer multiplexer;
+
+    protected Texture boxTexture;
 
     // Console
     private String lastCmd;
@@ -68,7 +74,8 @@ public class BaseScreen implements Screen {
         consoleService = ConsoleServiceImpl.getInstance();
         screenService = ScreenServiceImpl.getInstance();
         cameraService = CameraServiceImpl.getInstance();
-        eventServiceImpl = EventServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
+        box2DService = Box2DWorldImpl.getInstance();
 
         createResources();
         cameraSetup();
@@ -79,10 +86,11 @@ public class BaseScreen implements Screen {
 
     private void createResources() {
         stage = new Stage();
-        spriteBatch = new SpriteBatch();
         lastCmd = StringUtils.EMPTY;
-        debugFont = resourceService.getFont("sans_serif");
 
+        spriteBatch = resourceService.getBatch();
+        debugFont = resourceService.getFont("sans_serif");
+        boxTexture = resourceService.getTexture("box");
         consoleConfig = configService.getConsoleConfig();
         windowConfig = configService.getWindowConfig();
         debugConfig = configService.getDebugConfig();
@@ -90,6 +98,8 @@ public class BaseScreen implements Screen {
 
         screenWidth = windowConfig.getWidth();
         screenHeight = windowConfig.getHeight();
+
+        world = box2DService.getWorld();
 
         // Should scale the viewport with PPM
         stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getCameraConfig().getPpm(),
@@ -102,7 +112,7 @@ public class BaseScreen implements Screen {
 
     private void configureListeners() {
         // Reload application config
-        eventServiceImpl.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+        eventService.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
             consoleConfig = e.getApplicationConfig().getConsoleConfig();
             cameraService.cameraSetup();
 
@@ -158,6 +168,8 @@ public class BaseScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
             consoleService.cmd("config update");
+            engine.addEntity(new BoxEntity(world, boxTexture,
+                    windowConfig.getWidth(), windowConfig.getHeight()));
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

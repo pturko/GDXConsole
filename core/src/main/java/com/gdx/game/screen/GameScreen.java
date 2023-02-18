@@ -2,6 +2,9 @@ package com.gdx.game.screen;
 
 import com.badlogic.ashley.core.PooledEngine;
 import com.gdx.GdxGame;
+import com.gdx.engine.box2d.component.graphics.StaticSpriteRendererEngine;
+import com.gdx.engine.box2d.entity.item.BoxEntity;
+import com.gdx.engine.engine.box2d.Box2DPhysicsEngine;
 import com.gdx.engine.engine.camera.CameraEngine;
 import com.gdx.engine.engine.tlledmap.TiledMapEngine;
 
@@ -19,8 +22,15 @@ public class GameScreen extends BaseScreen {
         // Initialize pooled engine
         engine = new PooledEngine();
 
-        engine.addSystem(new TiledMapEngine());                 // Renders TiledMap textures
-        engine.addSystem(new CameraEngine());                   // Bound camera
+        engine.addSystem(new Box2DPhysicsEngine());                     // Physics engine
+
+        engine.addSystem(new TiledMapEngine());                         // Renders TiledMap textures
+        engine.addSystem(new CameraEngine());                           // Bound camera
+
+        engine.addSystem(new StaticSpriteRendererEngine());             // Renders non-animated sprites
+
+        // Add box object
+        engine.addEntity(new BoxEntity(world, boxTexture, 4.4f, 2.2f));
     }
 
     @Override
