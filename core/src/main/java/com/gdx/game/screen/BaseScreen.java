@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
-import com.gdx.engine.box2d.entity.item.BoxEntity;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ConsoleConfig;
@@ -46,6 +46,7 @@ public class BaseScreen implements Screen {
     protected float screenWidth;
     protected Camera camera;
     protected SpriteBatch spriteBatch;
+    protected Matrix4 projectionMatrix;
 
     protected InputMultiplexer multiplexer;
 
@@ -98,6 +99,7 @@ public class BaseScreen implements Screen {
 
         screenWidth = windowConfig.getWidth();
         screenHeight = windowConfig.getHeight();
+        projectionMatrix = new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
         world = box2DService.getWorld();
 
@@ -168,8 +170,6 @@ public class BaseScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
             consoleService.cmd("config update");
-            engine.addEntity(new BoxEntity(world, boxTexture,
-                    windowConfig.getWidth(), windowConfig.getHeight()));
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -183,6 +183,7 @@ public class BaseScreen implements Screen {
     }
 
     public void drawingDebug() {
+        spriteBatch.setProjectionMatrix(projectionMatrix);
         spriteBatch.begin();
 
         drawingConsole();

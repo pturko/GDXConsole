@@ -2,7 +2,7 @@ package com.gdx.engine.util;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
-import com.gdx.engine.engine.tlledmap.TiledMapData;
+import com.gdx.engine.model.map.TiledMapData;
 
 public class CameraUtils {
     

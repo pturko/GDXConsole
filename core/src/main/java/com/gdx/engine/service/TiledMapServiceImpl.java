@@ -3,7 +3,7 @@ package com.gdx.engine.service;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.gdx.engine.engine.tlledmap.TiledMapData;
+import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
 import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;

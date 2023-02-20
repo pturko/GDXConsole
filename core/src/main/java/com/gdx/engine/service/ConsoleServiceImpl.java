@@ -83,7 +83,7 @@ public class ConsoleServiceImpl implements ConsoleService {
                 }
                 break;
 
-            case "CONFIG":
+            case "CFG":
                 if (part.get(1).equalsIgnoreCase("console")) {
                     if (part.get(2).equalsIgnoreCase("show")) {
                         configService.getConsoleConfig().setShowConsole(
@@ -109,6 +109,22 @@ public class ConsoleServiceImpl implements ConsoleService {
                         );
                         resetActiveScreen();
                         log.info("map rendering: {}", configService.getTiledMapConfig().isRendering());
+                    }
+                }
+                if (part.get(1).equalsIgnoreCase("box2d")) {
+                    if (part.get(2).equalsIgnoreCase("rendering")) {
+                        configService.getBox2DConfig().setRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isRendering())
+                        );
+                        resetActiveScreen();
+                        log.info("box2d rendering: {}", configService.getBox2DConfig().isRendering());
+                    }
+                    if (part.get(2).equalsIgnoreCase("sprite")) {
+                        configService.getBox2DConfig().setStaticSpriteRenderer(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isStaticSpriteRenderer())
+                        );
+                        resetActiveScreen();
+                        log.info("box2d static sprite rendering: {}", configService.getBox2DConfig().isStaticSpriteRenderer());
                     }
                 }
                 if (part.get(1).equalsIgnoreCase("audio")) {

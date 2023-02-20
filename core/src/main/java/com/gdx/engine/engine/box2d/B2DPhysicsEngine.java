@@ -6,25 +6,30 @@ import com.gdx.engine.model.config.Box2DStepConfig;
 import com.gdx.engine.service.Box2DWorldImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
 
-public class Box2DPhysicsEngine extends EntitySystem {
+public class B2DPhysicsEngine extends EntitySystem {
     private static Box2DWorldImpl box2DService;
     private static ConfigServiceImpl configService;
     private static Box2DStepConfig box2DStepConfig;
 
     private final World world;
+    private boolean isRendering;
 
-    public Box2DPhysicsEngine() {
+    public B2DPhysicsEngine() {
         box2DService = Box2DWorldImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
         box2DStepConfig = configService.getBox2DConfig().getBox2DStepConfig();
         this.world = box2DService.getWorld();
+
+        isRendering = configService.getBox2DConfig().isRendering();
     }
 
     @Override
     public void update(float delta) {
-        world.step(1/box2DStepConfig.getTimeStep(),
-                box2DStepConfig.getVelocityIterations(),
-                box2DStepConfig.getPositionIterations());
+        if (isRendering) {
+            world.step(1 / box2DStepConfig.getTimeStep(),
+                    box2DStepConfig.getVelocityIterations(),
+                    box2DStepConfig.getPositionIterations());
+        }
     }
 
 }

@@ -6,8 +6,10 @@ import java.io.Serializable;
 
 @Data
 public class Box2DConfig implements Serializable {
-    private boolean enable;
+    private boolean rendering;
     private boolean box2DDebugRenderer;
+    private boolean staticSpriteRenderer;
+    private boolean animatedSpriteRenderer;
     private boolean doSleep;
     private Box2DStepConfig box2DStepConfig;
     private Box2DWorldGravityConfig box2DWorldGravityConfig;

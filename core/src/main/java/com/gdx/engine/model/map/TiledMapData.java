@@ -1,4 +1,4 @@
-package com.gdx.engine.engine.tlledmap;
+package com.gdx.engine.model.map;
 
 import lombok.Data;
 

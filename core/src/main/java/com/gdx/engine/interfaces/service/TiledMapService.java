@@ -2,7 +2,7 @@ package com.gdx.engine.interfaces.service;
 
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.gdx.engine.engine.tlledmap.TiledMapData;
+import com.gdx.engine.model.map.TiledMapData;
 
 public interface TiledMapService {
     boolean load(String mapName);

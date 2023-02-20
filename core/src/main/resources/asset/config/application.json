@@ -28,8 +28,10 @@
     "sound": true
   },
   "box2DConfig": {
-    "enable": true,
+    "rendering": true,
     "box2DDebugRenderer": true,
+    "staticSpriteRenderer": true,
+    "animatedSpriteRenderer": false,
     "doSleep": true,
     "box2DStepConfig": {
       "timeStep": 60,

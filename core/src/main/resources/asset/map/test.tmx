@@ -8,7 +8,7 @@
   <object id="2" x="384.773" y="255.876" width="95.3755" height="63.7711"/>
  </objectgroup>
  <objectgroup id="3" name="Box">
-  <object id="5" x="414.667" y="86.6667" width="24" height="24"/>
+  <object id="5" x="414.667" y="86.6667" width="20" height="16"/>
  </objectgroup>
  <layer id="1" name="Background" width="60" height="20">
   <data encoding="base64" compression="zlib">

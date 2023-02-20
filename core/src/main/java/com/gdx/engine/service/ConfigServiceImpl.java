@@ -1,7 +1,5 @@
 package com.gdx.engine.service;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.interfaces.service.ConfigService;
 import com.gdx.engine.model.config.*;
@@ -47,8 +45,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public void updateConfigs() {
         try {
-            FileHandle fileHandle = Gdx.files.external(CONFIG_FILE); // TODO - should be configurable external/internal
-            applicationConfig = FileLoaderUtil.getApplicationConfig(fileHandle);
+            applicationConfig = FileLoaderUtil.getApplicationConfig(CONFIG_FILE);
             update(applicationConfig);
             log.info("Config reloaded! (should be load external)");
 

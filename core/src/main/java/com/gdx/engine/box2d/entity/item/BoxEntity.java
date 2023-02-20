@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
-import com.gdx.game.map.CategoryBits;
+import com.gdx.game.map.CollisionMaskBits;
 
 public class BoxEntity extends Entity implements Disposable {
 
@@ -38,8 +38,8 @@ public class BoxEntity extends Entity implements Disposable {
     }
 
     public void constructIconBody() {
-        short bodyCategoryBits = CategoryBits.ITEM;
-        short bodyMaskBits = CategoryBits.GROUND;// | CategoryBits.PLATFORM;
+        short bodyCategoryBits = CollisionMaskBits.DATA;
+        short bodyMaskBits = CollisionMaskBits.GROUND;// | CategoryBits.PLATFORM;
         defineBody(bodyCategoryBits, bodyMaskBits);
     }
 
@@ -55,7 +55,7 @@ public class BoxEntity extends Entity implements Disposable {
     private void createBodyFixture(short categoryBits, short maskBits) {
         Fixture bodyFixture = b2body.getBodyBuilder().newRectangleFixture(b2body.getBody().getPosition(), itemWidth / 2, itemHeight / 2, 100)
                 .categoryBits(categoryBits)
-                .maskBits((short) (maskBits | CategoryBits.PLAYER))
+                .maskBits((short) (maskBits))
                 .setSensor(true)
                 .setUserData(this)
                 .buildFixture();

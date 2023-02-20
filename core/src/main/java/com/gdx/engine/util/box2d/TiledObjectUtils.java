@@ -8,14 +8,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.gdx.game.map.CategoryBits;
+import com.gdx.game.map.CollisionMaskBits;
 import com.gdx.game.map.MapLayerType;
 
 public class TiledObjectUtils {
 
     public static void parseLayers(World world, MapLayers mapLayers) {
-        createStaticPolyLines(world, mapLayers, MapLayerType.GROUND, CategoryBits.GROUND, false, 2);
-        createStaticRectangles(world, mapLayers, MapLayerType.BOX, CategoryBits.BOX, false, 2);
+        createStaticRectangles(world, mapLayers, MapLayerType.GROUND, CollisionMaskBits.GROUND, false, 2);
+        createStaticRectangles(world, mapLayers, MapLayerType.BOX, CollisionMaskBits.BOX, false, 2);
     }
 
     private static void createStaticRectangles(World world, MapLayers mapLayers, MapLayerType mapType,

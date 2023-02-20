@@ -1,6 +1,6 @@
 package com.gdx.engine.event;
 
-import com.gdx.engine.engine.tlledmap.TiledMapData;
+import com.gdx.engine.model.map.TiledMapData;
 
 public class MapDataChangedEvent extends Event {
 
