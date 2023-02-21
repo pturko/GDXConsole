@@ -19,8 +19,8 @@
   },
   "consoleConfig": {
     "showConsole": true,
-    "showOnError": false,
-    "showOnWarn": false,
+    "showOnError": true,
+    "showOnWarn": true,
     "startConsoleCmd": true
   },
   "audioConfig": {
@@ -29,8 +29,9 @@
   },
   "box2DConfig": {
     "rendering": true,
+    "enableContacts": true,
     "box2DDebugRenderer": true,
-    "staticSpriteRenderer": true,
+    "staticSpriteRenderer": false,
     "animatedSpriteRenderer": false,
     "doSleep": true,
     "box2DStepConfig": {

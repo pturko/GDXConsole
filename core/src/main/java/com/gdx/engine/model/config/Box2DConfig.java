@@ -7,6 +7,7 @@ import java.io.Serializable;
 @Data
 public class Box2DConfig implements Serializable {
     private boolean rendering;
+    private boolean enableContacts;
     private boolean box2DDebugRenderer;
     private boolean staticSpriteRenderer;
     private boolean animatedSpriteRenderer;

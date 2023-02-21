@@ -231,7 +231,7 @@ public class ConsoleServiceImpl implements ConsoleService {
             font.setColor(cmd.getColor());
             font.draw(batch, cmd.getDate()
                     + " [" + cmd.getLogLevel() + "] " +
-                    cmd.getMessage(), 5, 35 + (i * 17));
+                    cmd.getMessage(), 8, 30 + (i * 17));
             i++;
         }
     }

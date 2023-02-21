@@ -1,6 +1,6 @@
 package com.gdx.game.map;
 
-public class CollisionMaskBits {
+public class CategoryBits {
 
     public static final short GROUND = 1;
     public static final short BOX = 2;

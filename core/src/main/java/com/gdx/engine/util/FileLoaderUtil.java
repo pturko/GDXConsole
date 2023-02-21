@@ -10,10 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+import static com.gdx.engine.service.ResourceLoaderServiceImpl.EXTERNAL_APPLICATION_CONFIG;
+import static com.gdx.engine.service.ResourceLoaderServiceImpl.EXTERNAL_RESOURCES;
+
 @Slf4j
 public class FileLoaderUtil {
-
-    private static final boolean EXTERNAL_APPLICATION_CONFIG = false;
 
     public static ApplicationConfig getApplicationConfig(String fileName) throws IOException {
         Json JSON = new Json();
@@ -44,7 +45,7 @@ public class FileLoaderUtil {
 
     public static FileHandle getFileHandle(String filePath) {
         // TODO - Should be configurable internal/external
-        if (EXTERNAL_APPLICATION_CONFIG) {
+        if (EXTERNAL_RESOURCES) {
             return Gdx.files.external(filePath);
         } else {
             return Gdx.files.internal(filePath);

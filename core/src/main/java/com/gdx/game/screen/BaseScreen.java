@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
+import com.gdx.game.map.WorldContactListener;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ConsoleConfig;
@@ -101,7 +102,12 @@ public class BaseScreen implements Screen {
         screenHeight = windowConfig.getHeight();
         projectionMatrix = new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
+        // Initialize pooled engine
+        engine = new PooledEngine();
+
+        // Initialize box2D world and contact listener
         world = box2DService.getWorld();
+        world.setContactListener(new WorldContactListener(engine));
 
         // Should scale the viewport with PPM
         stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getCameraConfig().getPpm(),
@@ -131,12 +137,12 @@ public class BaseScreen implements Screen {
         componentSkin = resourceService.getSkin("uiskin");
 
         cmdTextField = new TextField(StringUtils.EMPTY, componentSkin);
-        cmdTextField.setPosition(2, 15);
-        cmdTextField.setSize(400, 24);
+        cmdTextField.setPosition(7, 10);
+        cmdTextField.setSize(396, 24);
         stage.addActor(cmdTextField);
 
         consoleFont = resourceService.getDefaultFont();
-        consoleBg = resourceService.getDrawable("uiskin", "default-window");
+        consoleBg = resourceService.getDrawable("console");
     }
 
     private void createInputProcessor() {
@@ -160,16 +166,16 @@ public class BaseScreen implements Screen {
         drawingDebug();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            consoleService.cmd("config window showFPS");
+            consoleService.cmd("cfg window showFPS");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
-            consoleService.cmd("config console show");
+            consoleService.cmd("cfg console show");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
-            consoleService.cmd("config map rendering");
+            consoleService.cmd("cfg map rendering");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            consoleService.cmd("config update");
+            consoleService.cmd("cfg update");
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

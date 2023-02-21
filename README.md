@@ -8,7 +8,8 @@
 <p>Perform many operations dynamically in runtime</p>
 
 <p>For the opportunity to update config dynamically - external file loading should be used</p>
-<p>FileLoaderUtil.EXTERNAL_APPLICATION_CONFIG = true</p>
+<p>ResourceLoaderServiceImpl.EXTERNAL_APPLICATION_CONFIG = true</p>
+
 
 ## Features
 - Dynamic resource loading
@@ -26,7 +27,7 @@
   Effects: fade, fadein, circle
 - RESOURCES
   - load - load resources from resources\resources.json
-- CFG - config
+- CFG - config management
   - CONSOLE
     - show - show/hide console (F2 key)
   - WINDOW
@@ -39,8 +40,7 @@
   - AUDIO
     - music - enable/disable music
     - sound  - enable/disable sound
-  - UPDATE
-    - reload application config (EXTERNAL_APPLICATION_CONFIG should be true)
+  - UPDATE - reload application config (EXTERNAL_APPLICATION_CONFIG should be true)
 - MUSIC
   - play <name>
   - playLoop <name>

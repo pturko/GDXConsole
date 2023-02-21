@@ -10,18 +10,28 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
-import com.gdx.game.map.CollisionMaskBits;
+import com.gdx.engine.model.config.WindowConfig;
+import com.gdx.engine.service.ConfigServiceImpl;
+import com.gdx.game.map.CategoryBits;
 
 public class BoxEntity extends Entity implements Disposable {
+    private static ConfigServiceImpl configService;
 
-    private static final int itemWidth = 20;
-    private static final int itemHeight = 16;
-
+    private static int itemWidth;
+    private static int itemHeight;
+    private static float ppm;
     private final TextureComponent textureComponent;
     private final B2BodyComponent b2body;
 
     public BoxEntity(World world, Texture texture, Float x, Float y) {
-        textureComponent = new TextureComponent(texture, x * 100, y * 100);
+        configService = ConfigServiceImpl.getInstance();
+        WindowConfig windowConfig = configService.getWindowConfig();
+        ppm = windowConfig.getCameraConfig().getPpm();
+
+        itemWidth = 22;
+        itemHeight = 16;
+
+        textureComponent = new TextureComponent(texture, x * ppm, y * ppm);
         b2body = new B2BodyComponent(world);
 
         add(textureComponent);
@@ -30,22 +40,22 @@ public class BoxEntity extends Entity implements Disposable {
         // Sprite data
         SpriteComponent sprite = new SpriteComponent();
         add(sprite);
-        sprite.setBounds(0, 0, 105f / 100, 105f / 100);
+        sprite.setBounds(0, 0, 105f / ppm, 105f / ppm);
 
         constructIconBody();
 
-        textureComponent.setBounds(0, 0, itemWidth / 100f, itemHeight / 100f);
+        textureComponent.setBounds(0, 0, itemWidth / ppm, itemHeight / ppm);
     }
 
     public void constructIconBody() {
-        short bodyCategoryBits = CollisionMaskBits.DATA;
-        short bodyMaskBits = CollisionMaskBits.GROUND;// | CategoryBits.PLATFORM;
+        short bodyCategoryBits = CategoryBits.BOX;
+        short bodyMaskBits = CategoryBits.GROUND;
         defineBody(bodyCategoryBits, bodyMaskBits);
     }
 
     private void defineBody(short bodyCategoryBits, short bodyMaskBits) {
         Body body = b2body.getBodyBuilder().type(BodyDef.BodyType.DynamicBody)
-                .position(textureComponent.getX(), textureComponent.getY(), 100)
+                .position(textureComponent.getX(), textureComponent.getY(), ppm)
                 .buildBody();
 
         b2body.setBody(body);
@@ -53,16 +63,18 @@ public class BoxEntity extends Entity implements Disposable {
     }
 
     private void createBodyFixture(short categoryBits, short maskBits) {
-        Fixture bodyFixture = b2body.getBodyBuilder().newRectangleFixture(b2body.getBody().getPosition(), itemWidth / 2, itemHeight / 2, 100)
+        Fixture bodyFixture = b2body.getBodyBuilder().newRectangleFixture(b2body.getBody().getPosition(),
+                        itemWidth / 2, itemHeight / 2, ppm)
                 .categoryBits(categoryBits)
-                .maskBits((short) (maskBits))
+                .maskBits((short) (maskBits | CategoryBits.DATA))
                 .setSensor(true)
                 .setUserData(this)
                 .buildFixture();
 
         b2body.setBodyFixture(bodyFixture);
 
-        Fixture collisionFixture = b2body.getBodyBuilder().newRectangleFixture(b2body.getBody().getPosition(), itemWidth / 2, itemHeight / 2, 100)
+        Fixture collisionFixture = b2body.getBodyBuilder().newRectangleFixture(b2body.getBody().getPosition(),
+                        itemWidth / 2, itemHeight / 2, ppm)
                 .categoryBits(categoryBits)
                 .maskBits(maskBits)
                 .setUserData(this)

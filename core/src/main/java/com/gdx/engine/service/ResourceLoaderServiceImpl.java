@@ -29,6 +29,8 @@ import java.util.Map;
 
 @Slf4j
 public class ResourceLoaderServiceImpl implements ResourceLoaderService {
+    public static final boolean EXTERNAL_APPLICATION_CONFIG = false;
+    public static final boolean EXTERNAL_RESOURCES = false;
 
     private static SpriteBatch batch;
     private static BitmapFont bitmapFont;
@@ -250,6 +252,16 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         }
 
         log.warn("Drawable '{}' not found! TextureAtlas or skin not provided", name);
+        return getDefaultDrawable();
+    }
+
+    public Drawable getDrawable(String name) {
+        //Trying to find drawable from texture
+        if (textures.get(name) != null && textures.get(name).getTexture() != null) {
+            return new Image(textures.get(name).getTexture()).getDrawable();
+        }
+
+        log.warn("Drawable '{}' not found!", name);
         return getDefaultDrawable();
     }
 

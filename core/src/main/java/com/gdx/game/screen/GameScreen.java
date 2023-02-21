@@ -20,9 +20,6 @@ public class GameScreen extends BaseScreen {
     }
 
     private void loadResources() {
-        // Initialize pooled engine
-        engine = new PooledEngine();
-
         engine.addSystem(new B2DPhysicsEngine());                       // Physics engine
 
         engine.addSystem(new TiledMapEngine());                         // Renders TiledMap textures

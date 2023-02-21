@@ -1,7 +1,7 @@
 {
   "textures": [
-    { "name": "ok",
-      "fileName": "ok.png"
+    { "name": "console",
+      "fileName": "console.png"
     },
     { "name": "box",
       "fileName": "box.jpg"
