@@ -1,9 +1,10 @@
 package com.gdx.game.screen;
 
-import com.badlogic.ashley.core.PooledEngine;
 import com.gdx.GdxGame;
+import com.gdx.engine.box2d.entity.animated.Torch;
+import com.gdx.engine.box2d.entity.sprite.BoxEntity;
 import com.gdx.engine.engine.box2d.StaticSpriteRendererEngine;
-import com.gdx.engine.box2d.entity.item.BoxEntity;
+import com.gdx.engine.engine.box2d.AnimatedSpriteRendererEngine;
 import com.gdx.engine.engine.box2d.B2DPhysicsEngine;
 import com.gdx.engine.engine.box2d.B2DebugRendererEngine;
 import com.gdx.engine.engine.camera.CameraEngine;
@@ -26,9 +27,14 @@ public class GameScreen extends BaseScreen {
         engine.addSystem(new CameraEngine());                           // Bound camera
 
         engine.addSystem(new StaticSpriteRendererEngine());             // Renders non-animated sprites
+        engine.addSystem(new AnimatedSpriteRendererEngine());           // Renders animated sprites
 
-        // Add box entity object
-        engine.addEntity(new BoxEntity(world, boxTexture, 4.4f, 2.2f));
+        // Add static entity
+        engine.addEntity(new BoxEntity("box", 4.4f, 2.2f, 22f, 16f));
+
+        // Add animated entity
+        engine.addEntity(new Torch("torch", 3.2f, 0.7f, 32f, 92f));
+        engine.addEntity(new Torch("torch", 5.2f, 0.7f, 32f, 92f));
 
         engine.addSystem(new B2DebugRendererEngine());                  // Renders physics debug profiles.
         if (configService.getBox2DConfig().isBox2DDebugRenderer()) {

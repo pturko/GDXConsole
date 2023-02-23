@@ -1,13 +1,13 @@
 val gdxVersion by extra {"1.11.0"}
-val gdxVfxVersion by extra {"0.5.0"}
+val gdxVfxVersion by extra {"0.5.1"}
 val jUnitPlatformVersion by extra {"1.9.0"}
 val jUnitJupiterVersion by extra {"5.9.0"}
-val mockitoVersion by extra {"4.8.0"}
+val mockitoVersion by extra {"4.11.0"}
 val assertJVersion by extra {"3.23.1"}
 val logbackVersion by extra {"1.4.5"}
 val commonsLang3Version by extra {"3.12.0"}
-val lombokVersion by extra {"1.18.24"}
-val ashleyVersion by extra {"1.7.0"}
+val lombokVersion by extra {"1.18.26"}
+val ashleyVersion by extra {"1.7.4"}
 
 plugins {
     java

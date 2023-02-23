@@ -58,10 +58,12 @@ public class StaticSpriteRendererEngine extends IteratingSystem {
         TextureComponent textureComponent = Mappers.TEXTURE_COMPONENT.get(entity);
         B2BodyComponent b2body = Mappers.B2BODY.get(entity);
 
-        float textureX = b2body.getBody().getPosition().x - textureComponent.getWidth() / 2;
-        float textureY = b2body.getBody().getPosition().y - textureComponent.getHeight() / 2;
-        textureComponent.setPosition(textureX, textureY);
-        textureComponent.draw(batch);
+        if (b2body != null) {
+            float textureX = b2body.getBody().getPosition().x - textureComponent.getWidth() / 2;
+            float textureY = b2body.getBody().getPosition().y - textureComponent.getHeight() / 2;
+            textureComponent.setPosition(textureX, textureY);
+            textureComponent.draw(batch);
+        }
     }
 
 }

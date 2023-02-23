@@ -5,6 +5,9 @@
     },
     { "name": "box",
       "fileName": "box.jpg"
+    },
+    { "name": "torch",
+      "fileName": "torch.jpg"
     }
   ],
   "textureAtlas": [

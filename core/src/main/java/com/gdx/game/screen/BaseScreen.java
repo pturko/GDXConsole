@@ -33,6 +33,7 @@ public class BaseScreen implements Screen {
     protected static ConsoleServiceImpl consoleService;
     protected static EventServiceImpl eventService;
     protected static Box2DWorldImpl box2DService;
+    protected static PooledEngineServiceImpl pooledEngineService;
 
     protected static ConsoleConfig consoleConfig;
     protected static WindowConfig windowConfig;
@@ -50,8 +51,6 @@ public class BaseScreen implements Screen {
     protected Matrix4 projectionMatrix;
 
     protected InputMultiplexer multiplexer;
-
-    protected Texture boxTexture;
 
     // Console
     private String lastCmd;
@@ -78,6 +77,7 @@ public class BaseScreen implements Screen {
         cameraService = CameraServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
         box2DService = Box2DWorldImpl.getInstance();
+        pooledEngineService = PooledEngineServiceImpl.getInstance();
 
         createResources();
         cameraSetup();
@@ -92,7 +92,6 @@ public class BaseScreen implements Screen {
 
         spriteBatch = resourceService.getBatch();
         debugFont = resourceService.getFont("sans_serif");
-        boxTexture = resourceService.getTexture("box");
         consoleConfig = configService.getConsoleConfig();
         windowConfig = configService.getWindowConfig();
         debugConfig = configService.getDebugConfig();
@@ -103,7 +102,7 @@ public class BaseScreen implements Screen {
         projectionMatrix = new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
         // Initialize pooled engine
-        engine = new PooledEngine();
+        engine = pooledEngineService.getEngine();
 
         // Initialize box2D world and contact listener
         world = box2DService.getWorld();

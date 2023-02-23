@@ -4,11 +4,12 @@ import com.badlogic.gdx.utils.Array;
 import com.gdx.engine.event.Event;
 import com.gdx.engine.interfaces.event.EventListener;
 import com.gdx.engine.event.EventType;
+import com.gdx.engine.interfaces.service.EventService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventServiceImpl {
+public class EventServiceImpl implements EventService {
 
     private static EventServiceImpl eventServiceInstance;
 

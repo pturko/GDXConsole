@@ -1,38 +1,43 @@
-package com.gdx.engine.box2d.entity.item;
+package com.gdx.engine.box2d.entity.sprite;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
 import com.gdx.engine.model.config.WindowConfig;
+import com.gdx.engine.service.Box2DWorldImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
+import com.gdx.engine.service.ResourceLoaderServiceImpl;
 import com.gdx.game.map.CategoryBits;
 
 public class BoxEntity extends Entity implements Disposable {
     private static ConfigServiceImpl configService;
+    private static ResourceLoaderServiceImpl resourceService;
+    private static Box2DWorldImpl box2DWorldService;
 
-    private static int itemWidth;
-    private static int itemHeight;
+    private static float itemWidth;
+    private static float itemHeight;
     private static float ppm;
     private final TextureComponent textureComponent;
     private final B2BodyComponent b2body;
 
-    public BoxEntity(World world, Texture texture, Float x, Float y) {
+    public BoxEntity(String textureName, float x, float y, float width, float height) {
+        resourceService = ResourceLoaderServiceImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
+        box2DWorldService = Box2DWorldImpl.getInstance();
+
         WindowConfig windowConfig = configService.getWindowConfig();
         ppm = windowConfig.getCameraConfig().getPpm();
 
-        itemWidth = 22;
-        itemHeight = 16;
+        itemWidth = width;
+        itemHeight = height;
 
-        textureComponent = new TextureComponent(texture, x * ppm, y * ppm);
-        b2body = new B2BodyComponent(world);
+        textureComponent = new TextureComponent(resourceService.getTexture(textureName), x * ppm, y * ppm);
+        b2body = new B2BodyComponent(box2DWorldService.getWorld());
 
         add(textureComponent);
         add(b2body);

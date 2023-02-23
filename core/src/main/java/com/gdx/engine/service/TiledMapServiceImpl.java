@@ -84,6 +84,7 @@ public class TiledMapServiceImpl implements TiledMapService {
     }
 
     private TiledMap getMap(String mapName) {
+        // TODO - should load external/internal as well
         try {
             return tmxMapLoader.load( ASSET + MAPS + mapName.toLowerCase() + MAP_FILE_EXT);
         } catch(Exception e) {
