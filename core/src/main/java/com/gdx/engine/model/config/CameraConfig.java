@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class CameraConfig implements Serializable {
-    private float ppm;
     private CameraPositionConfig cameraPositionConfig;
     private CameraViewportConfig cameraViewportConfig;
 }

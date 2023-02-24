@@ -21,27 +21,27 @@ public class TiledMapEngine extends EntitySystem {
     private final ConfigServiceImpl configService;
     private final TiledMapServiceImpl tiledMapService;
     private final CameraServiceImpl cameraService;
-    private final EventServiceImpl eventServiceImpl;
+    private final EventServiceImpl eventService;
 
     public TiledMapEngine() {
         configService = ConfigServiceImpl.getInstance();
         tiledMapService = TiledMapServiceImpl.getInstance();
-        eventServiceImpl = EventServiceImpl.getInstance();
+        eventService = EventServiceImpl.getInstance();
         cameraService = CameraServiceImpl.getInstance();
 
         isRendering = configService.getTiledMapConfig().isRendering();
         camera = cameraService.getCamera();
         renderer = new OrthogonalTiledMapRenderer(null, 1 /
-                configService.getWindowConfig().getCameraConfig().getPpm());
+                configService.getWindowConfig().getPpm());
 
         // Config changed event
-        eventServiceImpl.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+        eventService.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
             camera = cameraService.getCamera();
             isRendering = configService.getTiledMapConfig().isRendering();
         });
 
         // Whenever the map has been changed, set the OrthogonalTiledMapRenderer to render our new map
-        eventServiceImpl.addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
+        eventService.addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
             renderer.setMap(e.getTiledMap());
         });
     }

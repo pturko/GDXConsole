@@ -23,9 +23,8 @@ public class StaticSpriteRendererEngine extends IteratingSystem {
 
     private final Batch batch;
     private final Camera camera;
-    private final World world;
 
-    private boolean isRendering;
+    private final boolean isRendering;
 
     public StaticSpriteRendererEngine() {
         super(Family.all(SpriteComponent.class).get());
@@ -34,11 +33,9 @@ public class StaticSpriteRendererEngine extends IteratingSystem {
         cameraService = CameraServiceImpl.getInstance();
         box2DService = Box2DWorldImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
 
         this.batch = resourceService.getBatch();
         this.camera = cameraService.getCamera();
-        this.world = box2DService.getWorld();
 
         isRendering = configService.getBox2DConfig().isStaticSpriteRenderer();
     }

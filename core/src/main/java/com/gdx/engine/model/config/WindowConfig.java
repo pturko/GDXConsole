@@ -8,5 +8,6 @@ import java.io.Serializable;
 public class WindowConfig implements Serializable {
     private float width;
     private float height;
+    private float ppm;
     private CameraConfig cameraConfig;
 }

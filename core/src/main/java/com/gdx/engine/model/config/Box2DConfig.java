@@ -14,4 +14,5 @@ public class Box2DConfig implements Serializable {
     private boolean doSleep;
     private Box2DStepConfig box2DStepConfig;
     private Box2DWorldGravityConfig box2DWorldGravityConfig;
+    private Box2DLightsConfig box2DLightsConfig;
 }

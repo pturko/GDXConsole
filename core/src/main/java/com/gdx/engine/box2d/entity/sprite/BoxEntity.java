@@ -31,7 +31,7 @@ public class BoxEntity extends Entity implements Disposable {
         box2DWorldService = Box2DWorldImpl.getInstance();
 
         WindowConfig windowConfig = configService.getWindowConfig();
-        ppm = windowConfig.getCameraConfig().getPpm();
+        ppm = windowConfig.getPpm();
 
         itemWidth = width;
         itemHeight = height;
@@ -54,7 +54,7 @@ public class BoxEntity extends Entity implements Disposable {
 
     public void constructIconBody() {
         short bodyCategoryBits = CategoryBits.BOX;
-        short bodyMaskBits = CategoryBits.GROUND;
+        short bodyMaskBits = CategoryBits.WALL;
         defineBody(bodyCategoryBits, bodyMaskBits);
     }
 

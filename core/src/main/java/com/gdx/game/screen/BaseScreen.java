@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
@@ -109,8 +108,8 @@ public class BaseScreen implements Screen {
         world.setContactListener(new WorldContactListener(engine));
 
         // Should scale the viewport with PPM
-        stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getCameraConfig().getPpm(),
-                windowConfig.getHeight()/windowConfig.getCameraConfig().getPpm());
+        stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getPpm(),
+                windowConfig.getHeight()/windowConfig.getPpm());
     }
 
     public void cameraSetup() {
@@ -127,8 +126,8 @@ public class BaseScreen implements Screen {
             screenWidth = windowConfig.getWidth();
             screenHeight = windowConfig.getHeight();
 
-            stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getCameraConfig().getPpm(),
-                    windowConfig.getHeight()/windowConfig.getCameraConfig().getPpm());
+            stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getPpm(),
+                    windowConfig.getHeight()/windowConfig.getPpm());
         });
     }
 

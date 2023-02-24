@@ -29,8 +29,8 @@ import java.util.Map;
 
 @Slf4j
 public class ResourceLoaderServiceImpl implements ResourceLoaderService {
-    public static final boolean EXTERNAL_APPLICATION_CONFIG = true;
-    public static final boolean EXTERNAL_RESOURCES = true;
+    public static final boolean EXTERNAL_APPLICATION_CONFIG = false;
+    public static final boolean EXTERNAL_RESOURCES = false;
 
     private static SpriteBatch batch;
     private static BitmapFont bitmapFont;

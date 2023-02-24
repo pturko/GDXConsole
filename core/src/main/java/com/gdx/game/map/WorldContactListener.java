@@ -21,7 +21,7 @@ public class WorldContactListener implements ContactListener {
 
         switch (cDef) {
             // When a box hits the ground
-            case CategoryBits.BOX | CategoryBits.GROUND:
+            case CategoryBits.BOX | CategoryBits.WALL:
                 log.info("Begin Box contact");
                 break;
             default:
@@ -37,7 +37,7 @@ public class WorldContactListener implements ContactListener {
 
         switch (cDef) {
             // When a box hits the ground
-            case CategoryBits.BOX | CategoryBits.GROUND:
+            case CategoryBits.BOX | CategoryBits.WALL:
                 log.info("End Box contact");
                 break;
 

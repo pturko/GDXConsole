@@ -74,7 +74,7 @@ public class TiledMapServiceImpl implements TiledMapService {
         tiledMapData.setMapTileSize(tileWidth);
         tiledMapData.setLoaded(isMapLoaded);
         tiledMapData.setHasLayers(hasLayers);
-        tiledMapData.setPpm(configService.getWindowConfig().getCameraConfig().getPpm());
+        tiledMapData.setPpm(configService.getWindowConfig().getPpm());
 
         // Send map events
         eventService.sendEvent(new MapChangedEvent(tiledMap));

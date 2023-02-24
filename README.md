@@ -10,6 +10,7 @@
 <p>For the opportunity to update config dynamically - external file loading should be used</p>
 <p>ResourceLoaderServiceImpl.EXTERNAL_APPLICATION_CONFIG = true</p>
 
+![screenshot](./previews/screenshot.png)
 
 ## Features
 - Dynamic resource loading

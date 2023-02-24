@@ -8,6 +8,7 @@ val logbackVersion by extra {"1.4.5"}
 val commonsLang3Version by extra {"3.12.0"}
 val lombokVersion by extra {"1.18.26"}
 val ashleyVersion by extra {"1.7.4"}
+val box2DLightsVersion by extra {"1.5"}
 
 plugins {
     java
@@ -67,6 +68,7 @@ project(":core") {
         implementation("ch.qos.logback:logback-classic:$logbackVersion")
         testImplementation("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
         implementation("com.badlogicgames.gdx:gdx-box2d:$gdxVersion")
+        implementation("com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion")
         implementation("com.badlogicgames.ashley:ashley:$ashleyVersion")
         implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
         compileOnly("org.projectlombok:lombok:$lombokVersion")

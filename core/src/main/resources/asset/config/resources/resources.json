@@ -1,37 +1,59 @@
 {
-  "textures": [
-    { "name": "console",
-      "fileName": "console.png"
+  "version": "1.0",
+  "profile": "dev",
+  "windowConfig": {
+    "width": 800,
+    "height": 600,
+    "cameraConfig": {
+      "ppm": 100,
+      "cameraPositionConfig": {
+        "x": 3,
+        "y": 1.5,
+        "z": 0
+      },
+      "cameraViewportConfig": {
+        "width": 6,
+        "height": 3
+      }
+    }
+  },
+  "consoleConfig": {
+    "showConsole": false,
+    "showOnError": true,
+    "showOnWarn": true,
+    "startConsoleCmd": true
+  },
+  "audioConfig": {
+    "music": false,
+    "sound": false
+  },
+  "box2DConfig": {
+    "rendering": true,
+    "enableContacts": true,
+    "box2DDebugRenderer": false,
+    "staticSpriteRenderer": true,
+    "animatedSpriteRenderer": true,
+    "doSleep": true,
+    "box2DStepConfig": {
+      "timeStep": 60,
+      "velocityIterations": 6,
+      "positionIterations": 2
     },
-    { "name": "box",
-      "fileName": "box.jpg"
+    "box2DWorldGravityConfig": {
+      "x": 0,
+      "y": -6
     },
-    { "name": "torch",
-      "fileName": "torch.jpg"
+    "box2DLightsConfig": {
+      "rendering": true,
+      "ambientLight": 0.6,
+      "numberOfRays": 100
     }
-  ],
-  "textureAtlas": [
-  ],
-  "pixmap": [
-  ],
-  "font": [
-    { "name": "sans_serif",
-      "fileName": "sans_serif.fnt"
-    }
-  ],
-  "skin": [
-    { "name": "uiskin",
-      "fileName": "uiskin.json"
-    }
-  ],
-  "music": [
-    { "name": "click",
-      "fileName": "click.mp3"
-    }
-  ],
-  "sound": [
-    { "name": "click",
-      "fileName": "click.mp3"
-    }
-  ]
+  },
+  "tiledMapConfig": {
+    "rendering": true
+  },
+  "debugConfig": {
+    "showFPS": false,
+    "showHeap": false
+  }
 }

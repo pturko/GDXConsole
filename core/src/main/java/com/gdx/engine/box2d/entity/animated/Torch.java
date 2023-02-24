@@ -24,7 +24,7 @@ public class Torch extends Entity {
         resourceService = ResourceLoaderServiceImpl.getInstance();
 
         WindowConfig windowConfig = configService.getWindowConfig();
-        ppm = windowConfig.getCameraConfig().getPpm();
+        ppm = windowConfig.getPpm();
 
         itemWidth = width;
         itemHeight = height;
