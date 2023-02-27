@@ -14,12 +14,12 @@ public class GdxGame extends Game {
 	public void create() {
 		configService = ConfigServiceImpl.getInstance();
 		consoleService = ConsoleServiceImpl.getInstance();
-		screenService = ScreenServiceImpl.getInstance();
 
 		// Initialize application configs
 		configService.updateConfigs();
 
 		// Initialize windows
+		screenService = ScreenServiceImpl.getInstance();
 		screenService.init(this);
 
 		// Running commands

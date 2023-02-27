@@ -5,31 +5,43 @@ import com.badlogic.gdx.graphics.Camera;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapDataChangedEvent;
-import com.gdx.engine.service.CameraServiceImpl;
+import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.EventServiceImpl;
+import com.gdx.engine.service.ScreenServiceImpl;
 import com.gdx.engine.service.TiledMapServiceImpl;
 import com.gdx.engine.util.CameraUtils;
 
 public class CameraEngine extends EntitySystem {
-    private final EventServiceImpl eventService;
-    private final Camera camera;
+    private static ScreenServiceImpl screenService;
+    private static ConfigServiceImpl configService;
+    private static EventServiceImpl eventService;
+
+    private Camera camera;
     private TiledMapData tiledMapData;
+    private boolean isRendering;
 
     public CameraEngine() {
-        this.camera = CameraServiceImpl.getInstance().getCamera();
-        this.tiledMapData = TiledMapServiceImpl.getInstance().getMapData();
+        screenService = ScreenServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
+        configService = ConfigServiceImpl.getInstance();
+
+        setUp();
+    }
+
+    private void setUp() {
+        camera = screenService.getCamera();
+        tiledMapData = TiledMapServiceImpl.getInstance().getMapData();
+        isRendering = configService.getBox2DConfig().isRendering();
 
         eventService.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) -> {
             this.tiledMapData = e.getTiledMapData();
         });
     }
 
-
     @Override
     public void update(float delta) {
         // Make sure to bound the camera within the TiledMap.
-        if (tiledMapData != null) {
+        if (isRendering && tiledMapData != null) {
             CameraUtils.boundCamera(camera, tiledMapData);
         }
     }

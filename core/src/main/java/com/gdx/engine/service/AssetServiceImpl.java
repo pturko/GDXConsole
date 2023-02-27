@@ -14,8 +14,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.SerializationException;
-import com.gdx.engine.interfaces.service.ResourceLoaderService;
+import com.gdx.engine.interfaces.service.AssetService;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.asset.*;
 import com.gdx.engine.util.FileLoaderUtil;
@@ -28,15 +29,14 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ResourceLoaderServiceImpl implements ResourceLoaderService {
+public class AssetServiceImpl implements AssetService, Disposable {
     public static final boolean EXTERNAL_APPLICATION_CONFIG = false;
-    public static final boolean EXTERNAL_RESOURCES = false;
 
     private static SpriteBatch batch;
     private static BitmapFont bitmapFont;
     private static AssetResources resources;
 
-    private static ResourceLoaderServiceImpl resourceLoaderInstance;
+    private static AssetServiceImpl resourceLoaderInstance;
 
     private static Map<String, TextureResource> textures;
     private static Map<String, TextureAtlasResource> textureAtlas;
@@ -49,6 +49,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
     private static final String ASSET = "asset/";
     private static final String CONFIG_FOLDER = "config/";
     private static final String CONFIG_CONSOLE_CMD = "consoleCmd/startup-";
+    private static final String CONFIG_LAYER_FOLDER = "layer/";
     private static final String CONFIG_RESOURCES = "resources/";
     private static final String FONT = "font/";
     private static final String IMAGE_PIXMAP = "image/pixmap/";
@@ -63,7 +64,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
     private static final String RESOURCE_FILE = "resources";
     private static final String RESOURCE_FILE_EXT = ".json";
 
-    private ResourceLoaderServiceImpl() {
+    private AssetServiceImpl() {
         serviceReset();
     }
 
@@ -79,9 +80,9 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         sound = new HashMap<>();
     }
 
-    public static synchronized ResourceLoaderServiceImpl getInstance( ) {
+    public static synchronized AssetServiceImpl getInstance( ) {
         if (resourceLoaderInstance == null)
-            resourceLoaderInstance = new ResourceLoaderServiceImpl();
+            resourceLoaderInstance = new AssetServiceImpl();
         return resourceLoaderInstance;
     }
 
@@ -370,7 +371,6 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         return batch;
     }
 
-
     public static Music getMusic(String name) {
         String musicName = name.toLowerCase();
         if (music.get(musicName) != null) {
@@ -405,6 +405,10 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + profileName + RESOURCE_FILE_EXT;
     }
 
+    public static String getLayerConfigPath(String name) {
+        return ASSET + CONFIG_FOLDER + CONFIG_LAYER_FOLDER + name + RESOURCE_FILE_EXT;
+    }
+
     public static BitmapFont getFont(String name) {
         String fontName = name.toLowerCase();
         if (fonts.get(fontName) != null) {
@@ -437,6 +441,7 @@ public class ResourceLoaderServiceImpl implements ResourceLoaderService {
         return new Texture(pixmap);
     }
 
+    @Override
     public void dispose() {
         batch = null;
         textures.clear();

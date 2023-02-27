@@ -14,20 +14,18 @@ public class ConfigServiceImpl implements ConfigService {
 
     private static ConfigServiceImpl configServiceInstance;
     private static ApplicationConfig applicationConfig;
-    private static ScreenServiceImpl screenService;
-    private static ConsoleServiceImpl consoleService;
     private static EventServiceImpl eventService;
 
     private final String CONFIG_FILE= "asset/config/application.json"; //TODO - fix hardcode filename
 
     private static String version;
     private static Profile profile;
-    private static WindowConfig windowConfig;
+    private static AssetConfig assetConfig;
+    private static ScreenConfig screenConfig;
     private static ConsoleConfig consoleConfig;
     private static AudioConfig audioConfig;
     private static Box2DConfig box2DConfig;
     private static TiledMapConfig tiledMapConfig;
-    private static DebugConfig debugConfig;
 
     public static synchronized ConfigServiceImpl getInstance( ) {
         if (configServiceInstance == null) {
@@ -37,8 +35,6 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     ConfigServiceImpl() {
-        screenService = ScreenServiceImpl.getInstance();
-        consoleService = ConsoleServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
     }
 
@@ -59,12 +55,12 @@ public class ConfigServiceImpl implements ConfigService {
     public void update(ApplicationConfig applicationConfig) {
         version = applicationConfig.getVersion();
         profile = setProfile(applicationConfig.getProfile());
-        windowConfig = applicationConfig.getWindowConfig();
+        assetConfig = applicationConfig.getAssetConfig();
+        screenConfig = applicationConfig.getScreenConfig();
         consoleConfig = applicationConfig.getConsoleConfig();
         audioConfig = applicationConfig.getAudioConfig();
         box2DConfig = applicationConfig.getBox2DConfig();
         tiledMapConfig = applicationConfig.getTiledMapConfig();
-        debugConfig = applicationConfig.getDebugConfig();
     }
 
     @Override
@@ -78,8 +74,13 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public WindowConfig getWindowConfig() {
-        return windowConfig;
+    public AssetConfig getAssetConfig() {
+        return assetConfig;
+    }
+
+    @Override
+    public ScreenConfig getScreenConfig() {
+        return screenConfig;
     }
 
     @Override
@@ -100,11 +101,6 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public TiledMapConfig getTiledMapConfig() {
         return tiledMapConfig;
-    }
-
-    @Override
-    public DebugConfig getDebugConfig() {
-        return debugConfig;
     }
 
     @Override

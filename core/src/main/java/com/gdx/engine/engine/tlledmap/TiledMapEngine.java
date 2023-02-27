@@ -6,9 +6,9 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapChangedEvent;
-import com.gdx.engine.service.CameraServiceImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.EventServiceImpl;
+import com.gdx.engine.service.ScreenServiceImpl;
 import com.gdx.engine.service.TiledMapServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,27 +16,27 @@ import lombok.extern.slf4j.Slf4j;
 public class TiledMapEngine extends EntitySystem {
     private boolean isRendering;
     private OrthographicCamera camera;
-    private OrthogonalTiledMapRenderer renderer;
+    private final OrthogonalTiledMapRenderer renderer;
 
     private final ConfigServiceImpl configService;
     private final TiledMapServiceImpl tiledMapService;
-    private final CameraServiceImpl cameraService;
+    private final ScreenServiceImpl screenService;
     private final EventServiceImpl eventService;
 
     public TiledMapEngine() {
         configService = ConfigServiceImpl.getInstance();
         tiledMapService = TiledMapServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
-        cameraService = CameraServiceImpl.getInstance();
+        screenService = ScreenServiceImpl.getInstance();
 
         isRendering = configService.getTiledMapConfig().isRendering();
-        camera = cameraService.getCamera();
+        camera = screenService.getCamera();
         renderer = new OrthogonalTiledMapRenderer(null, 1 /
-                configService.getWindowConfig().getPpm());
+                configService.getBox2DConfig().getPpm());
 
         // Config changed event
         eventService.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            camera = cameraService.getCamera();
+            camera = screenService.getCamera();
             isRendering = configService.getTiledMapConfig().isRendering();
         });
 

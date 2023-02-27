@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="17">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="19">
  <tileset firstgid="1" name="test" tilewidth="16" tileheight="16" tilecount="1134" columns="42">
   <image source="test.jpg" width="674" height="444"/>
  </tileset>
@@ -8,19 +8,29 @@
    eJydlj1u3DAQhU1hrdpw6eQO3tKt4TP4AO5W8G3WjQ9DXiE5QFxLgE+QMhKWg3379GaoTTGgfsjhfPNHHtPNzXGWQ5WhSqli35c5U5Xlf67/x/o8wnOp87KYV+o4OTIGz7iugC7b77Fri9mErId0yXkgm4w3gy1mGzJmsAv9MYGNJWnuki79xvMKzdvCarwYR+Q8OrEYAn+37Ixiq3iYHb+NYu8tvBPwGauyy+I8CAZPMO9QFBf7RM3nPZUfIl7WgXW8JQ6YzyxoL//bUrteDUxp3S9wbYvX9GC9Wi238tCzHXtMxLjVnxxP7hG4x5Z8tpzOdfwAXqvvqKdMjh04h2tS2dxiLsFeW/oV2sHroxrjPfnd66c8h88qNTendX1MYr3ivnX6M9rBuWyx/XD8zv4v9E/1ax49H3u1r/Zi3tdZ+iCfbZ+hspmuIa39zrwqpiPpVXNUjfK5jf3JyyOV169OfJnXWLf06JzWdefdkbxv6j7G94nobOf/rXxWPUjlrrIX972mD6t5HH9PVytX+u4szGvrD86eSjfXUMu+a5hVnXj5wueQMe4rZy/ql3lbsVQ9B/mv4Y1qIqoF9oW974nV3lV/VrWq+o/i/V9OFUvlR64ddQ9bnr/SmpV5vTuDF1+vblQsHmb9P2b52Z2e8V3FNtLLd1Nm7ymHjfVPis9fzluuF2WHF7f7Wf/d7jR+zvK0O43Lt4hXnbfe3Rxz+RGYbfwKeFlvpv08v3u8791JXirrXeX9hFhH9cj7Z2e0tX13eQbtG/cNxYT6olxQsX2vsVzGX7P87s6xfq7C9cv3F/Wu4oE5bay3gtfm4nnLd1v+jrmoeC12C+fbzPtdOf8S63239nN0d+FvnPN41nKfMvkH24NeIA==
   </data>
  </layer>
- <objectgroup id="5" name="LightSource">
+ <objectgroup id="6" name="GROUND">
+  <object id="18" x="373.875" y="239">
+   <polyline points="-3.375,0.5 104.625,0.5"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="2" name="WALL" visible="0">
+  <object id="8" x="539.604" y="300.318" width="68.1254" height="17.0313"/>
+  <object id="11" x="179.146" y="270.281" width="112.376" height="63.7711"/>
+ </objectgroup>
+ <objectgroup id="5" name="LIGHT_SOURCE">
   <object id="15" x="344" y="200"/>
   <object id="16" x="530" y="200"/>
  </objectgroup>
- <objectgroup id="2" name="Walls" visible="0">
-  <object id="8" x="398.604" y="238.818" width="68.1254" height="17.0313"/>
-  <object id="11" x="385.646" y="254.781" width="95.3755" height="63.7711"/>
- </objectgroup>
- <objectgroup id="4" name="Torch" visible="0">
+ <objectgroup id="4" name="TORCH">
   <object id="13" x="500" y="210" width="32" height="92"/>
   <object id="14" x="310" y="210" width="32" height="92"/>
  </objectgroup>
- <objectgroup id="3" name="Box" visible="0">
-  <object id="5" x="414.667" y="86.6667" width="20" height="16"/>
+ <objectgroup id="3" name="BOX">
+  <object id="5" x="414.667" y="86.6667" width="20" height="16">
+   <properties>
+    <property name="texture" value="box"/>
+   </properties>
+  </object>
+  <object id="17" x="429.5" y="-21" width="20" height="16"/>
  </objectgroup>
 </map>

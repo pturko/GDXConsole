@@ -6,15 +6,18 @@ import com.badlogic.gdx.utils.Json;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.model.config.ConsoleCmd;
+import com.gdx.engine.model.map.MapEntity;
+import com.gdx.engine.service.ConfigServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
-import static com.gdx.engine.service.ResourceLoaderServiceImpl.EXTERNAL_APPLICATION_CONFIG;
-import static com.gdx.engine.service.ResourceLoaderServiceImpl.EXTERNAL_RESOURCES;
+import static com.gdx.engine.service.AssetServiceImpl.EXTERNAL_APPLICATION_CONFIG;
 
 @Slf4j
 public class FileLoaderUtil {
+
+    private static ConfigServiceImpl configService;
 
     public static ApplicationConfig getApplicationConfig(String fileName) throws IOException {
         Json JSON = new Json();
@@ -27,6 +30,12 @@ public class FileLoaderUtil {
         Json JSON = new Json();
         String jsonString = getFileHandle(fileName, true).readString();
         return JSON.fromJson(AssetResources.class, jsonString);
+    }
+
+    public static MapEntity getMapEntity(String fileName) {
+        Json JSON = new Json();
+        String jsonString = getFileHandle(fileName).readString();
+        return JSON.fromJson(MapEntity.class, jsonString);
     }
 
     public static ConsoleCmd getConsoleCmd(String fileName) {
@@ -44,8 +53,8 @@ public class FileLoaderUtil {
     }
 
     public static FileHandle getFileHandle(String filePath) {
-        // TODO - Should be configurable internal/external
-        if (EXTERNAL_RESOURCES) {
+        configService = ConfigServiceImpl.getInstance();
+        if (configService.getAssetConfig().isExternalFiles()) {
             return Gdx.files.external(filePath);
         } else {
             return Gdx.files.internal(filePath);

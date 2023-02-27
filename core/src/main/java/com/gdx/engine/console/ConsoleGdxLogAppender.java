@@ -7,25 +7,28 @@ import com.gdx.engine.service.ConsoleServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class ConsoleGdxLogAppender extends AppenderBase<ILoggingEvent> {
 
     private static ConfigServiceImpl configService;
     private static ConsoleServiceImpl consoleService;
 
-    private final ConcurrentMap<String, ILoggingEvent> eventMap = new ConcurrentHashMap<>();
+    public static final int CONSOLE_MAX_MESSAGES = 25;
+    private static final int CONSOLE_MAX_MESSAGE_LENGTH = 45;
 
     private static List<ConsoleMsgLog> cmdCommands = new ArrayList<>();
 
     @Override
     protected void append(ILoggingEvent event) {
-        eventMap.put(String.valueOf(System.currentTimeMillis()), event);
-        cmdCommands.add(new ConsoleMsgLog(event.getFormattedMessage(),
-                event.getLevel().toString()));
-
         configService = ConfigServiceImpl.getInstance();
+
+        String consoleLogLevel = configService.getConsoleConfig().getLogLevel();
+        if (consoleLogLevel.equals("INFO") || consoleLogLevel.equals("WARN") ||
+                consoleLogLevel.equals("ERROR") || consoleLogLevel.equals("DEBUG")) {
+            validateAndPushMessage(event.getFormattedMessage(), event.getLevel().toString());
+        }
+
+        // Check to enable the console if error or warn log level message
         String logLevel = event.getLevel().levelStr;
         if (logLevel.equals("ERROR") && configService.getConsoleConfig().isShowOnError() ||
                 logLevel.equals("WARN") && configService.getConsoleConfig().isShowOnWarn()) {
@@ -35,12 +38,19 @@ public class ConsoleGdxLogAppender extends AppenderBase<ILoggingEvent> {
         }
     }
 
-    public static List<ConsoleMsgLog> getCommandList() {
-        return cmdCommands;
+    public void validateAndPushMessage(String message, String logLevel) {
+        if (message.length() > CONSOLE_MAX_MESSAGE_LENGTH) {
+            String firstMessage = message.substring(0, CONSOLE_MAX_MESSAGE_LENGTH);
+            String secondMessage = message.substring(CONSOLE_MAX_MESSAGE_LENGTH, message.length());
+            cmdCommands.add(new ConsoleMsgLog(firstMessage, logLevel));
+            validateAndPushMessage(secondMessage, logLevel);
+        } else {
+            cmdCommands.add(new ConsoleMsgLog(message, logLevel));
+        }
     }
 
-    public static ConsoleMsgLog getLast() {
-        return cmdCommands.get(cmdCommands.size()-1);
+    public static List<ConsoleMsgLog> getCommandList() {
+        return cmdCommands;
     }
 
 }

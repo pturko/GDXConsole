@@ -12,7 +12,6 @@ public class GameScreen extends BaseScreen {
         super(gdxGame);
 
         loadResources();
-        cameraSetup();
     }
 
     private void loadResources() {
@@ -28,7 +27,7 @@ public class GameScreen extends BaseScreen {
 
         engine.addSystem(new B2DebugRendererEngine());                  // Renders physics debug profiles
 
-        if (configService.getBox2DConfig().isBox2DDebugRenderer()) {
+        if (configService.getBox2DConfig().isBox2DDebugRendering()) {
             engine.getSystem(B2DebugRendererEngine.class).setProcessing(true);
         }
     }

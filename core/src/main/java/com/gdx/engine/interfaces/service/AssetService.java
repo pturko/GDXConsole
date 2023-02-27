@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import java.io.IOException;
 
-public interface ResourceLoaderService {
+public interface AssetService {
     void loadResources() throws IOException;
     Texture getTexture(String name);
     Texture getTexture(String textureAtlasOrSkinName, String name);

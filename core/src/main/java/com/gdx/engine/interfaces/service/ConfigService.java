@@ -7,11 +7,11 @@ public interface ConfigService {
     String getProfileString();
     String getVersion();
     Profile getProfile();
-    WindowConfig getWindowConfig();
+    AssetConfig getAssetConfig();
+    ScreenConfig getScreenConfig();
     ConsoleConfig getConsoleConfig();
     AudioConfig getAudioConfig();
     Box2DConfig getBox2DConfig();
     TiledMapConfig getTiledMapConfig();
-    DebugConfig getDebugConfig();
     ApplicationConfig getApplicationConfig();
 }

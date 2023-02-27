@@ -2,9 +2,18 @@ package com.gdx.game.map;
 
 public class CategoryBits {
 
-    public static final short WALL = 1;
-    public static final short BOX = 2;
+    public static final short GROUND = 1;
 
-    public static final short DATA = 4;
-    public static final short TORCH = 8;
+    public static final short BOX = 2;
+    public static final short TORCH = 4;
+
+    private final short value;
+
+    CategoryBits(short value) {
+        this.value = value;
+    }
+
+    public short getName() {
+        return value;
+    }
 }

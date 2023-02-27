@@ -1,0 +1,9 @@
+{
+  "textureAtlasName": "",
+  "textureName": "box",
+  "type": "BOX",
+  "categoryBits": "",
+  "maskBits": "Ground, Box",
+  "mapEntityAnimation": {
+  }
+}

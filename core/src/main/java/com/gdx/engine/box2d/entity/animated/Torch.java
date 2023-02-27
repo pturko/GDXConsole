@@ -5,15 +5,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.box2d.component.graphics.AnimationComponent;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
-import com.gdx.engine.model.config.WindowConfig;
 import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.ResourceLoaderServiceImpl;
+import com.gdx.engine.service.AssetServiceImpl;
 import com.gdx.engine.util.AnimationUtils;
 
 public class Torch extends Entity {
-
     private static ConfigServiceImpl configService;
-    private static ResourceLoaderServiceImpl resourceService;
+    private static AssetServiceImpl assetService;
 
     private static float itemWidth;
     private static float itemHeight;
@@ -21,15 +19,14 @@ public class Torch extends Entity {
 
     public Torch(String textureName, float x, float y, float width, float height) {
         configService = ConfigServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
+        assetService = AssetServiceImpl.getInstance();
 
-        WindowConfig windowConfig = configService.getWindowConfig();
-        ppm = windowConfig.getPpm();
+        ppm = configService.getBox2DConfig().getPpm();
 
         itemWidth = width;
         itemHeight = height;
 
-        Texture texture = resourceService.getTexture(textureName);
+        Texture texture = assetService.getTexture(textureName);
 
         AnimationComponent<TextureRegion> animation = AnimationUtils.createAnimation(texture,
                 7f / ppm, 0, 5, 0, 0, 32, 92);

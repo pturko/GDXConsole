@@ -1,9 +1,13 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.IntMap;
 import com.gdx.GdxGame;
 import com.gdx.engine.interfaces.service.ScreenService;
+import com.gdx.engine.model.config.CameraPositionConfig;
+import com.gdx.engine.model.config.CameraViewportConfig;
+import com.gdx.engine.model.config.ScreenConfig;
 import com.gdx.engine.screen.ScreenItems;
 
 import com.gdx.engine.screen.TransitionScreen;
@@ -20,17 +24,20 @@ import java.util.List;
 
 @Slf4j
 public final class ScreenServiceImpl implements ScreenService {
-
-    private Screen activeScreen;
-    private BaseScreen baseScreen;
+    private static ConfigServiceImpl configService;
 
     private static ScreenServiceImpl screenServiceInstance;
 
-    private GdxGame gdxGame;
- 
     private final IntMap<Screen> screens;
- 
+    private static Screen activeScreen;
+    private static BaseScreen baseScreen;
+    private static OrthographicCamera camera;
+
+    private GdxGame gdxGame;
+
     private ScreenServiceImpl() {
+        camera = new OrthographicCamera();
+        cameraSetup();
         screens = new IntMap<>();
     }
  
@@ -41,9 +48,25 @@ public final class ScreenServiceImpl implements ScreenService {
         return screenServiceInstance;
     }
 
+    public void cameraSetup() {
+        configService = ConfigServiceImpl.getInstance();
+        ScreenConfig screenConfig = configService.getScreenConfig();
+        CameraPositionConfig cameraPositionConfig = screenConfig.getCameraConfig().getCameraPositionConfig();
+        CameraViewportConfig cameraViewportConfig = screenConfig.getCameraConfig().getCameraViewportConfig();
+
+        camera.position.set(cameraPositionConfig.getX(), cameraPositionConfig.getY(), cameraPositionConfig.getZ());
+        camera.viewportWidth = cameraViewportConfig.getWidth();
+        camera.viewportHeight = cameraViewportConfig.getHeight();
+    }
+
     @Override
     public void init(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
+    }
+
+    @Override
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 
     @Override
@@ -68,7 +91,7 @@ public final class ScreenServiceImpl implements ScreenService {
         activeScreen = nextActiveScreen;
     }
 
-    public Screen getTransitionScreen(String transitionEffectName, Screen nextScreen) {
+    private Screen getTransitionScreen(String transitionEffectName, Screen nextScreen) {
         List<TransitionEffect> effects = new ArrayList<>();
         switch (transitionEffectName.toUpperCase()) {
             case "FADE":
@@ -97,7 +120,7 @@ public final class ScreenServiceImpl implements ScreenService {
         this.baseScreen = baseScreen;
     }
 
-    public Screen getActiveScreen () {
+    public Screen getActiveScreen() {
         return activeScreen;
     }
 

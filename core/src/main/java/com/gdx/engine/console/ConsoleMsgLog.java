@@ -11,11 +11,11 @@ public class ConsoleMsgLog {
     private final String message;
     private String logLevel;
     private Color color;
-    private String date;
+    private final String date;
 
     public ConsoleMsgLog(String message, String logLevel){
         this.message = message;
-        this.logLevel = logLevel;
+        this.logLevel = logLevel.substring(0,1).toUpperCase();
         this.color = getColor(logLevel);
         this.date = LocalTime.now()
                 .truncatedTo(ChronoUnit.SECONDS)
@@ -36,6 +36,8 @@ public class ConsoleMsgLog {
                 return Color.CORAL;
             case "ERROR":
                 return Color.RED;
+            case "DEBUG":
+                return Color.CYAN;
             default:
                 return Color.WHITE;
         }

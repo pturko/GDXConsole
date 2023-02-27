@@ -15,35 +15,10 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        Fixture fixtureA = contact.getFixtureA();
-        Fixture fixtureB = contact.getFixtureB();
-        int cDef = fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits;
-
-        switch (cDef) {
-            // When a box hits the ground
-            case CategoryBits.BOX | CategoryBits.WALL:
-                log.info("Begin Box contact");
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
     public void endContact(Contact contact) {
-        Fixture fixtureA = contact.getFixtureA();
-        Fixture fixtureB = contact.getFixtureB();
-        int cDef = fixtureA.getFilterData().categoryBits | fixtureB.getFilterData().categoryBits;
-
-        switch (cDef) {
-            // When a box hits the ground
-            case CategoryBits.BOX | CategoryBits.WALL:
-                log.info("End Box contact");
-                break;
-
-            default:
-                break;
-        }
     }
 
     @Override

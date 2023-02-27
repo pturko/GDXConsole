@@ -5,9 +5,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class WindowConfig implements Serializable {
+public class ScreenConfig implements Serializable {
     private float width;
     private float height;
-    private float ppm;
+    private boolean fullScreen;
+    private DebugConfig debugConfig;
     private CameraConfig cameraConfig;
 }

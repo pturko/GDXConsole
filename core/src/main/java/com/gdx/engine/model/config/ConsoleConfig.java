@@ -9,5 +9,6 @@ public class ConsoleConfig implements Serializable {
     private boolean showConsole;
     private boolean showOnError;
     private boolean showOnWarn;
-    private boolean startConsoleCmd;
+    private boolean startCommands;
+    private String logLevel;
 }

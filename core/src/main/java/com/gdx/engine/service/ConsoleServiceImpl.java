@@ -22,18 +22,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.gdx.engine.console.ConsoleGdxLogAppender.CONSOLE_MAX_MESSAGES;
+
 
 @Slf4j
 public class ConsoleServiceImpl implements ConsoleService {
 
     private static ConsoleServiceImpl consoleServiceInstance;
     private static ConfigServiceImpl configService;
-    private static ResourceLoaderServiceImpl resourceService;
+    private static AssetServiceImpl assetService;
     private static ScreenServiceImpl screenService;
     private static TiledMapServiceImpl tiledMapService;
     private static EventServiceImpl eventService;
-
-    private static final int CONSOLE_MAX_MESSAGES = 25;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
         if (consoleServiceInstance == null)
@@ -47,7 +47,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     public void cmd(String cmd) {
         screenService = ScreenServiceImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
+        assetService = AssetServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
 
         List<String> options = Arrays.stream(cmd.split(StringUtils.SPACE))
@@ -63,6 +63,15 @@ public class ConsoleServiceImpl implements ConsoleService {
                 .collect(Collectors.toMap(Function.identity(), i -> options.get(i)));
 
         switch (options.stream().findFirst().get().toUpperCase()) {
+            case "APP":
+                if (part.get(1).equalsIgnoreCase("reload")) {
+
+                }
+                if (part.get(1).equalsIgnoreCase("exit")) {
+                    Gdx.app.exit();
+                }
+                break;
+
             case "VER":
             case "VERSION":
                 log.info("Version: {}", configService.getVersion());
@@ -78,7 +87,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "RESOURCES":
                 if (part.get(1).equalsIgnoreCase("load")) {
-                    resourceService.loadResources();
+                    assetService.loadResources();
                     log.info("Resources loaded");
                 }
                 break;
@@ -95,11 +104,11 @@ public class ConsoleServiceImpl implements ConsoleService {
                 }
                 if (part.get(1).equalsIgnoreCase("window")) {
                     if (part.get(2).equalsIgnoreCase("showFPS")) {
-                        configService.getDebugConfig().setShowFPS(
-                                OperationUtil.getBooleanValue(part.get(3), configService.getDebugConfig().isShowFPS())
+                        configService.getScreenConfig().getDebugConfig().setShowFPS(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowFPS())
                         );
                         resetActiveScreen();
-                        log.info("display fps: {}", configService.getDebugConfig().isShowFPS());
+                        log.info("display fps: {}", configService.getScreenConfig().getDebugConfig().isShowFPS());
                     }
                 }
                 if (part.get(1).equalsIgnoreCase("map")) {
@@ -120,11 +129,11 @@ public class ConsoleServiceImpl implements ConsoleService {
                         log.info("box2d rendering: {}", configService.getBox2DConfig().isRendering());
                     }
                     if (part.get(2).equalsIgnoreCase("sprite")) {
-                        configService.getBox2DConfig().setStaticSpriteRenderer(
-                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isStaticSpriteRenderer())
+                        configService.getBox2DConfig().setStaticSpriteRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isStaticSpriteRendering())
                         );
                         resetActiveScreen();
-                        log.info("box2d static sprite rendering: {}", configService.getBox2DConfig().isStaticSpriteRenderer());
+                        log.info("box2d static sprite rendering: {}", configService.getBox2DConfig().isStaticSpriteRendering());
                     }
                 }
                 if (part.get(1).equalsIgnoreCase("audio")) {
@@ -197,22 +206,19 @@ public class ConsoleServiceImpl implements ConsoleService {
                     tiledMapService = TiledMapServiceImpl.getInstance();
                     if (tiledMapService.load(part.get(2))) {
                         resetActiveScreen();
-                        log.info("TiledMap '{}' successful loaded", part.get(2));
+                        log.info("TiledMap '{}' loaded", part.get(2));
                     }
                 }
                 break;
-
-            case "EXIT":
-                Gdx.app.exit();
         }
     }
 
     public void runCommands() {
         configService = ConfigServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
-        if (configService.getConsoleConfig().isStartConsoleCmd()) {
+        assetService = AssetServiceImpl.getInstance();
+        if (configService.getConsoleConfig().isStartCommands()) {
             ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
-                    resourceService.getConsoleCmdPathFile(configService.getProfileString()));
+                    assetService.getConsoleCmdPathFile(configService.getProfileString()));
             for (String cmdScr : consoleCmd.getCmd()) {
                 cmd(cmdScr);
             }
@@ -220,6 +226,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void draw(SpriteBatch batch, BitmapFont font) {
+        // TODO - split message if too long
         int i = 1;
         List<ConsoleMsgLog> commandList = ConsoleGdxLogAppender.getCommandList();
         int maxCmdSize = (commandList.size() - 1) - CONSOLE_MAX_MESSAGES;

@@ -1,12 +1,9 @@
 package com.gdx.game.screen;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.gdx.GdxGame;
-import com.gdx.engine.service.ResourceLoaderServiceImpl;
+import com.gdx.engine.service.AssetServiceImpl;
 
 public class MenuScreen extends BaseScreen {
-
-    private ResourceLoaderServiceImpl resourceLoaderService;
 
     public MenuScreen(GdxGame gdxGame) {
         super(gdxGame);
@@ -15,7 +12,6 @@ public class MenuScreen extends BaseScreen {
     }
 
     private void initResources() {
-        resourceLoaderService = ResourceLoaderServiceImpl.getInstance();
     }
 
     @Override

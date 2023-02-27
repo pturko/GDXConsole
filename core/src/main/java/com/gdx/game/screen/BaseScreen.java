@@ -13,20 +13,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
+import com.gdx.engine.model.config.Box2DConfig;
 import com.gdx.game.map.WorldContactListener;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ConsoleConfig;
 import com.gdx.engine.model.config.DebugConfig;
-import com.gdx.engine.model.config.WindowConfig;
+import com.gdx.engine.model.config.ScreenConfig;
 import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class BaseScreen implements Screen {
-    protected static ResourceLoaderServiceImpl resourceService;
-    protected static CameraServiceImpl cameraService;
+    protected static AssetServiceImpl assetService;
     protected static ConfigServiceImpl configService;
     protected static ScreenServiceImpl screenService;
     protected static ConsoleServiceImpl consoleService;
@@ -35,8 +35,9 @@ public class BaseScreen implements Screen {
     protected static PooledEngineServiceImpl pooledEngineService;
 
     protected static ConsoleConfig consoleConfig;
-    protected static WindowConfig windowConfig;
+    protected static ScreenConfig screenConfig;
     protected static DebugConfig debugConfig;
+    protected static Box2DConfig box2DConfig;
 
     protected GdxGame gdxGame;
 
@@ -70,10 +71,9 @@ public class BaseScreen implements Screen {
         this.gdxGame = gdxGame;
 
         configService = ConfigServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
+        assetService = AssetServiceImpl.getInstance();
         consoleService = ConsoleServiceImpl.getInstance();
         screenService = ScreenServiceImpl.getInstance();
-        cameraService = CameraServiceImpl.getInstance();
         eventService = EventServiceImpl.getInstance();
         box2DService = Box2DWorldImpl.getInstance();
         pooledEngineService = PooledEngineServiceImpl.getInstance();
@@ -89,15 +89,16 @@ public class BaseScreen implements Screen {
         stage = new Stage();
         lastCmd = StringUtils.EMPTY;
 
-        spriteBatch = resourceService.getBatch();
-        debugFont = resourceService.getFont("sans_serif");
+        spriteBatch = assetService.getBatch();
+        debugFont = assetService.getFont("sans_serif");
         consoleConfig = configService.getConsoleConfig();
-        windowConfig = configService.getWindowConfig();
-        debugConfig = configService.getDebugConfig();
+        screenConfig = configService.getScreenConfig();
+        box2DConfig = configService.getBox2DConfig();
+        debugConfig = configService.getScreenConfig().getDebugConfig();
         screenService.setBaseScreen(this);
 
-        screenWidth = windowConfig.getWidth();
-        screenHeight = windowConfig.getHeight();
+        screenWidth = screenConfig.getWidth();
+        screenHeight = screenConfig.getHeight();
         projectionMatrix = new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
         // Initialize pooled engine
@@ -108,39 +109,39 @@ public class BaseScreen implements Screen {
         world.setContactListener(new WorldContactListener(engine));
 
         // Should scale the viewport with PPM
-        stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getPpm(),
-                windowConfig.getHeight()/windowConfig.getPpm());
+        stage.getViewport().setWorldSize(screenConfig.getWidth()/box2DConfig.getPpm(),
+                screenConfig.getHeight()/box2DConfig.getPpm());
     }
 
     public void cameraSetup() {
-        camera = cameraService.getCamera();
+        camera = screenService.getCamera();
     }
 
     private void configureListeners() {
         // Reload application config
         eventService.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
             consoleConfig = e.getApplicationConfig().getConsoleConfig();
-            cameraService.cameraSetup();
+            screenService.cameraSetup();
 
-            windowConfig = configService.getWindowConfig();
-            screenWidth = windowConfig.getWidth();
-            screenHeight = windowConfig.getHeight();
+            screenConfig = configService.getScreenConfig();
+            screenWidth = screenConfig.getWidth();
+            screenHeight = screenConfig.getHeight();
 
-            stage.getViewport().setWorldSize(windowConfig.getWidth()/windowConfig.getPpm(),
-                    windowConfig.getHeight()/windowConfig.getPpm());
+            stage.getViewport().setWorldSize(screenConfig.getWidth()/box2DConfig.getPpm(),
+                    screenConfig.getHeight()/box2DConfig.getPpm());
         });
     }
 
     private void createConsole() {
-        componentSkin = resourceService.getSkin("uiskin");
+        componentSkin = assetService.getSkin("uiskin");
 
         cmdTextField = new TextField(StringUtils.EMPTY, componentSkin);
         cmdTextField.setPosition(7, 10);
         cmdTextField.setSize(396, 24);
         stage.addActor(cmdTextField);
 
-        consoleFont = resourceService.getDefaultFont();
-        consoleBg = resourceService.getDrawable("console");
+        consoleFont = assetService.getDefaultFont();
+        consoleBg = assetService.getDrawable("console");
     }
 
     private void createInputProcessor() {

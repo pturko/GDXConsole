@@ -5,39 +5,41 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
 import com.gdx.engine.service.Box2DWorldImpl;
-import com.gdx.engine.service.CameraServiceImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.ResourceLoaderServiceImpl;
+import com.gdx.engine.service.AssetServiceImpl;
+import com.gdx.engine.service.ScreenServiceImpl;
 
 public class StaticSpriteRendererEngine extends IteratingSystem {
-    private static ResourceLoaderServiceImpl resourceService;
-    private static CameraServiceImpl cameraService;
+    private static AssetServiceImpl assetService;
+    private static ScreenServiceImpl screenService;
     private static Box2DWorldImpl box2DService;
     private static ConfigServiceImpl configService;
 
-    private final Batch batch;
-    private final Camera camera;
-
-    private final boolean isRendering;
+    private Batch batch;
+    private Camera camera;
+    private boolean isRendering;
 
     public StaticSpriteRendererEngine() {
         super(Family.all(SpriteComponent.class).get());
 
-        resourceService = ResourceLoaderServiceImpl.getInstance();
-        cameraService = CameraServiceImpl.getInstance();
+        assetService = AssetServiceImpl.getInstance();
+        screenService = ScreenServiceImpl.getInstance();
         box2DService = Box2DWorldImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
 
-        this.batch = resourceService.getBatch();
-        this.camera = cameraService.getCamera();
+        setUp();
+    }
 
-        isRendering = configService.getBox2DConfig().isStaticSpriteRenderer();
+    private void setUp() {
+        batch = assetService.getBatch();
+        camera = screenService.getCamera();
+
+        isRendering = configService.getBox2DConfig().isStaticSpriteRendering();
     }
 
     @Override
@@ -55,7 +57,7 @@ public class StaticSpriteRendererEngine extends IteratingSystem {
         TextureComponent textureComponent = Mappers.TEXTURE_COMPONENT.get(entity);
         B2BodyComponent b2body = Mappers.B2BODY.get(entity);
 
-        if (b2body != null) {
+        if (b2body != null && b2body.getBody() != null) {
             float textureX = b2body.getBody().getPosition().x - textureComponent.getWidth() / 2;
             float textureY = b2body.getBody().getPosition().y - textureComponent.getHeight() / 2;
             textureComponent.setPosition(textureX, textureY);

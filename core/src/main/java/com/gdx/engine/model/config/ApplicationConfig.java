@@ -8,10 +8,10 @@ import java.io.Serializable;
 public class ApplicationConfig implements Serializable {
     private String version;
     private String profile;
-    private WindowConfig windowConfig;
+    private AssetConfig assetConfig;
+    private ScreenConfig screenConfig;
     private ConsoleConfig consoleConfig;
     private AudioConfig audioConfig;
     private Box2DConfig box2DConfig;
     private TiledMapConfig tiledMapConfig;
-    private DebugConfig debugConfig;
 }

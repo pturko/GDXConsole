@@ -11,15 +11,19 @@ public class B2DPhysicsEngine extends EntitySystem {
     private static ConfigServiceImpl configService;
     private static Box2DStepConfig box2DStepConfig;
 
-    private final World world;
+    private World world;
     private boolean isRendering;
 
     public B2DPhysicsEngine() {
         box2DService = Box2DWorldImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
         box2DStepConfig = configService.getBox2DConfig().getBox2DStepConfig();
-        this.world = box2DService.getWorld();
 
+        setUp();
+    }
+
+    private void setUp() {
+        world = box2DService.getWorld();
         isRendering = configService.getBox2DConfig().isRendering();
     }
 

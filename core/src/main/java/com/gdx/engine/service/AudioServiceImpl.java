@@ -12,16 +12,16 @@ import java.util.HashMap;
 public class AudioServiceImpl implements AudioService {
 
     private static AudioServiceImpl audioServiceInstance;
-    private static ResourceLoaderServiceImpl resourceService = null;
-    private static ConfigServiceImpl configService = null;
+    private static AssetServiceImpl assetService;
+    private static ConfigServiceImpl configService;
 
     private static Music currentMusic;
     private static Sound currentSound;
     private static HashMap<String, Music> queuedMusic;
     private static HashMap<String, Sound> queuedSound;
 
-    private AudioServiceImpl() {
-        resourceService = ResourceLoaderServiceImpl.getInstance();
+    AudioServiceImpl() {
+        assetService = AssetServiceImpl.getInstance();
         configService = ConfigServiceImpl.getInstance();
         queuedMusic = new HashMap<>();
         queuedSound = new HashMap<>();
@@ -108,7 +108,7 @@ public class AudioServiceImpl implements AudioService {
 
     private void playMusic(String name, boolean isLooping) {
         if (configService.getAudioConfig().isMusic()) {
-            Music music = resourceService.getMusic(name);
+            Music music = assetService.getMusic(name);
             music.setLooping(isLooping);
             music.setVolume(10L);
             setCurrentMusic(music);
@@ -119,7 +119,7 @@ public class AudioServiceImpl implements AudioService {
 
     private void playSound(String name) {
         if (configService.getAudioConfig().isSound()) {
-            Sound sound = resourceService.getSound(name);
+            Sound sound = assetService.getSound(name);
             setCurrentSound(sound);
             setCurrentSound(sound);
             sound.play();

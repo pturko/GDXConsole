@@ -10,37 +10,49 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.AnimationComponent;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
-import com.gdx.engine.service.CameraServiceImpl;
+import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.PooledEngineServiceImpl;
-import com.gdx.engine.service.ResourceLoaderServiceImpl;
+import com.gdx.engine.service.AssetServiceImpl;
+import com.gdx.engine.service.ScreenServiceImpl;
 
 public class AnimatedSpriteRendererEngine extends IteratingSystem {
-    private final CameraServiceImpl cameraService;
-    private final ResourceLoaderServiceImpl resourceService;
+    private final AssetServiceImpl assetService;
+    private final ScreenServiceImpl screenService;
     private final PooledEngineServiceImpl pooledEngineService;
+    private static ConfigServiceImpl configService;
 
-    private final PooledEngine engine;
-    private final Batch batch;
-    private final Camera camera;
+    private PooledEngine engine;
+    private Batch batch;
+    private Camera camera;
+    private boolean isRendering;
 
     public AnimatedSpriteRendererEngine() {
         super(Family.all(AnimationComponent.class).get());
 
-        cameraService = CameraServiceImpl.getInstance();
-        resourceService = ResourceLoaderServiceImpl.getInstance();
+        screenService = ScreenServiceImpl.getInstance();
+        assetService = AssetServiceImpl.getInstance();
         pooledEngineService = PooledEngineServiceImpl.getInstance();
+        configService = ConfigServiceImpl.getInstance();
 
-        this.engine = pooledEngineService.getEngine();
-        this.batch = resourceService.getBatch();
-        this.camera = cameraService.getCamera();
+        setUp();
+    }
+
+    private void setUp() {
+        engine = pooledEngineService.getEngine();
+        batch = assetService.getBatch();
+        camera = screenService.getCamera();
+
+        isRendering = configService.getBox2DConfig().isAnimatedSpriteRendering();
     }
 
     @Override
     public void update(float delta) {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        super.update(delta);
-        batch.end();
+        if (isRendering) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            super.update(delta);
+            batch.end();
+        }
     }
 
     @Override

@@ -1,11 +1,20 @@
 {
   "version": "1.0",
   "profile": "dev",
-  "windowConfig": {
+  "assetConfig": {
+    "externalFiles": false,
+    "autoLoad": false
+  },
+  "screenConfig": {
     "width": 800,
     "height": 600,
-    "ppm": 100,
+    "fullScreen": false,
+    "debugConfig": {
+      "showFPS": false,
+      "showHeap": false
+    },
     "cameraConfig": {
+      "rendering": true,
       "cameraPositionConfig": {
         "x": 3,
         "y": 1.5,
@@ -18,10 +27,11 @@
     }
   },
   "consoleConfig": {
-    "showConsole": false,
+    "showConsole": true,
     "showOnError": true,
     "showOnWarn": true,
-    "startConsoleCmd": true
+    "startCommands": true,
+    "logLevel": "WARN"
   },
   "audioConfig": {
     "music": false,
@@ -30,10 +40,11 @@
   "box2DConfig": {
     "rendering": true,
     "enableContacts": true,
-    "box2DDebugRenderer": false,
-    "staticSpriteRenderer": true,
-    "animatedSpriteRenderer": true,
+    "box2DDebugRendering": true,
+    "staticSpriteRendering": false,
+    "animatedSpriteRendering": true,
     "doSleep": true,
+    "ppm": 100,
     "box2DStepConfig": {
       "timeStep": 60,
       "velocityIterations": 6,
@@ -41,19 +52,17 @@
     },
     "box2DWorldGravityConfig": {
       "x": 0,
-      "y": -6
+      "y": -5
     },
     "box2DLightsConfig": {
       "rendering": true,
-      "ambientLight": 0.6,
-      "numberOfRays": 100
+      "ambientLight": 0.7,
+      "numberOfRays": 50,
+      "distance": 90
     }
   },
   "tiledMapConfig": {
     "rendering": true
-  },
-  "debugConfig": {
-    "showFPS": false,
-    "showHeap": false
   }
 }
+
