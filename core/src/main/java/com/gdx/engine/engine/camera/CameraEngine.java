@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapDataChangedEvent;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.EventServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
-import com.gdx.engine.service.TiledMapServiceImpl;
+import com.gdx.engine.service.*;
 import com.gdx.engine.util.CameraUtils;
 
 public class CameraEngine extends EntitySystem {
@@ -21,21 +18,20 @@ public class CameraEngine extends EntitySystem {
     private boolean isRendering;
 
     public CameraEngine() {
-        screenService = ScreenServiceImpl.getInstance();
-        eventService = EventServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        screenService = ServiceFactoryImpl.getScreenService();
+        eventService = ServiceFactoryImpl.getEventService();
+        configService = ServiceFactoryImpl.getConfigService();
 
         setUp();
     }
 
     private void setUp() {
         camera = screenService.getCamera();
-        tiledMapData = TiledMapServiceImpl.getInstance().getMapData();
+        tiledMapData = ServiceFactoryImpl.getTiledMapService().getMapData();
         isRendering = configService.getBox2DConfig().isRendering();
 
-        eventService.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) -> {
-            this.tiledMapData = e.getTiledMapData();
-        });
+        eventService.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) ->
+                this.tiledMapData = e.getTiledMapData());
     }
 
     @Override

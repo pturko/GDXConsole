@@ -10,10 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.AnimationComponent;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.PooledEngineServiceImpl;
-import com.gdx.engine.service.AssetServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
+import com.gdx.engine.service.*;
 
 public class AnimatedSpriteRendererEngine extends IteratingSystem {
     private final AssetServiceImpl assetService;
@@ -29,10 +26,10 @@ public class AnimatedSpriteRendererEngine extends IteratingSystem {
     public AnimatedSpriteRendererEngine() {
         super(Family.all(AnimationComponent.class).get());
 
-        screenService = ScreenServiceImpl.getInstance();
-        assetService = AssetServiceImpl.getInstance();
-        pooledEngineService = PooledEngineServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        screenService = ServiceFactoryImpl.getScreenService();
+        assetService = ServiceFactoryImpl.getAssetService();
+        pooledEngineService = ServiceFactoryImpl.getPooledEngineService();
+        configService = ServiceFactoryImpl.getConfigService();
 
         setUp();
     }

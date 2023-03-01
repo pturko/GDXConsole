@@ -21,8 +21,8 @@ public class AudioServiceImpl implements AudioService {
     private static HashMap<String, Sound> queuedSound;
 
     AudioServiceImpl() {
-        assetService = AssetServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        assetService = ServiceFactoryImpl.getAssetService();
+        configService = ServiceFactoryImpl.getConfigService();
         queuedMusic = new HashMap<>();
         queuedSound = new HashMap<>();
     }

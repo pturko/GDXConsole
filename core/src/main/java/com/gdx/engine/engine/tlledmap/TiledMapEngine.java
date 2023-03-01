@@ -6,10 +6,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapChangedEvent;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.EventServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
-import com.gdx.engine.service.TiledMapServiceImpl;
+import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,10 +21,10 @@ public class TiledMapEngine extends EntitySystem {
     private final EventServiceImpl eventService;
 
     public TiledMapEngine() {
-        configService = ConfigServiceImpl.getInstance();
-        tiledMapService = TiledMapServiceImpl.getInstance();
-        eventService = EventServiceImpl.getInstance();
-        screenService = ScreenServiceImpl.getInstance();
+        configService = ServiceFactoryImpl.getConfigService();
+        tiledMapService = ServiceFactoryImpl.getTiledMapService();
+        eventService = ServiceFactoryImpl.getEventService();
+        screenService = ServiceFactoryImpl.getScreenService();
 
         isRendering = configService.getTiledMapConfig().isRendering();
         camera = screenService.getCamera();
@@ -41,9 +38,8 @@ public class TiledMapEngine extends EntitySystem {
         });
 
         // Whenever the map has been changed, set the OrthogonalTiledMapRenderer to render our new map
-        eventService.addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
-            renderer.setMap(e.getTiledMap());
-        });
+        eventService.addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) ->
+                renderer.setMap(e.getTiledMap()));
     }
 
     @Override

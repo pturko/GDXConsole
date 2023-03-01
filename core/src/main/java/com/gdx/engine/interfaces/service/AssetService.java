@@ -14,4 +14,5 @@ public interface AssetService {
     Drawable getDrawable(String textureAtlasOrSkinName, String name);
     Skin getSkin(String skinName);
     SpriteBatch getBatch();
+    String getLayerConfigPath(String name);
 }

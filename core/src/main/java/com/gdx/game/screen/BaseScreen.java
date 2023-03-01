@@ -31,7 +31,7 @@ public class BaseScreen implements Screen {
     protected static ScreenServiceImpl screenService;
     protected static ConsoleServiceImpl consoleService;
     protected static EventServiceImpl eventService;
-    protected static Box2DWorldImpl box2DService;
+    protected static Box2DWorldServiceImpl box2DService;
     protected static PooledEngineServiceImpl pooledEngineService;
 
     protected static ConsoleConfig consoleConfig;
@@ -60,8 +60,6 @@ public class BaseScreen implements Screen {
     private BitmapFont consoleFont;
     private BitmapFont debugFont;
 
-    // FPS counter
-    private long now;
     private int frameCount;
     private long lastRender;
     private static int lastFPS;
@@ -70,13 +68,13 @@ public class BaseScreen implements Screen {
     public BaseScreen(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
 
-        configService = ConfigServiceImpl.getInstance();
-        assetService = AssetServiceImpl.getInstance();
-        consoleService = ConsoleServiceImpl.getInstance();
-        screenService = ScreenServiceImpl.getInstance();
-        eventService = EventServiceImpl.getInstance();
-        box2DService = Box2DWorldImpl.getInstance();
-        pooledEngineService = PooledEngineServiceImpl.getInstance();
+        configService = ServiceFactoryImpl.getConfigService();
+        assetService = ServiceFactoryImpl.getAssetService();
+        consoleService = ServiceFactoryImpl.getConsoleService();
+        screenService = ServiceFactoryImpl.getScreenService();
+        eventService = ServiceFactoryImpl.getEventService();
+        box2DService = ServiceFactoryImpl.getBox2DWorldService();
+        pooledEngineService = ServiceFactoryImpl.getPooledEngineService();
 
         createResources();
         cameraSetup();
@@ -160,7 +158,7 @@ public class BaseScreen implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
-    public void update(float delta) {
+    public void update() {
         //---------- Drawing console and debug information ----------------------------
         drawingDebug();
 
@@ -169,12 +167,26 @@ public class BaseScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             consoleService.cmd("cfg console show");
+            stage.setKeyboardFocus(cmdTextField);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             consoleService.cmd("cfg map rendering");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
             consoleService.cmd("cfg update");
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
+            consoleService.cmd("map clear");
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
+            consoleService.cmd("map reload");
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F7)) {
+            consoleService.cmd("map load test");
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
+            consoleService.cmd("map load test2");
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -217,7 +229,7 @@ public class BaseScreen implements Screen {
         //---------- Drawing FPS ----------------------------
         if (debugConfig.isShowFPS()) {
             frameCount++;
-            now = System.nanoTime();
+            long now = System.nanoTime();
             if ((now - lastRender) >= FPSUpdateInterval * 1000000000) {
                 lastFPS = frameCount / FPSUpdateInterval;
                 frameCount = 0;

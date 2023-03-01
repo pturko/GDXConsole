@@ -1,6 +1,5 @@
 package com.gdx.engine.service;
 
-
 import com.badlogic.ashley.core.PooledEngine;
 import com.gdx.engine.interfaces.service.PooledEngineService;
 

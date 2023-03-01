@@ -11,7 +11,6 @@ import java.io.IOException;
 
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
-
     private static ConfigServiceImpl configServiceInstance;
     private static ApplicationConfig applicationConfig;
     private static EventServiceImpl eventService;
@@ -35,7 +34,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     ConfigServiceImpl() {
-        eventService = EventServiceImpl.getInstance();
+        eventService = ServiceFactoryImpl.getEventService();
     }
 
     @Override
@@ -43,7 +42,7 @@ public class ConfigServiceImpl implements ConfigService {
         try {
             applicationConfig = FileLoaderUtil.getApplicationConfig(CONFIG_FILE);
             update(applicationConfig);
-            log.info("Config reloaded! (should be load external)");
+//            log.info("Config reloaded! (should be load external)");
 
             // Sending config changed events
             eventService.sendEvent(new ConfigChangedEvent(applicationConfig));

@@ -36,7 +36,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
     private static BitmapFont bitmapFont;
     private static AssetResources resources;
 
-    private static AssetServiceImpl resourceLoaderInstance;
+    private static AssetServiceImpl assetServiceInstance;
 
     private static Map<String, TextureResource> textures;
     private static Map<String, TextureAtlasResource> textureAtlas;
@@ -81,9 +81,9 @@ public class AssetServiceImpl implements AssetService, Disposable {
     }
 
     public static synchronized AssetServiceImpl getInstance( ) {
-        if (resourceLoaderInstance == null)
-            resourceLoaderInstance = new AssetServiceImpl();
-        return resourceLoaderInstance;
+        if (assetServiceInstance == null)
+            assetServiceInstance = new AssetServiceImpl();
+        return assetServiceInstance;
     }
 
     public void loadResources() {
@@ -405,7 +405,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
         return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + profileName + RESOURCE_FILE_EXT;
     }
 
-    public static String getLayerConfigPath(String name) {
+    public String getLayerConfigPath(String name) {
         return ASSET + CONFIG_FOLDER + CONFIG_LAYER_FOLDER + name + RESOURCE_FILE_EXT;
     }
 

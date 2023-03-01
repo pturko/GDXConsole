@@ -1,14 +1,20 @@
 package com.gdx.engine.service;
 
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
 import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;
-import com.gdx.engine.util.box2d.TiledObjectUtils;
+import com.gdx.game.util.TiledObjectUtils;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.stream.IntStream;
 
 @Slf4j
 public class TiledMapServiceImpl implements TiledMapService {
@@ -19,45 +25,46 @@ public class TiledMapServiceImpl implements TiledMapService {
 
     private static final TmxMapLoader tmxMapLoader = new TmxMapLoader();
 
-    private static TiledMapServiceImpl tiledMapService;
-    private static ConfigServiceImpl configService;
-    private static EventServiceImpl eventService;
-    private static Box2DWorldImpl box2DWorld;
+    private static TiledMapServiceImpl tiledMapServiceInstance;
 
-    private TiledMapData tiledMapData;
+    private String mapName;
+    private final PooledEngine engine;
+    private final TiledMapData tiledMapData;
     private TiledMap tiledMap;
     private MapLayers mapLayers;
+    private final World world;
 
     private static boolean hasLayers;
     private static boolean isMapLoaded;
 
     public TiledMapServiceImpl() {
-        configService = ConfigServiceImpl.getInstance();
-        eventService = EventServiceImpl.getInstance();
-        box2DWorld = Box2DWorldImpl.getInstance();
+        world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
+        engine = ServiceFactoryImpl.getPooledEngineService().getEngine();
+
+        tiledMapData = new TiledMapData();
     }
 
     public static synchronized TiledMapServiceImpl getInstance() {
-        if (tiledMapService == null)
-            tiledMapService = new TiledMapServiceImpl();
-        return tiledMapService;
+        if (tiledMapServiceInstance == null)
+            tiledMapServiceInstance = new TiledMapServiceImpl();
+        return tiledMapServiceInstance;
     }
 
-    public boolean load(String mapFilePath) {
-        tiledMapData = new TiledMapData();
+    public void load(String mapName) {
+        clear();
+        this.mapName = mapName;
         hasLayers = false;
 
-        tiledMap = getMap(mapFilePath);
-        if (tiledMap == null) {
-            return isMapLoaded = false;
-        }
+        tiledMap = mapLoad(mapName);
         isMapLoaded = true;
 
-        mapLayers = tiledMap.getLayers();
-        if (mapLayers.size() > 0) {
-            hasLayers = true;
-        } else {
-            log.warn("Map has no detected layers!");
+        if (tiledMap != null) {
+            mapLayers = tiledMap.getLayers();
+            if (mapLayers.size() > 0) {
+                hasLayers = true;
+            } else {
+                log.warn("Map has no detected layers!");
+            }
         }
 
         // Extract map properties
@@ -68,22 +75,22 @@ public class TiledMapServiceImpl implements TiledMapService {
         assert tileWidth == tileHeight;
 
         // Create bodies in the world according to each map layer
-        TiledObjectUtils.parseLayers(box2DWorld.getWorld(), mapLayers);
+        TiledObjectUtils.parseLayers(world, mapLayers);
 
         // Set up tiled map data
         tiledMapData.setMapTileSize(tileWidth);
         tiledMapData.setLoaded(isMapLoaded);
         tiledMapData.setHasLayers(hasLayers);
-        tiledMapData.setPpm(configService.getBox2DConfig().getPpm());
+        tiledMapData.setPpm(ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm());
 
         // Send map events
-        eventService.sendEvent(new MapChangedEvent(tiledMap));
-        eventService.sendEvent(new MapDataChangedEvent(tiledMapData));
+        ServiceFactoryImpl.getEventService().sendEvent(new MapChangedEvent(tiledMap));
+        ServiceFactoryImpl.getEventService().sendEvent(new MapDataChangedEvent(tiledMapData));
 
-        return true;
+        log.info("Tiled map '{}' loaded", mapName);
     }
 
-    private TiledMap getMap(String mapName) {
+    private TiledMap mapLoad(String mapName) {
         // TODO - should load external/internal as well
         try {
             return tmxMapLoader.load( ASSET + MAPS + mapName.toLowerCase() + MAP_FILE_EXT);
@@ -92,6 +99,30 @@ public class TiledMapServiceImpl implements TiledMapService {
         }
 
         return null;
+    }
+
+    @Override
+    public void clear() {
+        engine.clearPools();
+
+        // Dispose map data if there is any
+        if (tiledMap != null) {
+            tiledMap.dispose();
+
+            // Destroy all entity and bodies
+            engine.getEntities().forEach(e ->
+                    engine.removeEntity(e));
+
+            Array<Body> bodies = new Array<>();
+            world.getBodies(bodies);
+            IntStream.range(0, bodies.size).forEach(i ->
+                    world.destroyBody(bodies.get(i)));
+
+            engine.getEntities().forEach(e ->
+                    engine.removeEntity(e));
+
+            TiledObjectUtils.clearLights();
+        }
     }
 
     @Override
@@ -104,18 +135,17 @@ public class TiledMapServiceImpl implements TiledMapService {
         return tiledMapData;
     }
 
-    public MapLayers getLayers() {
-        return mapLayers;
-    }
-
-    public TiledMap getTiledMap() {
-        return tiledMap;
+    @Override
+    public String getMapName() {
+        return mapName;
     }
 
     public boolean isMapLoaded() {
         return isMapLoaded;
     }
 
-    protected void dispose() {}
+    public void dispose() {
+        tiledMap.dispose();
+    }
 
 }

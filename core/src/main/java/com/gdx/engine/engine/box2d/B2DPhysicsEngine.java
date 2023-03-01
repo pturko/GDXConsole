@@ -3,11 +3,12 @@ package com.gdx.engine.engine.box2d;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.engine.model.config.Box2DStepConfig;
-import com.gdx.engine.service.Box2DWorldImpl;
+import com.gdx.engine.service.Box2DWorldServiceImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
+import com.gdx.engine.service.ServiceFactoryImpl;
 
 public class B2DPhysicsEngine extends EntitySystem {
-    private static Box2DWorldImpl box2DService;
+    private static Box2DWorldServiceImpl box2DService;
     private static ConfigServiceImpl configService;
     private static Box2DStepConfig box2DStepConfig;
 
@@ -15,8 +16,9 @@ public class B2DPhysicsEngine extends EntitySystem {
     private boolean isRendering;
 
     public B2DPhysicsEngine() {
-        box2DService = Box2DWorldImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        box2DService = ServiceFactoryImpl.getBox2DWorldService();
+        configService = ServiceFactoryImpl.getConfigService();
+
         box2DStepConfig = configService.getBox2DConfig().getBox2DStepConfig();
 
         setUp();

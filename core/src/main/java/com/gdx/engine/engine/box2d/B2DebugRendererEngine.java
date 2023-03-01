@@ -4,13 +4,14 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.gdx.engine.service.Box2DWorldImpl;
+import com.gdx.engine.service.Box2DWorldServiceImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.ScreenServiceImpl;
+import com.gdx.engine.service.ServiceFactoryImpl;
 
 public class B2DebugRendererEngine extends EntitySystem {
     private static ScreenServiceImpl screenService;
-    private static Box2DWorldImpl box2DService;
+    private static Box2DWorldServiceImpl box2DService;
     private static ConfigServiceImpl configService;
 
     private Camera camera;
@@ -20,9 +21,9 @@ public class B2DebugRendererEngine extends EntitySystem {
     private boolean isRendering;
 
     public B2DebugRendererEngine() {
-        screenService = ScreenServiceImpl.getInstance();
-        box2DService = Box2DWorldImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        screenService = ServiceFactoryImpl.getScreenService();
+        box2DService = ServiceFactoryImpl.getBox2DWorldService();
+        configService = ServiceFactoryImpl.getConfigService();
 
         setUp();
     }
@@ -32,6 +33,10 @@ public class B2DebugRendererEngine extends EntitySystem {
         world = box2DService.getWorld();
         renderer = new Box2DDebugRenderer();
         isRendering = configService.getBox2DConfig().isBox2DDebugRendering();
+
+        if (configService.getBox2DConfig().isBox2DDebugRendering()) {
+            this.setProcessing(true);
+        }
     }
 
     @Override

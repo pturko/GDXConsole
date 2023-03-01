@@ -1,4 +1,4 @@
-package com.gdx.engine.box2d.entity.sprite;
+package com.gdx.game.entity.dynamic;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,15 +8,17 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
-import com.gdx.engine.service.Box2DWorldImpl;
+import com.gdx.engine.model.map.MapEntityData;
+import com.gdx.engine.service.Box2DWorldServiceImpl;
 import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.AssetServiceImpl;
+import com.gdx.engine.service.ServiceFactoryImpl;
 import com.gdx.game.map.CategoryBits;
 
 public class BoxEntity extends Entity implements Disposable {
     private static ConfigServiceImpl configService;
     private static AssetServiceImpl assetService;
-    private static Box2DWorldImpl box2DWorldService;
+    private static Box2DWorldServiceImpl box2DWorldService;
 
     private static float itemWidth;
     private static float itemHeight;
@@ -24,10 +26,10 @@ public class BoxEntity extends Entity implements Disposable {
     private final TextureComponent textureComponent;
     private final B2BodyComponent b2body;
 
-    public BoxEntity(String textureName, float x, float y, float width, float height) {
-        assetService = AssetServiceImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
-        box2DWorldService = Box2DWorldImpl.getInstance();
+    public BoxEntity(String textureName, MapEntityData mapEntity, float x, float y, float width, float height) {
+        assetService = ServiceFactoryImpl.getAssetService();
+        configService = ServiceFactoryImpl.getConfigService();
+        box2DWorldService = ServiceFactoryImpl.getBox2DWorldService();
 
         ppm = configService.getBox2DConfig().getPpm();
 

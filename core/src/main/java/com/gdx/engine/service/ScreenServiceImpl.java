@@ -49,7 +49,7 @@ public final class ScreenServiceImpl implements ScreenService {
     }
 
     public void cameraSetup() {
-        configService = ConfigServiceImpl.getInstance();
+        configService = ServiceFactoryImpl.getConfigService();
         ScreenConfig screenConfig = configService.getScreenConfig();
         CameraPositionConfig cameraPositionConfig = screenConfig.getCameraConfig().getCameraPositionConfig();
         CameraViewportConfig cameraViewportConfig = screenConfig.getCameraConfig().getCameraViewportConfig();

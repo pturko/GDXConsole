@@ -1,29 +1,19 @@
 package com.gdx;
 
 import com.badlogic.gdx.Game;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.ConsoleServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
+import com.gdx.engine.service.ServiceFactoryImpl;
 
 public class GdxGame extends Game {
 
-	private static ConfigServiceImpl configService;
-	private static ScreenServiceImpl screenService;
-	private static ConsoleServiceImpl consoleService;
-
 	public void create() {
-		configService = ConfigServiceImpl.getInstance();
-		consoleService = ConsoleServiceImpl.getInstance();
-
 		// Initialize application configs
-		configService.updateConfigs();
+		ServiceFactoryImpl.getConfigService().updateConfigs();
 
 		// Initialize windows
-		screenService = ScreenServiceImpl.getInstance();
-		screenService.init(this);
+		 ServiceFactoryImpl.getScreenService().init(this);
 
 		// Running commands
-		consoleService.runCommands();
+		ServiceFactoryImpl.getConsoleService().runCommands();
 	}
 
 	@Override

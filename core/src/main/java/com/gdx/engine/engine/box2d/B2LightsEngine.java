@@ -6,14 +6,11 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapChangedEvent;
-import com.gdx.engine.service.Box2DWorldImpl;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.EventServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
-import com.gdx.engine.util.box2d.TiledObjectUtils;
+import com.gdx.engine.service.*;
+import com.gdx.game.util.TiledObjectUtils;
 
 public class B2LightsEngine extends EntitySystem {
-    private static Box2DWorldImpl box2DService;
+    private static Box2DWorldServiceImpl box2DService;
     private static ConfigServiceImpl configService;
     private static EventServiceImpl eventService;
     private static ScreenServiceImpl screenService;
@@ -27,10 +24,10 @@ public class B2LightsEngine extends EntitySystem {
     private float ambientLight;
 
     public B2LightsEngine() {
-        box2DService = Box2DWorldImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
-        eventService = EventServiceImpl.getInstance();
-        screenService = ScreenServiceImpl.getInstance();
+        box2DService = ServiceFactoryImpl.getBox2DWorldService();
+        configService = ServiceFactoryImpl.getConfigService();
+        eventService = ServiceFactoryImpl.getEventService();
+        screenService = ServiceFactoryImpl.getScreenService();
 
         setUp();
     }

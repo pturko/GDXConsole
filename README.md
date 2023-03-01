@@ -54,6 +54,7 @@
   - stopAll <name>
 - MAP
   - load <mapName> - loading tiled map
+  - reload - reload active tiled map
 - CMD <profileName> - run commands from config/startup-<profileName>.json
 - PROFILE - show active profile
 - EXIT - exit program

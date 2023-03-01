@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import com.gdx.engine.service.ConfigServiceImpl;
 import com.gdx.engine.service.ConsoleServiceImpl;
+import com.gdx.engine.service.ServiceFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ConsoleGdxLogAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent event) {
-        configService = ConfigServiceImpl.getInstance();
+        configService = ServiceFactoryImpl.getConfigService();
 
         String consoleLogLevel = configService.getConsoleConfig().getLogLevel();
         if (consoleLogLevel.equals("INFO") || consoleLogLevel.equals("WARN") ||
@@ -33,7 +34,7 @@ public class ConsoleGdxLogAppender extends AppenderBase<ILoggingEvent> {
         if (logLevel.equals("ERROR") && configService.getConsoleConfig().isShowOnError() ||
                 logLevel.equals("WARN") && configService.getConsoleConfig().isShowOnWarn()) {
             configService.getConsoleConfig().setShowConsole(true);
-            consoleService = ConsoleServiceImpl.getInstance();
+            consoleService = ServiceFactoryImpl.getConsoleService();
             consoleService.resetActiveScreen();
         }
     }

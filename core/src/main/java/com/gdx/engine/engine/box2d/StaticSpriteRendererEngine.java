@@ -9,15 +9,12 @@ import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
-import com.gdx.engine.service.Box2DWorldImpl;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.AssetServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
+import com.gdx.engine.service.*;
 
 public class StaticSpriteRendererEngine extends IteratingSystem {
     private static AssetServiceImpl assetService;
     private static ScreenServiceImpl screenService;
-    private static Box2DWorldImpl box2DService;
+    private static Box2DWorldServiceImpl box2DService;
     private static ConfigServiceImpl configService;
 
     private Batch batch;
@@ -27,10 +24,10 @@ public class StaticSpriteRendererEngine extends IteratingSystem {
     public StaticSpriteRendererEngine() {
         super(Family.all(SpriteComponent.class).get());
 
-        assetService = AssetServiceImpl.getInstance();
-        screenService = ScreenServiceImpl.getInstance();
-        box2DService = Box2DWorldImpl.getInstance();
-        configService = ConfigServiceImpl.getInstance();
+        assetService = ServiceFactoryImpl.getAssetService();
+        screenService = ServiceFactoryImpl.getScreenService();
+        box2DService = ServiceFactoryImpl.getBox2DWorldService();
+        configService = ServiceFactoryImpl.getConfigService();
 
         setUp();
     }

@@ -1,7 +1,6 @@
 package com.gdx.game.screen;
 
 import com.gdx.GdxGame;
-import com.gdx.engine.service.AssetServiceImpl;
 
 public class MenuScreen extends BaseScreen {
 
@@ -22,7 +21,7 @@ public class MenuScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
 
-        update(delta);
+        update();
         clearScreen();
     }
 
