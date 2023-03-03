@@ -4,49 +4,56 @@ import box2dLight.RayHandler;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.World;
+import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapChangedEvent;
+import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.Box2DLightsConfig;
 import com.gdx.engine.service.*;
 import com.gdx.game.util.TiledObjectUtils;
 
 public class B2LightsEngine extends EntitySystem {
-    private static Box2DWorldServiceImpl box2DService;
-    private static ConfigServiceImpl configService;
-    private static EventServiceImpl eventService;
-    private static ScreenServiceImpl screenService;
-
     private static final String LIGHT_SOURCE_MAP_LAYER = "LIGHT_SOURCE";
 
-    private Camera camera;
-    private World world;
-    private RayHandler rayHandler;
+    private final Camera camera;
+    private final World world;
+    private final RayHandler rayHandler;
     private boolean isRendering;
     private float ambientLight;
 
     public B2LightsEngine() {
-        box2DService = ServiceFactoryImpl.getBox2DWorldService();
-        configService = ServiceFactoryImpl.getConfigService();
-        eventService = ServiceFactoryImpl.getEventService();
-        screenService = ServiceFactoryImpl.getScreenService();
-
-        setUp();
-    }
-
-    private void setUp() {
-        world = box2DService.getWorld();
+        world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
         rayHandler = new RayHandler(world);
 
-        camera = screenService.getCamera();
-        isRendering = configService.getBox2DConfig().getBox2DLightsConfig().isRendering();
-        ambientLight = configService.getBox2DConfig().getBox2DLightsConfig().getAmbientLight();
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
+    }
+
+    private void update(ApplicationConfig config) {
+        Box2DLightsConfig box2DLightsConfig = config.getBox2DConfig().getBox2DLightsConfig();
+        isRendering = box2DLightsConfig.isRendering();
+        ambientLight = box2DLightsConfig.getAmbientLight();
+    }
+
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
+                update(e.getApplicationConfig()));
 
         // Whenever the map is changed, remove previous light objects and update brightness
-        eventService.addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
             rayHandler.removeAll();
             rayHandler.setAmbientLight(ambientLight);
-
             TiledObjectUtils.createLightSources(rayHandler,
                     e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
+        });
+
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            rayHandler.removeAll();
+            rayHandler.setAmbientLight(ambientLight);
+            TiledObjectUtils.createLightSources(rayHandler, ServiceFactoryImpl.getTiledMapService()
+                    .getMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
         });
     }
 

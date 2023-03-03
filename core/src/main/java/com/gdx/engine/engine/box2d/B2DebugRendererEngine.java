@@ -4,46 +4,38 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.gdx.engine.service.Box2DWorldServiceImpl;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.ScreenServiceImpl;
+import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.EventType;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 
 public class B2DebugRendererEngine extends EntitySystem {
-    private static ScreenServiceImpl screenService;
-    private static Box2DWorldServiceImpl box2DService;
-    private static ConfigServiceImpl configService;
-
-    private Camera camera;
-    private World world;
-    private Box2DDebugRenderer renderer;
-
-    private boolean isRendering;
+    private final Box2DDebugRenderer renderer;
+    private final Camera camera;
+    private final World world;
 
     public B2DebugRendererEngine() {
-        screenService = ServiceFactoryImpl.getScreenService();
-        box2DService = ServiceFactoryImpl.getBox2DWorldService();
-        configService = ServiceFactoryImpl.getConfigService();
+        renderer = new Box2DDebugRenderer();
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
+        world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
 
-        setUp();
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
     }
 
-    private void setUp() {
-        camera = screenService.getCamera();
-        world = box2DService.getWorld();
-        renderer = new Box2DDebugRenderer();
-        isRendering = configService.getBox2DConfig().isBox2DDebugRendering();
+    private void update(ApplicationConfig config) {
+        this.setProcessing(config.getBox2DConfig().isBox2DDebugRendering());
+    }
 
-        if (configService.getBox2DConfig().isBox2DDebugRendering()) {
-            this.setProcessing(true);
-        }
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
+                update(e.getApplicationConfig()));
     }
 
     @Override
     public void update(float delta) {
-        if (isRendering) {
-            renderer.render(world, camera.combined);
-        }
+        renderer.render(world, camera.combined);
     }
 
 }

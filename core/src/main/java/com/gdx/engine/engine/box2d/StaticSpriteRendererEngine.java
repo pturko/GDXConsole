@@ -9,34 +9,35 @@ import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
 import com.gdx.engine.box2d.component.graphics.TextureComponent;
 import com.gdx.engine.box2d.component.physics.B2BodyComponent;
+import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.EventType;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.*;
 
 public class StaticSpriteRendererEngine extends IteratingSystem {
-    private static AssetServiceImpl assetService;
-    private static ScreenServiceImpl screenService;
-    private static Box2DWorldServiceImpl box2DService;
-    private static ConfigServiceImpl configService;
-
-    private Batch batch;
-    private Camera camera;
+    private final Batch batch;
+    private final Camera camera;
     private boolean isRendering;
 
     public StaticSpriteRendererEngine() {
         super(Family.all(SpriteComponent.class).get());
 
-        assetService = ServiceFactoryImpl.getAssetService();
-        screenService = ServiceFactoryImpl.getScreenService();
-        box2DService = ServiceFactoryImpl.getBox2DWorldService();
-        configService = ServiceFactoryImpl.getConfigService();
+        batch = ServiceFactoryImpl.getAssetService().getBatch();
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        setUp();
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
     }
 
-    private void setUp() {
-        batch = assetService.getBatch();
-        camera = screenService.getCamera();
+    private void update(ApplicationConfig config) {
+        isRendering = config.getBox2DConfig().isStaticSpriteRendering();
+    }
 
-        isRendering = configService.getBox2DConfig().isStaticSpriteRendering();
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            update(e.getApplicationConfig());
+        });
     }
 
     @Override

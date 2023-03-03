@@ -2,7 +2,10 @@ package com.gdx.engine.service;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.EventType;
 import com.gdx.engine.interfaces.service.AudioService;
+import com.gdx.engine.model.config.AudioConfig;
 import com.gdx.engine.state.AudioState;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,28 +13,40 @@ import java.util.HashMap;
 
 @Slf4j
 public class AudioServiceImpl implements AudioService {
-
     private static AudioServiceImpl audioServiceInstance;
     private static AssetServiceImpl assetService;
-    private static ConfigServiceImpl configService;
 
     private static Music currentMusic;
     private static Sound currentSound;
     private static HashMap<String, Music> queuedMusic;
     private static HashMap<String, Sound> queuedSound;
 
+    private boolean isMusic;
+    private boolean isSound;
+
     AudioServiceImpl() {
-        assetService = ServiceFactoryImpl.getAssetService();
-        configService = ServiceFactoryImpl.getConfigService();
         queuedMusic = new HashMap<>();
         queuedSound = new HashMap<>();
+        assetService = ServiceFactoryImpl.getAssetService();
+        setUp();
+
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            setUp();
+        });
     }
 
     public static AudioServiceImpl getInstance() {
-        if(audioServiceInstance == null) {
+        if (audioServiceInstance == null) {
             audioServiceInstance = new AudioServiceImpl();
         }
         return audioServiceInstance;
+    }
+
+    private void setUp() {
+        AudioConfig audioConfig = ServiceFactoryImpl.getConfigService().getAudioConfig();
+        isMusic = audioConfig.isMusic();
+        isSound = audioConfig.isSound();
     }
 
     public Music getCurrentMusic() {
@@ -107,7 +122,7 @@ public class AudioServiceImpl implements AudioService {
     }
 
     private void playMusic(String name, boolean isLooping) {
-        if (configService.getAudioConfig().isMusic()) {
+        if (isMusic) {
             Music music = assetService.getMusic(name);
             music.setLooping(isLooping);
             music.setVolume(10L);
@@ -118,7 +133,7 @@ public class AudioServiceImpl implements AudioService {
     }
 
     private void playSound(String name) {
-        if (configService.getAudioConfig().isSound()) {
+        if (isSound) {
             Sound sound = assetService.getSound(name);
             setCurrentSound(sound);
             setCurrentSound(sound);

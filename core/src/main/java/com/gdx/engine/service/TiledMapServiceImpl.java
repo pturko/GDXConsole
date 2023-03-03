@@ -118,6 +118,7 @@ public class TiledMapServiceImpl implements TiledMapService {
             IntStream.range(0, bodies.size).forEach(i ->
                     world.destroyBody(bodies.get(i)));
 
+            // Destroy entities
             engine.getEntities().forEach(e ->
                     engine.removeEntity(e));
 
@@ -128,6 +129,11 @@ public class TiledMapServiceImpl implements TiledMapService {
     @Override
     public TiledMap getMap() {
         return tiledMap;
+    }
+
+    @Override
+    public MapLayers getMapLayers() {
+        return mapLayers;
     }
 
     @Override

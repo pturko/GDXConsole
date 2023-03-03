@@ -9,28 +9,20 @@ import com.gdx.engine.service.*;
 import com.gdx.engine.util.CameraUtils;
 
 public class CameraEngine extends EntitySystem {
-    private static ScreenServiceImpl screenService;
-    private static ConfigServiceImpl configService;
-    private static EventServiceImpl eventService;
-
     private Camera camera;
     private TiledMapData tiledMapData;
     private boolean isRendering;
 
     public CameraEngine() {
-        screenService = ServiceFactoryImpl.getScreenService();
-        eventService = ServiceFactoryImpl.getEventService();
-        configService = ServiceFactoryImpl.getConfigService();
-
-        setUp();
+        update();
     }
 
-    private void setUp() {
-        camera = screenService.getCamera();
+    private void update() {
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
         tiledMapData = ServiceFactoryImpl.getTiledMapService().getMapData();
-        isRendering = configService.getBox2DConfig().isRendering();
+        isRendering = ServiceFactoryImpl.getConfigService().getBox2DConfig().isRendering();
 
-        eventService.addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) ->
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.MAP_DATA_CHANGED, (MapDataChangedEvent e) ->
                 this.tiledMapData = e.getTiledMapData());
     }
 

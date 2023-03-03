@@ -1,9 +1,9 @@
 {
   "textureAtlasName": "",
-  "textureName": "box",
+  "textureName": "torch",
   "type": "TORCH",
   "categoryBits": "",
-  "maskBits": "Ground, Box",
+  "maskBits": "",
   "mapEntityAnimation": {
     "frameDuration": 10,
     "firstFrameCount": 0,

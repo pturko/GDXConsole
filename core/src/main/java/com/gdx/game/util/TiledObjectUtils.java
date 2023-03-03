@@ -1,5 +1,6 @@
 package com.gdx.game.util;
 
+import box2dLight.ConeLight;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.ashley.core.PooledEngine;
@@ -19,9 +20,6 @@ import com.gdx.game.entity.animated.Torch;
 import com.gdx.game.entity.dynamic.BoxEntity;
 import com.gdx.engine.model.config.Box2DConfig;
 import com.gdx.engine.model.map.MapEntityData;
-import com.gdx.engine.service.AssetServiceImpl;
-import com.gdx.engine.service.ConfigServiceImpl;
-import com.gdx.engine.service.PooledEngineServiceImpl;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.gdx.engine.util.FileLoaderUtil;
 import com.gdx.game.map.CategoryBits;
@@ -33,40 +31,26 @@ import java.util.List;
 
 @Slf4j
 public class TiledObjectUtils {
-    private static ConfigServiceImpl configService;
-    private static AssetServiceImpl assetService;
-    private static PooledEngineServiceImpl pooledEngineService;
-
-    private static boolean GROUND_COLLISION = true;
-    private static boolean BOX_COLLISION = true;
+    private static PooledEngine engine;
+    private static final boolean GROUND_COLLISION = true;
     private static float ppm;
 
-    private static PooledEngine engine;
-
     private final static List<PointLight> pointLights = new ArrayList<>();
+    private final static List<ConeLight> coneLights = new ArrayList<>();
 
     public static void parseLayers(World world, MapLayers mapLayers) {
-        configService = ServiceFactoryImpl.getConfigService();
-        assetService = ServiceFactoryImpl.getAssetService();
-        pooledEngineService = ServiceFactoryImpl.getPooledEngineService();
-
         BodyBuilder bodyBuilder = new BodyBuilder(world);
 
-        Box2DConfig box2DConfig = configService.getBox2DConfig();
-        engine = pooledEngineService.getEngine();
+        Box2DConfig box2DConfig = ServiceFactoryImpl.getConfigService().getBox2DConfig();
+        engine = ServiceFactoryImpl.getPooledEngineService().getEngine();
         ppm = box2DConfig.getPpm();
-
-        if (!box2DConfig.isEnableContacts()) {
-            GROUND_COLLISION = false;
-            BOX_COLLISION = false;
-        }
 
         for (MapLayer layer : mapLayers) {
             MapObjects mapObjects = layer.getObjects();
             String name = layer.getName();
             boolean isVisible = layer.isVisible();
 
-            log.debug("Parsing layer: {}, [isVisible:{}, {}]", name, isVisible, mapObjects.getCount());
+            log.debug("Parsing layer: {}, [v: {}, c: {}]", name, isVisible, mapObjects.getCount());
             if (isVisible) {
                 String layerType = null; // = (String) layer.getProperties().get(MAP_PROPERTY_TYPE);
                 //if (layerType == null) {
@@ -86,16 +70,20 @@ public class TiledObjectUtils {
                         log.error("Layer '{}' not found", layerType);
                     }
 
-                    switch (mapType) {
-                        case GROUND:
-                            createStaticEntities(bodyBuilder, mapObjects, CategoryBits.GROUND, GROUND_COLLISION, 2);
-                            break;
-                        case BOX:
-                            createBoxStaticEntity("box", mapObjects, mapEntity);
-                            break;
-                        case TORCH:
-                            createTorchAnimationEntity("torch", mapObjects, mapEntity);
-                            break;
+                    if (mapType != null) {
+                        switch (mapType) {
+                            case GROUND:
+                                createStaticEntities(bodyBuilder, mapObjects, CategoryBits.GROUND, GROUND_COLLISION, 2);
+                                break;
+                            case BOX:
+                                createBoxStaticEntity(mapObjects, mapEntity);
+                                break;
+                            case TORCH:
+                                createTorchAnimationEntity(mapObjects, mapEntity);
+                                break;
+                        }
+                    } else {
+                        log.warn("Map layer '{}' not found!", layerType);
                     }
                 }
             } else {
@@ -106,7 +94,7 @@ public class TiledObjectUtils {
 
     private static void createStaticEntities(BodyBuilder bodyBuilder, MapObjects mapObjects,
                                               short categoryBits, boolean collision, float friction) {
-        log.debug("[rectangles: {}, polyLines: {}]",
+        log.debug("Processing: [r: {}, p: {}]",
                 mapObjects.getByType(RectangleMapObject.class).size,
                 mapObjects.getByType(PolylineMapObject.class).size
         );
@@ -145,11 +133,11 @@ public class TiledObjectUtils {
         }
     }
 
-    private static void createBoxStaticEntity(String textureName, MapObjects mapObjects, MapEntityData mapEntity) {
+    private static void createBoxStaticEntity(MapObjects mapObjects, MapEntityData mapEntity) {
         for (RectangleMapObject object : mapObjects.getByType(RectangleMapObject.class)) {
             Rectangle rect = object.getRectangle();
 
-            engine.addEntity(new BoxEntity(textureName, mapEntity,
+            engine.addEntity(new BoxEntity(mapEntity,
                         (rect.getX() + rect.getWidth() / 2) / ppm,
                         (rect.getY() + rect.getHeight() / 2) / ppm,
                         rect.getWidth(),
@@ -158,11 +146,11 @@ public class TiledObjectUtils {
         }
     }
 
-    private static void createTorchAnimationEntity(String textureName, MapObjects mapObjects, MapEntityData mapEntity) {
+    private static void createTorchAnimationEntity(MapObjects mapObjects, MapEntityData mapEntity) {
         for (RectangleMapObject object : mapObjects.getByType(RectangleMapObject.class)) {
             Rectangle rect = object.getRectangle();
 
-            engine.addEntity(new Torch(textureName, mapEntity,
+            engine.addEntity(new Torch(mapEntity,
                     (rect.getX() + rect.getWidth() / 2) / ppm,
                     (rect.getY() + rect.getHeight() / 2) / ppm,
                     rect.getWidth(),
@@ -172,21 +160,20 @@ public class TiledObjectUtils {
     }
 
     public static void createLightSources(RayHandler rayHandler, MapObjects mapObjects) {
-        int distance = configService.getBox2DConfig().getBox2DLightsConfig().getDistance();
+        Box2DConfig box2DConfig = ServiceFactoryImpl.getConfigService().getBox2DConfig();
+        int distance = box2DConfig.getBox2DLightsConfig().getLightDistance();
         for (RectangleMapObject o : mapObjects.getByType(RectangleMapObject.class)) {
             Rectangle rect = o.getRectangle();
             float x = rect.getX() + rect.getWidth() / 2;
             float y = rect.getY() + rect.getHeight() / 2;
-            PointLight pointLight = LightBuilder.createPointLight(rayHandler, Color.ORANGE, distance, x, y);
-            pointLights.add(pointLight);
+            pointLights.add(LightBuilder.createPointLight(rayHandler, Color.ORANGE, distance, x, y));
         }
-//        LightBuilder.createConeLight(rayHandler, Color.ORANGE, 200, x, y, -20, 30);
     }
 
     public static MapEntityData loadLayerConfig(String name) {
         MapEntityData mapEntity = null;
         try {
-            mapEntity = FileLoaderUtil.getMapEntity(assetService.getLayerConfigPath(name));
+            mapEntity = FileLoaderUtil.getMapEntity(ServiceFactoryImpl.getAssetService().getLayerConfigPath(name));
         } catch (Exception e) {
             log.error("Layer config file not found: {}", name + ".json");
         }
@@ -194,6 +181,8 @@ public class TiledObjectUtils {
     }
 
     public static void clearLights() {
+        pointLights.clear();
+        coneLights.clear();
     }
 
 }

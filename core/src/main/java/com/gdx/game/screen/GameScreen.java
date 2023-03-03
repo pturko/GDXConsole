@@ -19,7 +19,7 @@ public class GameScreen extends BaseScreen {
         engine.addSystem(new CameraEngine());                           // Bound camera
         engine.addSystem(new StaticSpriteRendererEngine());             // Renders non-animated sprites
         engine.addSystem(new AnimatedSpriteRendererEngine());           // Renders animated sprites
-        engine.addSystem(new B2LightsEngine());                         // Renders Dynamic box2d lights
+        engine.addSystem(new B2LightsEngine());                         // Renders Dynamic box2D lights
         engine.addSystem(new B2DebugRendererEngine());                  // Renders physics debug profiles
     }
 

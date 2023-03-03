@@ -2,7 +2,7 @@
   "cmd": [
     "ver",
     "profile",
-    "resources load",
+    "asset load",
     "screen game",
     "map load test"
   ]

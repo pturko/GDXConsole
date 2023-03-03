@@ -37,7 +37,7 @@ public class ConsoleMsgLog {
             case "ERROR":
                 return Color.RED;
             case "DEBUG":
-                return Color.CYAN;
+                return Color.LIME;
             default:
                 return Color.WHITE;
         }

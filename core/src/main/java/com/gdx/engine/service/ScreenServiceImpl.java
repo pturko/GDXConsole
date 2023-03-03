@@ -4,12 +4,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.IntMap;
 import com.gdx.GdxGame;
+import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.EventType;
 import com.gdx.engine.interfaces.service.ScreenService;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.model.config.CameraPositionConfig;
 import com.gdx.engine.model.config.CameraViewportConfig;
 import com.gdx.engine.model.config.ScreenConfig;
 import com.gdx.engine.screen.ScreenItems;
-
 import com.gdx.engine.screen.TransitionScreen;
 import com.gdx.engine.screen.effects.CoolOutTransitionEffect;
 import com.gdx.engine.screen.effects.FadeInTransitionEffect;
@@ -24,8 +26,6 @@ import java.util.List;
 
 @Slf4j
 public final class ScreenServiceImpl implements ScreenService {
-    private static ConfigServiceImpl configService;
-
     private static ScreenServiceImpl screenServiceInstance;
 
     private final IntMap<Screen> screens;
@@ -37,10 +37,18 @@ public final class ScreenServiceImpl implements ScreenService {
 
     private ScreenServiceImpl() {
         camera = new OrthographicCamera();
-        cameraSetup();
+        cameraSetup(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
         screens = new IntMap<>();
     }
- 
+
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            cameraSetup(e.getApplicationConfig());
+        });
+    }
+
     public static synchronized ScreenServiceImpl getInstance() {
         if (null == screenServiceInstance) {
             screenServiceInstance = new ScreenServiceImpl();
@@ -48,9 +56,8 @@ public final class ScreenServiceImpl implements ScreenService {
         return screenServiceInstance;
     }
 
-    public void cameraSetup() {
-        configService = ServiceFactoryImpl.getConfigService();
-        ScreenConfig screenConfig = configService.getScreenConfig();
+    private void cameraSetup(ApplicationConfig config) {
+        ScreenConfig screenConfig = config.getScreenConfig();
         CameraPositionConfig cameraPositionConfig = screenConfig.getCameraConfig().getCameraPositionConfig();
         CameraViewportConfig cameraViewportConfig = screenConfig.getCameraConfig().getCameraViewportConfig();
 

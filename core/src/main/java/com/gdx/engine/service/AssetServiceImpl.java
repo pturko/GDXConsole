@@ -32,11 +32,11 @@ import java.util.Map;
 public class AssetServiceImpl implements AssetService, Disposable {
     public static final boolean EXTERNAL_APPLICATION_CONFIG = false;
 
+    private static AssetServiceImpl assetServiceInstance;
+
     private static SpriteBatch batch;
     private static BitmapFont bitmapFont;
     private static AssetResources resources;
-
-    private static AssetServiceImpl assetServiceInstance;
 
     private static Map<String, TextureResource> textures;
     private static Map<String, TextureAtlasResource> textureAtlas;
@@ -49,7 +49,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
     private static final String ASSET = "asset/";
     private static final String CONFIG_FOLDER = "config/";
     private static final String CONFIG_CONSOLE_CMD = "consoleCmd/startup-";
-    private static final String CONFIG_LAYER_FOLDER = "layer/";
+    private static final String CONFIG_LAYER_FOLDER = "map/";
     private static final String CONFIG_RESOURCES = "resources/";
     private static final String FONT = "font/";
     private static final String IMAGE_PIXMAP = "image/pixmap/";
@@ -65,19 +65,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
     private static final String RESOURCE_FILE_EXT = ".json";
 
     private AssetServiceImpl() {
-        serviceReset();
-    }
-
-    public void serviceReset() {
-        batch = new SpriteBatch();
-        bitmapFont = new BitmapFont();
-        textures = new HashMap<>();
-        textureAtlas = new HashMap<>();
-        pixmaps = new HashMap<>();
-        skins = new HashMap<>();
-        fonts = new HashMap<>();
-        music = new HashMap<>();
-        sound = new HashMap<>();
+        setUp();
     }
 
     public static synchronized AssetServiceImpl getInstance( ) {
@@ -88,7 +76,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
 
     public void loadResources() {
         dispose();
-        serviceReset();
+        setUp();
         String fileResource = ASSET + CONFIG_FOLDER + CONFIG_RESOURCES + RESOURCE_FILE + RESOURCE_FILE_EXT;
         try {
             resources = FileLoaderUtil.getResources(fileResource);
@@ -203,8 +191,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
         if (textureAtlasOrSkinName.equals(StringUtils.EMPTY) && textures.get(name) != null) {
             return textures.get(name).getTexture();
         } else {
-
-            //Trying to find texture from textureAtlas
+            // Trying to find texture from textureAtlas
             if (textureAtlas.get(textureAtlasOrSkinName) != null) {
                 TextureAtlas txAtlas = textureAtlas.get(textureAtlasOrSkinName).getTextureAtlas();
                 if (txAtlas != null && txAtlas.findRegion(name) != null) {
@@ -212,7 +199,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
                 }
             }
 
-            //Trying to find texture from skin
+            // Trying to find texture from skin
             if (skins.get(textureAtlasOrSkinName) != null) {
                 Skin skin = skins.get(textureAtlasOrSkinName).getSkin();
                 TextureAtlas txAtlas = skin.getAtlas();
@@ -401,7 +388,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
                 ASSET + DEFAULT_AUDIO));
     }
 
-    public static String getConsoleCmdPathFile(String profileName) {
+    public String getConsoleCmdPathFile(String profileName) {
         return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + profileName + RESOURCE_FILE_EXT;
     }
 
@@ -424,33 +411,31 @@ public class AssetServiceImpl implements AssetService, Disposable {
         if (!textureData.isPrepared()) {
             textureData.prepare();
         }
-        Pixmap pixmap = new Pixmap(
-                textureRegion.getRegionWidth(),
-                textureRegion.getRegionHeight(),
+        Pixmap pixmap = new Pixmap(textureRegion.getRegionWidth(), textureRegion.getRegionHeight(),
                 textureData.getFormat()
         );
         pixmap.drawPixmap(
-                textureData.consumePixmap(), // The other Pixmap
-                0, // The target x-coordinate (top left corner)
-                0, // The target y-coordinate (top left corner)
-                textureRegion.getRegionX(), // The source x-coordinate (top left corner)
-                textureRegion.getRegionY(), // The source y-coordinate (top left corner)
-                textureRegion.getRegionWidth(), // The width of the area from the other Pixmap in pixels
-                textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
+                textureData.consumePixmap(), 0, 0, textureRegion.getRegionX(), textureRegion.getRegionY(),
+                textureRegion.getRegionWidth(), textureRegion.getRegionHeight()
         );
         return new Texture(pixmap);
     }
 
+    public void setUp() {
+        batch = new SpriteBatch();
+        bitmapFont = new BitmapFont();
+        textures = new HashMap<>();
+        textureAtlas = new HashMap<>();
+        pixmaps = new HashMap<>();
+        skins = new HashMap<>();
+        fonts = new HashMap<>();
+        music = new HashMap<>();
+        sound = new HashMap<>();
+    }
+
     @Override
     public void dispose() {
-        batch = null;
-        textures.clear();
-        textureAtlas.clear();
-        pixmaps.clear();
-        skins.clear();
-        fonts.clear();
-        music.clear();
-        sound.clear();
+        batch.dispose();
     }
 
 }

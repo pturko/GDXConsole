@@ -1,7 +1,6 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.engine.console.ConsoleGdxLogAppender;
@@ -30,9 +29,6 @@ public class ConsoleServiceImpl implements ConsoleService {
     private static ConsoleServiceImpl consoleServiceInstance;
     private static ConfigServiceImpl configService;
     private static AssetServiceImpl assetService;
-    private static ScreenServiceImpl screenService;
-    private static TiledMapServiceImpl tiledMapService;
-    private static EventServiceImpl eventService;
 
     public static synchronized ConsoleServiceImpl getInstance( ) {
         if (consoleServiceInstance == null)
@@ -44,10 +40,8 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void cmd(String cmd) {
-        screenService = ServiceFactoryImpl.getScreenService();
         configService = ServiceFactoryImpl.getConfigService();
         assetService = ServiceFactoryImpl.getAssetService();
-        eventService = ServiceFactoryImpl.getEventService();
 
         List<String> options = Arrays.stream(cmd.split(StringUtils.SPACE))
                 .map(String::trim)
@@ -59,15 +53,28 @@ public class ConsoleServiceImpl implements ConsoleService {
 
         Map<Integer, String> part = IntStream.range(0, options.size())
                 .boxed()
-                .collect(Collectors.toMap(Function.identity(), i -> options.get(i)));
+                .collect(Collectors.toMap(Function.identity(), options::get));
 
         switch (options.stream().findFirst().get().toUpperCase()) {
-            case "APP":
-                if (part.get(1).equalsIgnoreCase("reload")) {
+            case "ASSET":
+                if (part.get(1).equalsIgnoreCase("load")) {
+                    assetService.loadResources();
+                    log.info("Resources loaded");
                 }
+                if (part.get(1).equalsIgnoreCase("reload")) {
+                    assetService.loadResources();
+                    log.info("Resources loaded");
+                }
+                break;
+
+            case "APP":
                 if (part.get(1).equalsIgnoreCase("exit")) {
                     Gdx.app.exit();
                 }
+                break;
+
+            case "INFO":
+                log.info("{}", part.get(1));
                 break;
 
             case "VER":
@@ -75,19 +82,8 @@ public class ConsoleServiceImpl implements ConsoleService {
                 log.info("Version: {}", configService.getVersion());
                 break;
 
-            case "INFO":
-                log.info("{}", part.get(1));
-                break;
-
             case "SCREEN":
-                screenService.show(part.get(1).toUpperCase(), part.get(2));
-                break;
-
-            case "RESOURCES":
-                if (part.get(1).equalsIgnoreCase("load")) {
-                    assetService.loadResources();
-                    log.info("Resources loaded");
-                }
+                ServiceFactoryImpl.getScreenService().show(part.get(1).toUpperCase(), part.get(2));
                 break;
 
             case "CFG":
@@ -96,7 +92,6 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getConsoleConfig().setShowConsole(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getConsoleConfig().isShowConsole())
                         );
-                        resetActiveScreen();
                         log.info("display console: {}", configService.getConsoleConfig().isShowConsole());
                     }
                 }
@@ -105,7 +100,6 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getScreenConfig().getDebugConfig().setShowFPS(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowFPS())
                         );
-                        resetActiveScreen();
                         log.info("display fps: {}", configService.getScreenConfig().getDebugConfig().isShowFPS());
                     }
                 }
@@ -114,7 +108,6 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getTiledMapConfig().setRendering(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getTiledMapConfig().isRendering())
                         );
-                        resetActiveScreen();
                         log.info("map rendering: {}", configService.getTiledMapConfig().isRendering());
                     }
                 }
@@ -123,14 +116,12 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getBox2DConfig().setRendering(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isRendering())
                         );
-                        resetActiveScreen();
                         log.info("box2d rendering: {}", configService.getBox2DConfig().isRendering());
                     }
                     if (part.get(2).equalsIgnoreCase("sprite")) {
                         configService.getBox2DConfig().setStaticSpriteRendering(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isStaticSpriteRendering())
                         );
-                        resetActiveScreen();
                         log.info("box2d static sprite rendering: {}", configService.getBox2DConfig().isStaticSpriteRendering());
                     }
                 }
@@ -139,26 +130,22 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getAudioConfig().setMusic(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getAudioConfig().isMusic())
                         );
-                        resetActiveScreen();
                         log.info("music: {}", configService.getAudioConfig().isMusic());
                     }
                     if (part.get(2).equalsIgnoreCase("sound")) {
                         configService.getAudioConfig().setSound(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getAudioConfig().isSound())
                         );
-                        resetActiveScreen();
                         log.info("sound: {}", configService.getAudioConfig().isSound());
                     }
                 }
 
                 if (part.get(1).equalsIgnoreCase("update")) {
-                    configService.updateConfigs();
-                    resetActiveScreen();
+                    ServiceFactoryImpl.getConfigService().updateConfigs();
                 }
 
                 // Sending config changed events
-                eventService.sendEvent(new ConfigChangedEvent(configService.getApplicationConfig()));
-
+                ServiceFactoryImpl.getEventService().sendEvent(new ConfigChangedEvent(configService.getApplicationConfig()));
                 break;
 
             case "MUSIC":
@@ -201,16 +188,14 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "MAP":
                 if (part.get(1).equalsIgnoreCase("load")) {
-                    tiledMapService = ServiceFactoryImpl.getTiledMapService();
-                    tiledMapService.load(part.get(2));
+                    ServiceFactoryImpl.getTiledMapService().load(part.get(2));
                 }
                 if (part.get(1).equalsIgnoreCase("reload")) {
-                    tiledMapService = ServiceFactoryImpl.getTiledMapService();
-                    tiledMapService.load(tiledMapService.getMapName());
+                    TiledMapServiceImpl tiledMapService = ServiceFactoryImpl.getTiledMapService();
+                    ServiceFactoryImpl.getTiledMapService().load(tiledMapService.getMapName());
                 }
                 if (part.get(1).equalsIgnoreCase("clear")) {
-                    tiledMapService = ServiceFactoryImpl.getTiledMapService();
-                    tiledMapService.clear();
+                    ServiceFactoryImpl.getTiledMapService().clear();
                 }
                 break;
         }
@@ -221,10 +206,8 @@ public class ConsoleServiceImpl implements ConsoleService {
         assetService = ServiceFactoryImpl.getAssetService();
         if (configService.getConsoleConfig().isStartCommands()) {
             ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
-                    assetService.getConsoleCmdPathFile(configService.getProfileString()));
-            for (String cmdScr : consoleCmd.getCmd()) {
-                cmd(cmdScr);
-            }
+                    ServiceFactoryImpl.getAssetService().getConsoleCmdPathFile(configService.getProfileString()));
+            consoleCmd.getCmd().forEach(this::cmd);
         }
     }
 
@@ -246,12 +229,12 @@ public class ConsoleServiceImpl implements ConsoleService {
         }
     }
 
-    public void resetActiveScreen() {
-        Screen activeScreen = ServiceFactoryImpl.getScreenService().getActiveScreen();
-        if (activeScreen != null) {
-            activeScreen.resume();
-        }
-    }
+//    public void resetActiveScreen() {
+//        Screen activeScreen = ServiceFactoryImpl.getScreenService().getActiveScreen();
+//        if (activeScreen != null) {
+//            activeScreen.resume();
+//        }
+//    }
 
     public void dispose() {}
 

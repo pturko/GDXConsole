@@ -15,13 +15,14 @@ public class Torch extends Entity {
     private static float itemHeight;
     private static float ppm;
 
-    public Torch(String textureName, MapEntityData mapEntity, float x, float y, float width, float height) {
+    public Torch(MapEntityData mapEntity, float x, float y, float width, float height) {
         ppm = ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm();
 
         itemWidth = width;
         itemHeight = height;
 
-        Texture texture = ServiceFactoryImpl.getAssetService().getTexture(textureName);
+        Texture texture = ServiceFactoryImpl.getAssetService().getTexture(
+                mapEntity.getTextureAtlasName(), mapEntity.getTextureName());
 
         MapEntityAnimation mapEntityAnimation = mapEntity.getMapEntityAnimation();
         AnimationComponent<TextureRegion> animation = AnimationUtils.createAnimation(texture,

@@ -6,6 +6,6 @@ import lombok.Data;
 public class Box2DLightsConfig {
     private boolean rendering;
     private float ambientLight;
-    private int numberOfRays;
-    private int distance;
+    private int lightNumberOfRays;
+    private int lightDistance;
 }

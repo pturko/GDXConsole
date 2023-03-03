@@ -13,35 +13,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
-import com.gdx.engine.model.config.Box2DConfig;
+import com.gdx.engine.model.config.*;
 import com.gdx.game.map.WorldContactListener;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ConsoleConfig;
-import com.gdx.engine.model.config.DebugConfig;
-import com.gdx.engine.model.config.ScreenConfig;
 import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+
 @Slf4j
 public class BaseScreen implements Screen {
-    protected static AssetServiceImpl assetService;
-    protected static ConfigServiceImpl configService;
-    protected static ScreenServiceImpl screenService;
     protected static ConsoleServiceImpl consoleService;
-    protected static EventServiceImpl eventService;
-    protected static Box2DWorldServiceImpl box2DService;
-    protected static PooledEngineServiceImpl pooledEngineService;
-
-    protected static ConsoleConfig consoleConfig;
-    protected static ScreenConfig screenConfig;
-    protected static DebugConfig debugConfig;
-    protected static Box2DConfig box2DConfig;
 
     protected GdxGame gdxGame;
-
-    protected Stage stage;
+    protected Stage stage = new Stage();
     protected PooledEngine engine;
     protected World world;
     protected float screenHeight;
@@ -52,14 +38,23 @@ public class BaseScreen implements Screen {
 
     protected InputMultiplexer multiplexer;
 
+    private final String FONT_NAME = "sans_serif";
+    private final String SKIN_NAME = "uiskin";
+    private final String CONSOLE_BG = "console";
+
+    private boolean isShowConsole;
+    private boolean isShowFPS;
+    private boolean isShowHeap;
+
     // Console
-    private String lastCmd;
+    private String lastCmd = StringUtils.EMPTY;
     private Skin componentSkin;
     private Drawable consoleBg;
     private TextField cmdTextField;
     private BitmapFont consoleFont;
     private BitmapFont debugFont;
 
+    //FPS counter
     private int frameCount;
     private long lastRender;
     private static int lastFPS;
@@ -68,14 +63,7 @@ public class BaseScreen implements Screen {
     public BaseScreen(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
 
-        configService = ServiceFactoryImpl.getConfigService();
-        assetService = ServiceFactoryImpl.getAssetService();
-        consoleService = ServiceFactoryImpl.getConsoleService();
-        screenService = ServiceFactoryImpl.getScreenService();
-        eventService = ServiceFactoryImpl.getEventService();
-        box2DService = ServiceFactoryImpl.getBox2DWorldService();
-        pooledEngineService = ServiceFactoryImpl.getPooledEngineService();
-
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
         createResources();
         cameraSetup();
         createConsole();
@@ -84,54 +72,52 @@ public class BaseScreen implements Screen {
     }
 
     private void createResources() {
-        stage = new Stage();
-        lastCmd = StringUtils.EMPTY;
+        consoleService = ServiceFactoryImpl.getConsoleService();
 
-        spriteBatch = assetService.getBatch();
-        debugFont = assetService.getFont("sans_serif");
-        consoleConfig = configService.getConsoleConfig();
-        screenConfig = configService.getScreenConfig();
-        box2DConfig = configService.getBox2DConfig();
-        debugConfig = configService.getScreenConfig().getDebugConfig();
-        screenService.setBaseScreen(this);
+        spriteBatch = ServiceFactoryImpl.getAssetService().getBatch();
+        debugFont = ServiceFactoryImpl.getAssetService().getFont(FONT_NAME);
+        
+        ServiceFactoryImpl.getScreenService().setBaseScreen(this);
+    }
+
+    public void cameraSetup() {
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
+    }
+
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            update(e.getApplicationConfig());
+        });
+    }
+
+    private void update(ApplicationConfig config) {
+        ScreenConfig screenConfig = config.getScreenConfig();
+        float ppm = config.getBox2DConfig().getPpm();
 
         screenWidth = screenConfig.getWidth();
         screenHeight = screenConfig.getHeight();
         projectionMatrix = new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
         // Initialize pooled engine
-        engine = pooledEngineService.getEngine();
+        engine = ServiceFactoryImpl.getPooledEngineService().getEngine();
 
         // Initialize box2D world and contact listener
-        world = box2DService.getWorld();
+        world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
         world.setContactListener(new WorldContactListener(engine));
 
         // Should scale the viewport with PPM
-        stage.getViewport().setWorldSize(screenConfig.getWidth()/box2DConfig.getPpm(),
-                screenConfig.getHeight()/box2DConfig.getPpm());
-    }
+        stage.getViewport().setWorldSize(screenConfig.getWidth()/ppm,
+                screenConfig.getHeight()/ppm);
 
-    public void cameraSetup() {
-        camera = screenService.getCamera();
-    }
-
-    private void configureListeners() {
-        // Reload application config
-        eventService.addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            consoleConfig = e.getApplicationConfig().getConsoleConfig();
-            screenService.cameraSetup();
-
-            screenConfig = configService.getScreenConfig();
-            screenWidth = screenConfig.getWidth();
-            screenHeight = screenConfig.getHeight();
-
-            stage.getViewport().setWorldSize(screenConfig.getWidth()/box2DConfig.getPpm(),
-                    screenConfig.getHeight()/box2DConfig.getPpm());
-        });
+        isShowConsole = config.getConsoleConfig().isShowConsole();
+        isShowFPS = config.getScreenConfig().getDebugConfig().isShowFPS();
+        isShowHeap = config.getScreenConfig().getDebugConfig().isShowHeap();
     }
 
     private void createConsole() {
-        componentSkin = assetService.getSkin("uiskin");
+        AssetServiceImpl assetService = ServiceFactoryImpl.getAssetService();
+        componentSkin = assetService.getSkin(SKIN_NAME);
 
         cmdTextField = new TextField(StringUtils.EMPTY, componentSkin);
         cmdTextField.setPosition(7, 10);
@@ -139,7 +125,8 @@ public class BaseScreen implements Screen {
         stage.addActor(cmdTextField);
 
         consoleFont = assetService.getDefaultFont();
-        consoleBg = assetService.getDrawable("console");
+        consoleBg = assetService.getDrawable(CONSOLE_BG);
+        stage.setKeyboardFocus(cmdTextField);
     }
 
     private void createInputProcessor() {
@@ -159,7 +146,8 @@ public class BaseScreen implements Screen {
     }
 
     public void update() {
-        //---------- Drawing console and debug information ----------------------------
+        // Drawing console and debug information
+        drawingConsole();
         drawingDebug();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
@@ -199,21 +187,12 @@ public class BaseScreen implements Screen {
         }
     }
 
-    public void drawingDebug() {
-        spriteBatch.setProjectionMatrix(projectionMatrix);
-        spriteBatch.begin();
-
-        drawingConsole();
-        drawingFPS();
-        drawingHeap();
-
-        spriteBatch.end();
-
-        camera.update();
-    }
-
     void drawingConsole() {
-        if (consoleConfig.isShowConsole()) {
+        // Drawing console
+        if (isShowConsole) {
+            spriteBatch.setProjectionMatrix(projectionMatrix);
+            spriteBatch.begin();
+
             spriteBatch.setColor(50, 50, 50, 0.5f);
             consoleBg.draw(spriteBatch,5,5,400,480);
             consoleService.draw(spriteBatch, consoleFont);
@@ -222,12 +201,25 @@ public class BaseScreen implements Screen {
 
             stage.draw();
             stage.act(Gdx.graphics.getDeltaTime());
+
+            spriteBatch.end();
         }
     }
 
+    public void drawingDebug() {
+        spriteBatch.setProjectionMatrix(projectionMatrix);
+        spriteBatch.begin();
+
+        drawingFPS();
+        drawingHeap();
+        debugFont.draw(spriteBatch, "F1-F8 service keys", 630, 20);
+
+        spriteBatch.end();
+    }
+
     void drawingFPS() {
-        //---------- Drawing FPS ----------------------------
-        if (debugConfig.isShowFPS()) {
+        // Drawing FPS information
+        if (isShowFPS) {
             frameCount++;
             long now = System.nanoTime();
             if ((now - lastRender) >= FPSUpdateInterval * 1000000000) {
@@ -240,9 +232,9 @@ public class BaseScreen implements Screen {
     }
 
     void drawingHeap() {
-        //---------- Drawing Heap ----------------------------
-        if (debugConfig.isShowHeap()) {
-            debugFont.draw(spriteBatch, "heap:" + Gdx.app.getJavaHeap(), 0, screenHeight-10);
+        // Drawing Heap information
+        if (isShowHeap) {
+            debugFont.draw(spriteBatch, "heap:" + Gdx.app.getJavaHeap(), (screenWidth/2)-70, screenHeight-30);
         }
     }
 

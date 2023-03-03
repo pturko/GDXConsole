@@ -2,7 +2,6 @@ package com.gdx.engine.engine.box2d;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,15 +9,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.box2d.component.Mappers;
 import com.gdx.engine.box2d.component.graphics.AnimationComponent;
 import com.gdx.engine.box2d.component.graphics.SpriteComponent;
+import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.EventType;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.*;
 
 public class AnimatedSpriteRendererEngine extends IteratingSystem {
-    private final AssetServiceImpl assetService;
-    private final ScreenServiceImpl screenService;
-    private final PooledEngineServiceImpl pooledEngineService;
-    private static ConfigServiceImpl configService;
-
-    private PooledEngine engine;
     private Batch batch;
     private Camera camera;
     private boolean isRendering;
@@ -26,20 +22,22 @@ public class AnimatedSpriteRendererEngine extends IteratingSystem {
     public AnimatedSpriteRendererEngine() {
         super(Family.all(AnimationComponent.class).get());
 
-        screenService = ServiceFactoryImpl.getScreenService();
-        assetService = ServiceFactoryImpl.getAssetService();
-        pooledEngineService = ServiceFactoryImpl.getPooledEngineService();
-        configService = ServiceFactoryImpl.getConfigService();
-
-        setUp();
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
     }
 
-    private void setUp() {
-        engine = pooledEngineService.getEngine();
-        batch = assetService.getBatch();
-        camera = screenService.getCamera();
+    private void update(ApplicationConfig config) {
+        batch = ServiceFactoryImpl.getAssetService().getBatch();
+        camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        isRendering = configService.getBox2DConfig().isAnimatedSpriteRendering();
+        isRendering = config.getBox2DConfig().isStaticSpriteRendering();
+    }
+
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
+            update(e.getApplicationConfig());
+        });
     }
 
     @Override

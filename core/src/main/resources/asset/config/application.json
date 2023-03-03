@@ -10,8 +10,8 @@
     "height": 600,
     "fullScreen": false,
     "debugConfig": {
-      "showFPS": false,
-      "showHeap": false
+      "showFPS": true,
+      "showHeap": true
     },
     "cameraConfig": {
       "rendering": true,
@@ -31,7 +31,7 @@
     "showOnError": true,
     "showOnWarn": true,
     "startCommands": true,
-    "logLevel": "WARN"
+    "logLevel": "INFO"
   },
   "audioConfig": {
     "music": false,
@@ -41,7 +41,7 @@
     "rendering": true,
     "enableContacts": true,
     "box2DDebugRendering": true,
-    "staticSpriteRendering": false,
+    "staticSpriteRendering": true,
     "animatedSpriteRendering": true,
     "doSleep": true,
     "ppm": 100,
@@ -57,8 +57,8 @@
     "box2DLightsConfig": {
       "rendering": true,
       "ambientLight": 0.7,
-      "numberOfRays": 50,
-      "distance": 90
+      "lightNumberOfRays": 50,
+      "lightDistance": 90
     }
   },
   "tiledMapConfig": {

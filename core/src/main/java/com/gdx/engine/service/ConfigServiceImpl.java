@@ -9,13 +9,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
+import static com.gdx.engine.service.AssetServiceImpl.EXTERNAL_APPLICATION_CONFIG;
+
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
     private static ConfigServiceImpl configServiceInstance;
     private static ApplicationConfig applicationConfig;
     private static EventServiceImpl eventService;
 
-    private final String CONFIG_FILE= "asset/config/application.json"; //TODO - fix hardcode filename
+    //TODO - fix hardcoded filename
+    private final String CONFIG_FILE= "asset/config/application.json";
 
     private static String version;
     private static Profile profile;
@@ -42,7 +45,10 @@ public class ConfigServiceImpl implements ConfigService {
         try {
             applicationConfig = FileLoaderUtil.getApplicationConfig(CONFIG_FILE);
             update(applicationConfig);
-//            log.info("Config reloaded! (should be load external)");
+            log.info("Config reloaded!");
+            if (!EXTERNAL_APPLICATION_CONFIG) {
+                log.warn("EXTERNAL_APPLICATION_CONFIG should be TRUE");
+            }
 
             // Sending config changed events
             eventService.sendEvent(new ConfigChangedEvent(applicationConfig));
@@ -111,14 +117,14 @@ public class ConfigServiceImpl implements ConfigService {
         Profile profileState = Profile.DEFAULT;
 
         if (null == profile || profile.equals(StringUtils.EMPTY)) {
-            log.error("Profile couldn't be empty. Setting to DEFAULT");
+            log.warn("Profile couldn't be empty! Set to DEFAULT");
             return profileState;
         }
 
         try {
             profileState = Profile.valueOf(profile.toUpperCase());
         } catch (Exception e) {
-            log.error("Profile {} couldn't found. Setting to DEFAULT", profile.toUpperCase());
+            log.warn("Profile '{}' couldn't found! Set to DEFAULT", profile.toUpperCase());
         }
 
         return profileState;
