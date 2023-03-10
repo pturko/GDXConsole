@@ -4,16 +4,17 @@ import com.gdx.GdxGame;
 import com.gdx.engine.engine.box2d.*;
 import com.gdx.engine.engine.camera.CameraEngine;
 import com.gdx.engine.engine.tlledmap.TiledMapEngine;
+import com.gdx.engine.engine.console.ConsoleEngine;
 
 public class GameScreen extends BaseScreen {
 
     public GameScreen(GdxGame gdxGame) {
         super(gdxGame);
 
-        loadResources();
+        loadEngines();
     }
 
-    private void loadResources() {
+    private void loadEngines() {
         engine.addSystem(new B2DPhysicsEngine());                       // Physics engine
         engine.addSystem(new TiledMapEngine());                         // Renders TiledMap textures
         engine.addSystem(new CameraEngine());                           // Bound camera
@@ -21,6 +22,8 @@ public class GameScreen extends BaseScreen {
         engine.addSystem(new AnimatedSpriteRendererEngine());           // Renders animated sprites
         engine.addSystem(new B2LightsEngine());                         // Renders Dynamic box2D lights
         engine.addSystem(new B2DebugRendererEngine());                  // Renders physics debug profiles
+
+        engine.addSystem(new ConsoleEngine());                          // Console engine
     }
 
     @Override

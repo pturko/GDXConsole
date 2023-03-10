@@ -8,7 +8,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setWindowedMode(800, 600);
-
+		config.setTitle("GDXConsole application");
 		new Lwjgl3Application(new GdxGame(), config);
 	}
 }

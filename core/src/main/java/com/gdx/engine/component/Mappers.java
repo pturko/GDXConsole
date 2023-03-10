@@ -1,10 +1,10 @@
-package com.gdx.engine.box2d.component;
+package com.gdx.engine.component;
 
 import com.badlogic.ashley.core.ComponentMapper;
-import com.gdx.engine.box2d.component.graphics.AnimationComponent;
-import com.gdx.engine.box2d.component.graphics.SpriteComponent;
-import com.gdx.engine.box2d.component.graphics.TextureComponent;
-import com.gdx.engine.box2d.component.physics.B2BodyComponent;
+import com.gdx.engine.component.graphics.AnimationComponent;
+import com.gdx.engine.component.graphics.SpriteComponent;
+import com.gdx.engine.component.graphics.TextureComponent;
+import com.gdx.engine.component.physics.B2BodyComponent;
 
 public class Mappers {
 

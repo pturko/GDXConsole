@@ -6,12 +6,12 @@
     "autoLoad": false
   },
   "screenConfig": {
-    "width": 800,
-    "height": 600,
+    "width": 1024,
+    "height": 768,
     "fullScreen": false,
     "debugConfig": {
       "showFPS": true,
-      "showHeap": true
+      "showHeap": false
     },
     "cameraConfig": {
       "rendering": true,

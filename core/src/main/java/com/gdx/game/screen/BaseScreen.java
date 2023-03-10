@@ -9,9 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.gdx.GdxGame;
 import com.gdx.engine.model.config.*;
 import com.gdx.game.map.WorldContactListener;
@@ -19,7 +16,6 @@ import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 
 @Slf4j
@@ -39,19 +35,10 @@ public class BaseScreen implements Screen {
     protected InputMultiplexer multiplexer;
 
     private final String FONT_NAME = "sans_serif";
-    private final String SKIN_NAME = "uiskin";
-    private final String CONSOLE_BG = "console";
 
-    private boolean isShowConsole;
     private boolean isShowFPS;
     private boolean isShowHeap;
 
-    // Console
-    private String lastCmd = StringUtils.EMPTY;
-    private Skin componentSkin;
-    private Drawable consoleBg;
-    private TextField cmdTextField;
-    private BitmapFont consoleFont;
     private BitmapFont debugFont;
 
     //FPS counter
@@ -66,7 +53,6 @@ public class BaseScreen implements Screen {
         update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
         createResources();
         cameraSetup();
-        createConsole();
         configureListeners();
         createInputProcessor();
     }
@@ -110,23 +96,8 @@ public class BaseScreen implements Screen {
         stage.getViewport().setWorldSize(screenConfig.getWidth()/ppm,
                 screenConfig.getHeight()/ppm);
 
-        isShowConsole = config.getConsoleConfig().isShowConsole();
         isShowFPS = config.getScreenConfig().getDebugConfig().isShowFPS();
         isShowHeap = config.getScreenConfig().getDebugConfig().isShowHeap();
-    }
-
-    private void createConsole() {
-        AssetServiceImpl assetService = ServiceFactoryImpl.getAssetService();
-        componentSkin = assetService.getSkin(SKIN_NAME);
-
-        cmdTextField = new TextField(StringUtils.EMPTY, componentSkin);
-        cmdTextField.setPosition(7, 10);
-        cmdTextField.setSize(396, 24);
-        stage.addActor(cmdTextField);
-
-        consoleFont = assetService.getDefaultFont();
-        consoleBg = assetService.getDrawable(CONSOLE_BG);
-        stage.setKeyboardFocus(cmdTextField);
     }
 
     private void createInputProcessor() {
@@ -146,16 +117,13 @@ public class BaseScreen implements Screen {
     }
 
     public void update() {
-        // Drawing console and debug information
-        drawingConsole();
         drawingDebug();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             consoleService.cmd("cfg window showFPS");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
-            consoleService.cmd("cfg console show");
-            stage.setKeyboardFocus(cmdTextField);
+            ServiceFactoryImpl.getConsoleService().cmd("cfg console show");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             consoleService.cmd("cfg map rendering");
@@ -175,34 +143,6 @@ public class BaseScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
             consoleService.cmd("map load test2");
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            lastCmd = cmdTextField.getText();
-            consoleService.cmd(lastCmd);
-            cmdTextField.setText(StringUtils.EMPTY);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            cmdTextField.setText(lastCmd);
-        }
-    }
-
-    void drawingConsole() {
-        // Drawing console
-        if (isShowConsole) {
-            spriteBatch.setProjectionMatrix(projectionMatrix);
-            spriteBatch.begin();
-
-            spriteBatch.setColor(50, 50, 50, 0.5f);
-            consoleBg.draw(spriteBatch,5,5,400,480);
-            consoleService.draw(spriteBatch, consoleFont);
-
-            spriteBatch.setColor(200, 200, 200, 1f);
-
-            stage.draw();
-            stage.act(Gdx.graphics.getDeltaTime());
-
-            spriteBatch.end();
         }
     }
 

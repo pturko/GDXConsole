@@ -37,4 +37,8 @@ public class ServiceFactoryImpl {
     public static TiledMapServiceImpl getTiledMapService() {
         return TiledMapServiceImpl.getInstance();
     }
+
+    public static UIServiceImpl getUIService() {
+        return UIServiceImpl.getInstance();
+    }
 }

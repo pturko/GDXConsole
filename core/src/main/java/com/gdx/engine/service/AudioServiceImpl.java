@@ -5,7 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.interfaces.service.AudioService;
-import com.gdx.engine.model.config.AudioConfig;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.state.AudioState;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,12 +28,9 @@ public class AudioServiceImpl implements AudioService {
         queuedMusic = new HashMap<>();
         queuedSound = new HashMap<>();
         assetService = ServiceFactoryImpl.getAssetService();
-        setUp();
 
-        // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            setUp();
-        });
+        audioSetUp(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        configureListeners();
     }
 
     public static AudioServiceImpl getInstance() {
@@ -43,10 +40,15 @@ public class AudioServiceImpl implements AudioService {
         return audioServiceInstance;
     }
 
-    private void setUp() {
-        AudioConfig audioConfig = ServiceFactoryImpl.getConfigService().getAudioConfig();
-        isMusic = audioConfig.isMusic();
-        isSound = audioConfig.isSound();
+    private void audioSetUp(ApplicationConfig config) {
+        isMusic = config.getAudioConfig().isMusic();
+        isSound = config.getAudioConfig().isSound();
+    }
+
+    private void configureListeners() {
+        // Event reload application config
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
+                audioSetUp(e.getApplicationConfig()));
     }
 
     public Music getCurrentMusic() {

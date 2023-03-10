@@ -9,6 +9,7 @@ val commonsLang3Version by extra {"3.12.0"}
 val lombokVersion by extra {"1.18.26"}
 val ashleyVersion by extra {"1.7.4"}
 val box2DLightsVersion by extra {"1.5"}
+val visUIVersion by extra {"1.5.1"}
 
 plugins {
     java
@@ -51,6 +52,7 @@ project(":desktop") {
         implementation("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop")
         implementation("com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop")
         implementation("com.badlogicgames.ashley:ashley:$ashleyVersion")
+        implementation("com.kotcrab.vis:vis-ui:$visUIVersion:sources")
     }
 }
 
@@ -71,6 +73,7 @@ project(":core") {
         implementation("com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion")
         implementation("com.badlogicgames.ashley:ashley:$ashleyVersion")
         implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
+        implementation("com.kotcrab.vis:vis-ui:$visUIVersion")
         compileOnly("org.projectlombok:lombok:$lombokVersion")
         annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     }

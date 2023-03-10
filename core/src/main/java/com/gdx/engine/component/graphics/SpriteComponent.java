@@ -1,4 +1,4 @@
-package com.gdx.engine.box2d.component.graphics;
+package com.gdx.engine.component.graphics;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.graphics.Texture;

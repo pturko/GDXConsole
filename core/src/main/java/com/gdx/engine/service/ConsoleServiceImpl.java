@@ -1,14 +1,13 @@
 package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.gdx.engine.console.ConsoleGdxLogAppender;
 import com.gdx.engine.console.ConsoleMsgLog;
 import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.ConsoleEnabledEvent;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
 import com.gdx.engine.state.AudioState;
+import com.gdx.engine.screen.window.ConsoleWindow;
 import com.gdx.engine.util.FileLoaderUtil;
 import com.gdx.engine.util.OperationUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,22 +20,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.gdx.engine.console.ConsoleGdxLogAppender.CONSOLE_MAX_MESSAGES;
-
-
 @Slf4j
 public class ConsoleServiceImpl implements ConsoleService {
     private static ConsoleServiceImpl consoleServiceInstance;
     private static ConfigServiceImpl configService;
     private static AssetServiceImpl assetService;
 
+    public ConsoleServiceImpl() {}
+
     public static synchronized ConsoleServiceImpl getInstance( ) {
         if (consoleServiceInstance == null)
             consoleServiceInstance = new ConsoleServiceImpl();
         return consoleServiceInstance;
-    }
-
-    public ConsoleServiceImpl() {
     }
 
     public void cmd(String cmd) {
@@ -92,6 +87,10 @@ public class ConsoleServiceImpl implements ConsoleService {
                         configService.getConsoleConfig().setShowConsole(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getConsoleConfig().isShowConsole())
                         );
+                        // Send console enabled event
+                        if (configService.getConsoleConfig().isShowConsole()) {
+                            ServiceFactoryImpl.getEventService().sendEvent(new ConsoleEnabledEvent());
+                        }
                         log.info("display console: {}", configService.getConsoleConfig().isShowConsole());
                     }
                 }
@@ -198,7 +197,19 @@ public class ConsoleServiceImpl implements ConsoleService {
                     ServiceFactoryImpl.getTiledMapService().clear();
                 }
                 break;
+
+            case "UI":
+                if (part.get(1).equalsIgnoreCase("load")) {
+                    ServiceFactoryImpl.getUIService().load(part.get(2));
+                    log.info("UI loaded");
+                }
+                break;
         }
+    }
+
+    @Override
+    public void addMessage(ConsoleMsgLog message) {
+        ConsoleWindow.addMessage(message);
     }
 
     public void runCommands() {
@@ -210,31 +221,6 @@ public class ConsoleServiceImpl implements ConsoleService {
             consoleCmd.getCmd().forEach(this::cmd);
         }
     }
-
-    public void draw(SpriteBatch batch, BitmapFont font) {
-        // TODO - split message if too long
-        int i = 1;
-        List<ConsoleMsgLog> commandList = ConsoleGdxLogAppender.getCommandList();
-        int maxCmdSize = (commandList.size() - 1) - CONSOLE_MAX_MESSAGES;
-        if (maxCmdSize < 0) {
-            maxCmdSize = 0;
-        }
-        for (int j = commandList.size() - 1; j >= maxCmdSize; j--) {
-            ConsoleMsgLog cmd = commandList.get(j);
-            font.setColor(cmd.getColor());
-            font.draw(batch, cmd.getDate()
-                    + " [" + cmd.getLogLevel() + "] " +
-                    cmd.getMessage(), 8, 30 + (i * 17));
-            i++;
-        }
-    }
-
-//    public void resetActiveScreen() {
-//        Screen activeScreen = ServiceFactoryImpl.getScreenService().getActiveScreen();
-//        if (activeScreen != null) {
-//            activeScreen.resume();
-//        }
-//    }
 
     public void dispose() {}
 

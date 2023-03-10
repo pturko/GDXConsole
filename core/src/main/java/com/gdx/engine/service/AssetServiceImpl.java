@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.SerializationException;
+import com.gdx.engine.event.AssetChangedEvent;
 import com.gdx.engine.interfaces.service.AssetService;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.asset.*;
@@ -176,6 +177,8 @@ public class AssetServiceImpl implements AssetService, Disposable {
                 log.error("File '{}' not found!", fileName);
             }
         }
+
+        ServiceFactoryImpl.getEventService().sendEvent(new AssetChangedEvent());
     }
 
     public Texture getTexture(String name) {
@@ -317,7 +320,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
             return skins.get(skinName).getSkin();
         } else {
             log.warn("Skin '{}' not found!", skinName);
-            return new Skin();
+            return null;
         }
     }
 
@@ -394,6 +397,10 @@ public class AssetServiceImpl implements AssetService, Disposable {
 
     public String getLayerConfigPath(String name) {
         return ASSET + CONFIG_FOLDER + CONFIG_LAYER_FOLDER + name + RESOURCE_FILE_EXT;
+    }
+
+    public String getSkinPath(String name) {
+        return ASSET + IMAGE_SKIN + name + RESOURCE_FILE_EXT;
     }
 
     public static BitmapFont getFont(String name) {

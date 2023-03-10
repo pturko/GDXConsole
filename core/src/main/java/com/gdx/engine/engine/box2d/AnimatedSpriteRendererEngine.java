@@ -6,9 +6,9 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.gdx.engine.box2d.component.Mappers;
-import com.gdx.engine.box2d.component.graphics.AnimationComponent;
-import com.gdx.engine.box2d.component.graphics.SpriteComponent;
+import com.gdx.engine.component.Mappers;
+import com.gdx.engine.component.graphics.AnimationComponent;
+import com.gdx.engine.component.graphics.SpriteComponent;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
@@ -35,9 +35,8 @@ public class AnimatedSpriteRendererEngine extends IteratingSystem {
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            update(e.getApplicationConfig());
-        });
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
+                update(e.getApplicationConfig()));
     }
 
     @Override

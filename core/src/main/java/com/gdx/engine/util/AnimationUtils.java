@@ -3,11 +3,11 @@ package com.gdx.engine.util;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import com.gdx.engine.box2d.component.graphics.AnimationComponent;
+import com.gdx.engine.component.graphics.AnimationComponent;
 
 public class AnimationUtils {
 
-    private static Array<TextureRegion> frames = new Array<>();
+    private static final Array<TextureRegion> frames = new Array<>();
 
     private AnimationUtils() {
     }

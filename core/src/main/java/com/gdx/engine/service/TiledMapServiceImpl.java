@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
-import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;
 import com.gdx.game.util.TiledObjectUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -83,9 +82,8 @@ public class TiledMapServiceImpl implements TiledMapService {
         tiledMapData.setHasLayers(hasLayers);
         tiledMapData.setPpm(ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm());
 
-        // Send map events
+        // Send map event
         ServiceFactoryImpl.getEventService().sendEvent(new MapChangedEvent(tiledMap));
-        ServiceFactoryImpl.getEventService().sendEvent(new MapDataChangedEvent(tiledMapData));
 
         log.info("Tiled map '{}' loaded", mapName);
     }

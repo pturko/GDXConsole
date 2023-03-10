@@ -29,9 +29,8 @@ public class B2DPhysicsEngine extends EntitySystem {
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            b2DSetUp(e.getApplicationConfig());
-        });
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
+                b2DSetUp(e.getApplicationConfig()));
     }
 
     @Override

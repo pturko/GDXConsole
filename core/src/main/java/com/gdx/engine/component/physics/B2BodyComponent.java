@@ -1,4 +1,4 @@
-package com.gdx.engine.box2d.component.physics;
+package com.gdx.engine.component.physics;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.physics.box2d.Body;

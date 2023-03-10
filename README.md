@@ -27,9 +27,11 @@
 - INFO - send log message
 - SCREEN <name> <effect> - set screen
   Effects: fade, fadein, circle
-- RESOURCES
+- ASSET
   - load - load resources from resources\resources.json
+  - reset - asset reload
 - CFG - config management
+  - UPDATE - update application config
   - CONSOLE
     - show - show/hide console (F2 key)
   - WINDOW
@@ -55,6 +57,8 @@
 - MAP
   - load <mapName> - loading tiled map
   - reload - reload active tiled map
+  - clear - clear map
 - CMD <profileName> - run commands from config/startup-<profileName>.json
 - PROFILE - show active profile
-- EXIT - exit program
+- APP
+  - exit - exit program

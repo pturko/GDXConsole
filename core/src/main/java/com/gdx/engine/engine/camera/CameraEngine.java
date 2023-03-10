@@ -2,9 +2,9 @@ package com.gdx.engine.engine.camera;
 
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
+import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.event.MapDataChangedEvent;
 import com.gdx.engine.service.*;
 import com.gdx.engine.util.CameraUtils;
 
