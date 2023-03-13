@@ -7,7 +7,7 @@ public class GdxGame extends Game {
 
 	public void create() {
 		// Initialize UI service
-		ServiceFactoryImpl.getUIService().load("asset/image/skin/uiskin.json"); //temporary
+		ServiceFactoryImpl.getUIService().load();
 
 		// Initialize application configs
 		ServiceFactoryImpl.getConfigService().updateConfigs();
@@ -16,7 +16,7 @@ public class GdxGame extends Game {
 		ServiceFactoryImpl.getScreenService().init(this);
 
 		// Running commands
-		ServiceFactoryImpl.getConsoleService().runCommands();
+		ServiceFactoryImpl.getConsoleService().runProfileCommands();
 	}
 
 	@Override

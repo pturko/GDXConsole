@@ -49,7 +49,8 @@ public class AssetServiceImpl implements AssetService, Disposable {
 
     private static final String ASSET = "asset/";
     private static final String CONFIG_FOLDER = "config/";
-    private static final String CONFIG_CONSOLE_CMD = "consoleCmd/startup-";
+    private static final String CONFIG_CONSOLE_STARTUP_CMD = "consoleCmd/startup-";
+    private static final String CONFIG_CONSOLE_CMD = "consoleCmd/";
     private static final String CONFIG_LAYER_FOLDER = "map/";
     private static final String CONFIG_RESOURCES = "resources/";
     private static final String FONT = "font/";
@@ -178,6 +179,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
             }
         }
 
+        log.info("Asset resources loaded");
         ServiceFactoryImpl.getEventService().sendEvent(new AssetChangedEvent());
     }
 
@@ -391,8 +393,12 @@ public class AssetServiceImpl implements AssetService, Disposable {
                 ASSET + DEFAULT_AUDIO));
     }
 
-    public String getConsoleCmdPathFile(String profileName) {
-        return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + profileName + RESOURCE_FILE_EXT;
+    public String getConsoleCmdPathProfileFile(String profileName) {
+        return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_STARTUP_CMD + profileName + RESOURCE_FILE_EXT;
+    }
+
+    public String getConsoleCmdPathFile(String fileName) {
+        return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + fileName + RESOURCE_FILE_EXT;
     }
 
     public String getLayerConfigPath(String name) {

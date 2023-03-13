@@ -152,7 +152,6 @@ public class BaseScreen implements Screen {
 
         drawingFPS();
         drawingHeap();
-        debugFont.draw(spriteBatch, "F1-F8 service keys", 630, 20);
 
         spriteBatch.end();
     }

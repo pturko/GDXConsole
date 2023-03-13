@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "music stopAll",
+    "sound stopAll",
+    "cfg audio music false",
+    "cfg audio sound false"
+  ]
+}
+

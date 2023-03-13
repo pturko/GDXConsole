@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UIServiceImpl implements UIService {
     private static UIServiceImpl uiServiceInstance;
 
+    private static final String SKIN_NAME = "asset/image/skin/uiskin.json"; // TODO - receive from asset
+
     public static synchronized UIServiceImpl getInstance( ) {
         if (uiServiceInstance == null) {
             uiServiceInstance = new UIServiceImpl();
@@ -16,8 +18,8 @@ public class UIServiceImpl implements UIService {
     }
 
     @Override
-    public void load(String skinName) {
-        VisUI.load(skinName);
+    public void load() {
+        VisUI.load(SKIN_NAME);
     }
 
     public void dispose() {

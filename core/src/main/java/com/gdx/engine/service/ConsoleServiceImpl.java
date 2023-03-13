@@ -54,11 +54,9 @@ public class ConsoleServiceImpl implements ConsoleService {
             case "ASSET":
                 if (part.get(1).equalsIgnoreCase("load")) {
                     assetService.loadResources();
-                    log.info("Resources loaded");
                 }
                 if (part.get(1).equalsIgnoreCase("reload")) {
                     assetService.loadResources();
-                    log.info("Resources loaded");
                 }
                 break;
 
@@ -176,7 +174,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "CMD":
                 if (part.get(1).equalsIgnoreCase("profile")) {
-                    runCommands();
+                    runProfileCommands();
                     log.info("Run commands for profile: {}", configService.getProfileString());
                 }
                 break;
@@ -200,7 +198,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "UI":
                 if (part.get(1).equalsIgnoreCase("load")) {
-                    ServiceFactoryImpl.getUIService().load(part.get(2));
+                    ServiceFactoryImpl.getUIService().load();
                     log.info("UI loaded");
                 }
                 break;
@@ -212,14 +210,21 @@ public class ConsoleServiceImpl implements ConsoleService {
         ConsoleWindow.addMessage(message);
     }
 
-    public void runCommands() {
+    public void runProfileCommands() {
         configService = ServiceFactoryImpl.getConfigService();
         assetService = ServiceFactoryImpl.getAssetService();
         if (configService.getConsoleConfig().isStartCommands()) {
             ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
-                    ServiceFactoryImpl.getAssetService().getConsoleCmdPathFile(configService.getProfileString()));
+                    ServiceFactoryImpl.getAssetService().getConsoleCmdPathProfileFile(configService.getProfileString()));
             consoleCmd.getCmd().forEach(this::cmd);
         }
+    }
+
+    @Override
+    public void runFileCommands(String fileName) {
+            ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
+                    ServiceFactoryImpl.getAssetService().getConsoleCmdPathFile(fileName));
+            consoleCmd.getCmd().forEach(this::cmd);
     }
 
     public void dispose() {}

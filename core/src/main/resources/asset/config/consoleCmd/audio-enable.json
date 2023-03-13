@@ -1,0 +1,7 @@
+{
+  "cmd": [
+    "cfg audio music true",
+    "cfg audio sound true"
+  ]
+}
+
