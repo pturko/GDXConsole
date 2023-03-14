@@ -118,32 +118,6 @@ public class BaseScreen implements Screen {
 
     public void update() {
         drawingDebug();
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            consoleService.cmd("cfg window showFPS");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
-            ServiceFactoryImpl.getConsoleService().cmd("cfg console show");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
-            consoleService.cmd("cfg map rendering");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            consoleService.cmd("cfg update");
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
-            consoleService.cmd("map clear");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
-            consoleService.cmd("map reload");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F7)) {
-            consoleService.cmd("map load test");
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
-            consoleService.cmd("map load test2");
-        }
     }
 
     public void drawingDebug() {

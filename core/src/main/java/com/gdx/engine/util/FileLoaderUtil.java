@@ -58,4 +58,11 @@ public class FileLoaderUtil {
         }
     }
 
+    public static FileHandle[] getCmdFileList() {
+        return getFileHandle(ServiceFactoryImpl.getAssetService().getConsoleCmdPathFolder()).list();
+    }
+
+    public static FileHandle[] getMapFileList() {
+        return getFileHandle(ServiceFactoryImpl.getAssetService().getConsoleMapPathFolder()).list();
+    }
 }

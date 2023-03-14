@@ -8,7 +8,7 @@
 <p>Perform many operations dynamically in runtime</p>
 
 <p>For the opportunity to update config dynamically - external file loading should be used</p>
-<p>ResourceLoaderServiceImpl.EXTERNAL_APPLICATION_CONFIG = true</p>
+<p>AssetServiceImpl.EXTERNAL_APPLICATION_CONFIG = true</p>
 <p>application.json --> assetConfig.externalFiles = true</p>
 
 ![screenshot](./previews/screenshot.png)
@@ -62,6 +62,6 @@
 - CMD <profileName> - run commands from config/startup-<profileName>.json
 - PROFILE - show active profile
 - UI
-  - load
+  - load - load default UI
 - APP
   - exit - exit program

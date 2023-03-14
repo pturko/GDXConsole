@@ -397,6 +397,14 @@ public class AssetServiceImpl implements AssetService, Disposable {
         return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_STARTUP_CMD + profileName + RESOURCE_FILE_EXT;
     }
 
+    public String getConsoleCmdPathFolder() {
+        return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD;
+    }
+
+    public String getConsoleMapPathFolder() {
+        return ASSET + CONFIG_LAYER_FOLDER;
+    }
+
     public String getConsoleCmdPathFile(String fileName) {
         return ASSET + CONFIG_FOLDER + CONFIG_CONSOLE_CMD + fileName + RESOURCE_FILE_EXT;
     }

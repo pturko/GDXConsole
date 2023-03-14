@@ -3,19 +3,21 @@ package com.gdx.engine.engine.console;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gdx.engine.event.AssetChangedEvent;
 import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.ConsoleEnabledEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.screen.window.AudioWindow;
 import com.gdx.engine.screen.window.ConsoleWindow;
 import com.gdx.engine.service.*;
+import com.gdx.engine.util.FileLoaderUtil;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.Menu;
 import com.kotcrab.vis.ui.widget.MenuBar;
@@ -30,7 +32,8 @@ public class WindowEngine extends EntitySystem {
     private final Table table;
     private MenuBar menuBar;
 
-    private boolean isShowConsole;
+    private ConsoleWindow consoleWindow;
+    private AudioWindow audioWindow;
 
     public WindowEngine() {
         this.batch = ServiceFactoryImpl.getAssetService().getBatch();
@@ -41,32 +44,21 @@ public class WindowEngine extends EntitySystem {
         table.setFillParent(true);
         stage.addActor(table);
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
-        createConsole();
+        addKeyListener();
         createMenuBar();
+        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
         configureListeners();
-
-        Gdx.input.setInputProcessor(stage);
     }
 
-    private void createConsole() {
+    private void addKeyListener() {
         table.setFillParent(true);
         stage.addActor(table);
 
         stage.addListener(new InputListener() {
-            boolean debug = false;
             @Override
             public boolean keyDown (InputEvent event, int keycode) {
-                if (keycode == Input.Keys.F9) {
-                    debug = !debug;
-                    table.setDebug(debug, true);
-                    for (Actor actor : stage.getActors()) {
-                        if (actor instanceof Group) {
-                            Group group = (Group) actor;
-                            group.setDebug(debug, true);
-                        }
-                    }
-                    return true;
+                if (keycode == Input.Keys.F2) {
+                    ServiceFactoryImpl.getConsoleService().cmd("cfg console show");
                 }
                 if (keycode == Input.Keys.ENTER) {
                     ServiceFactoryImpl.getConsoleService().cmd(ConsoleWindow.getCmdTextField().getText());
@@ -78,8 +70,9 @@ public class WindowEngine extends EntitySystem {
                 return false;
             }
         });
-
         stage.setKeyboardFocus(ConsoleWindow.getCmdTextField());
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     private void createMenuBar() {
@@ -107,9 +100,13 @@ public class WindowEngine extends EntitySystem {
         consoleMenu.addItem(new MenuItem("Console", new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
-                stage.addActor(new ConsoleWindow());
+                if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
+                    consoleWindow = new ConsoleWindow();
+                    consoleWindow.setVisible(true);
+                    stage.addActor(consoleWindow);
+                }
             }
-        }));
+        }).setShortcut("F2"));
         consoleMenu.addSeparator();
         consoleMenu.addItem(createConsoleMenu());
 
@@ -148,8 +145,20 @@ public class WindowEngine extends EntitySystem {
         mapMenu.addItem(new MenuItem("Layers"));
         mapMenu.addItem(new MenuItem("Objects"));
 
-        windowMenu.addItem(new MenuItem("Audio"));
-        windowMenu.addItem(new MenuItem("Box2D"));
+        windowMenu.addItem(new MenuItem("Audio", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                if (audioWindow == null || audioWindow.getTouchable().name().equals("disabled")) {
+                    audioWindow = new AudioWindow();
+                    stage.addActor(audioWindow);
+                }
+            }
+        }));
+        windowMenu.addItem(new MenuItem("Box2D", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+            }
+        }));
 
         helpMenu.addItem(new MenuItem("About", new ChangeListener() {
             @Override
@@ -165,24 +174,18 @@ public class WindowEngine extends EntitySystem {
         menuBar.addMenu(helpMenu);
     }
 
-
     private MenuItem createConsoleMenu() {
         MenuItem item = new MenuItem("Run cmd file");
-
         PopupMenu menu = new PopupMenu();
-        menu.addItem(new MenuItem("audio-enable", new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                ServiceFactoryImpl.getConsoleService().runFileCommands("audio-enable");
-            }
-        }));
-        menu.addItem(new MenuItem("audio-disable", new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                ServiceFactoryImpl.getConsoleService().runFileCommands("audio-disable");
-            }
-        }));
-
+        for (FileHandle entry: FileLoaderUtil.getCmdFileList()) {
+            String fileName = entry.name().substring(0, entry.name().length()-5);
+            menu.addItem(new MenuItem(fileName, new ChangeListener() {
+                @Override
+                public void changed (ChangeEvent event, Actor actor) {
+                    ServiceFactoryImpl.getConsoleService().runFileCommands(fileName);
+                }
+            }));
+        }
         item.setSubMenu(menu);
         return item;
     }
@@ -191,56 +194,51 @@ public class WindowEngine extends EntitySystem {
         MenuItem item = new MenuItem("Load");
 
         PopupMenu menu = new PopupMenu();
-        menu.addItem(new MenuItem("test.tmx", new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                ServiceFactoryImpl.getTiledMapService().load("test");
+        for (FileHandle entry: FileLoaderUtil.getMapFileList()) {
+            if (entry.extension().equals("tmx")) {
+                String fileName = entry.name().substring(0, entry.name().length() - 4);
+                menu.addItem(new MenuItem(fileName, new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        ServiceFactoryImpl.getTiledMapService().load(fileName);
+                    }
+                }));
             }
-        }));
-        menu.addItem(new MenuItem("test2.tmx", new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                ServiceFactoryImpl.getTiledMapService().load("test2");
-            }
-        }));
+        }
 
         item.setSubMenu(menu);
         return item;
+    }
+
+    private void update(ApplicationConfig config) {
+        if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
+            if (config.getConsoleConfig().isShowConsole()) {
+                consoleWindow = new ConsoleWindow();
+                stage.addActor(consoleWindow);
+            }
+        }
     }
 
     private void configureListeners() {
         // Event reload application config
         ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
             update(e.getApplicationConfig());
-            createConsole();
         });
-
-        // Whenever the map is changed, remove previous light objects and update brightness
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.ASSET_CHANGED, (AssetChangedEvent e) ->
-                createConsole());
 
         // Whenever the map is changed, remove previous light objects and update brightness
         ServiceFactoryImpl.getEventService().addEventListener(EventType.CONSOLE_ENABLED, (ConsoleEnabledEvent e) ->
                 stage.setKeyboardFocus(ConsoleWindow.getCmdTextField()));
     }
 
-    private void update(ApplicationConfig config) {
-        isShowConsole = config.getConsoleConfig().isShowConsole();
-    }
-
     @Override
     public void update(float delta) {
-        if (isShowConsole) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
-
-            batch.setColor(50, 50, 50, 0.5f);
 
             stage.act(Math.min(delta, 1 / 30f));
             stage.draw();
 
             batch.end();
-        }
     }
 
 }
