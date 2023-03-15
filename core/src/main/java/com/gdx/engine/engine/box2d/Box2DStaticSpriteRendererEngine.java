@@ -14,12 +14,12 @@ import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.*;
 
-public class StaticSpriteRendererEngine extends IteratingSystem {
+public class Box2DStaticSpriteRendererEngine extends IteratingSystem {
     private final Batch batch;
     private final Camera camera;
     private boolean isRendering;
 
-    public StaticSpriteRendererEngine() {
+    public Box2DStaticSpriteRendererEngine() {
         super(Family.all(SpriteComponent.class).get());
 
         batch = ServiceFactoryImpl.getAssetService().getBatch();

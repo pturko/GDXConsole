@@ -1,4 +1,4 @@
-package com.gdx.engine.engine.console;
+package com.gdx.engine.engine.window;
 
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +15,7 @@ import com.gdx.engine.event.ConsoleEnabledEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.screen.window.AudioWindow;
+import com.gdx.engine.screen.window.Box2DWindow;
 import com.gdx.engine.screen.window.ConsoleWindow;
 import com.gdx.engine.service.*;
 import com.gdx.engine.util.FileLoaderUtil;
@@ -34,6 +35,7 @@ public class WindowEngine extends EntitySystem {
 
     private ConsoleWindow consoleWindow;
     private AudioWindow audioWindow;
+    private Box2DWindow box2DWindow;
 
     public WindowEngine() {
         this.batch = ServiceFactoryImpl.getAssetService().getBatch();
@@ -102,8 +104,8 @@ public class WindowEngine extends EntitySystem {
             public void changed (ChangeEvent event, Actor actor) {
                 if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
                     consoleWindow = new ConsoleWindow();
-                    consoleWindow.setVisible(true);
                     stage.addActor(consoleWindow);
+                    ServiceFactoryImpl.getConfigService().getConsoleConfig().setShowConsole(true);
                 }
             }
         }).setShortcut("F2"));
@@ -157,6 +159,10 @@ public class WindowEngine extends EntitySystem {
         windowMenu.addItem(new MenuItem("Box2D", new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
+                if (box2DWindow == null || box2DWindow.getTouchable().name().equals("disabled")) {
+                    box2DWindow = new Box2DWindow();
+                    stage.addActor(box2DWindow);
+                }
             }
         }));
 
@@ -211,10 +217,15 @@ public class WindowEngine extends EntitySystem {
     }
 
     private void update(ApplicationConfig config) {
-        if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
-            if (config.getConsoleConfig().isShowConsole()) {
+        if (config.getConsoleConfig().isShowConsole()) {
+            if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
                 consoleWindow = new ConsoleWindow();
                 stage.addActor(consoleWindow);
+            }
+        } else {
+            if (consoleWindow != null) {
+                consoleWindow.remove();
+                consoleWindow = null;
             }
         }
     }

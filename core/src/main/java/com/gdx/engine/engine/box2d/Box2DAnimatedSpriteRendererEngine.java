@@ -14,12 +14,12 @@ import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.*;
 
-public class AnimatedSpriteRendererEngine extends IteratingSystem {
+public class Box2DAnimatedSpriteRendererEngine extends IteratingSystem {
     private Batch batch;
     private Camera camera;
     private boolean isRendering;
 
-    public AnimatedSpriteRendererEngine() {
+    public Box2DAnimatedSpriteRendererEngine() {
         super(Family.all(AnimationComponent.class).get());
 
         update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
@@ -30,7 +30,7 @@ public class AnimatedSpriteRendererEngine extends IteratingSystem {
         batch = ServiceFactoryImpl.getAssetService().getBatch();
         camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        isRendering = config.getBox2DConfig().isStaticSpriteRendering();
+        isRendering = config.getBox2DConfig().isAnimatedSpriteRendering();
     }
 
     private void configureListeners() {

@@ -12,7 +12,7 @@ import com.gdx.engine.model.config.Box2DLightsConfig;
 import com.gdx.engine.service.*;
 import com.gdx.game.util.TiledObjectUtils;
 
-public class B2LightsEngine extends EntitySystem {
+public class Box2DLightsEngine extends EntitySystem {
     private static final String LIGHT_SOURCE_MAP_LAYER = "LIGHT_SOURCE";
 
     private final Camera camera;
@@ -21,7 +21,7 @@ public class B2LightsEngine extends EntitySystem {
     private boolean isRendering;
     private float ambientLight;
 
-    public B2LightsEngine() {
+    public Box2DLightsEngine() {
         world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
         camera = ServiceFactoryImpl.getScreenService().getCamera();
         rayHandler = new RayHandler(world);

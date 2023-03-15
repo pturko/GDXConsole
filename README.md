@@ -36,7 +36,7 @@
   - CONSOLE
     - show - show/hide console (F2 key)
   - WINDOW
-    - showFPS - show/hide FPS (F1 key)
+    - showFPS - show/hide FPS
   - MAP
     - rendering - rendering tiled map
   - BOX2D

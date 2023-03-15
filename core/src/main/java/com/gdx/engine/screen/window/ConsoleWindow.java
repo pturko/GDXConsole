@@ -8,9 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.gdx.engine.console.ConsoleMsgLog;
-import com.gdx.engine.event.ConfigChangedEvent;
-import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.kotcrab.vis.ui.util.TableUtils;
 import com.kotcrab.vis.ui.widget.*;
@@ -42,7 +39,6 @@ public class ConsoleWindow extends VisWindow {
 
 		consoleWidget();
 		addCloseButtonCustom();
-		configureListeners();
 
 		setResizable(false);
 		setSize(W_WIDTH, W_HEIGHT);
@@ -51,7 +47,6 @@ public class ConsoleWindow extends VisWindow {
 
 	private void consoleWidget() {
 		consoleTable = new VisTable();
-		consoleTable.setVisible(ServiceFactoryImpl.getConfigService().getConsoleConfig().isShowConsole());
 
 		consoleScrollPane = new VisScrollPane(consoleTable);
 		consoleScrollPane.setFlickScroll(true);
@@ -94,17 +89,6 @@ public class ConsoleWindow extends VisWindow {
 		consoleCommands.add(msg);
 	}
 
-	private void configureListeners() {
-		// Event reload application config
-		ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-			update(e.getApplicationConfig());
-		});
-	}
-
-	private void update(ApplicationConfig config) {
-		consoleTable.setVisible(ServiceFactoryImpl.getConfigService().getConsoleConfig().isShowConsole());
-	}
-
 	public static VisTextField getCmdTextField() {
 		return consoleTextEdit;
 	}
@@ -124,18 +108,25 @@ public class ConsoleWindow extends VisWindow {
 			public void changed (ChangeEvent event, Actor actor) {
 				fadeOut();
 				remove();
+				ServiceFactoryImpl.getConfigService().getConsoleConfig().setShowConsole(false);
 				getColor().a = 1f;
 			}
 		});
 		closeButton.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				fadeOut();
+				remove();
+				ServiceFactoryImpl.getConfigService().getConsoleConfig().setShowConsole(false);
 				event.cancel();
 				return true;
 			}
 		});
 
-		if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2)
+		if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2) {
 			titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
+		}
+
+
 	}
 }

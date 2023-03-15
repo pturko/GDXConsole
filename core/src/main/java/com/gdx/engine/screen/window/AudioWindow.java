@@ -11,8 +11,11 @@ import com.kotcrab.vis.ui.widget.*;
 
 public class AudioWindow extends VisWindow {
 
-	private static final float W_POSITION_X = 720;
+	private static final float W_POSITION_X = 460;
 	private static final float W_POSITION_Y = 480;
+
+	private static VisCheckBox musicCheckBox;
+	private static VisCheckBox soundCheckBox;
 
 	public AudioWindow() {
 		super("Audio");
@@ -30,7 +33,7 @@ public class AudioWindow extends VisWindow {
 		VisTable audioTable = new VisTable(true);
 		audioTable.defaults().left();
 
-		VisCheckBox musicCheckBox = new VisCheckBox("Music");
+		musicCheckBox = new VisCheckBox("Music");
 		musicCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getAudioConfig().isMusic());
 		musicCheckBox.addListener(new ChangeListener() {
 			@Override
@@ -39,7 +42,7 @@ public class AudioWindow extends VisWindow {
 			}
 		});
 
-		VisCheckBox soundCheckBox = new VisCheckBox("Sound");
+		soundCheckBox = new VisCheckBox("Sound");
 		soundCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getAudioConfig().isSound());
 		soundCheckBox.addListener(new ChangeListener() {
 			@Override
@@ -77,8 +80,9 @@ public class AudioWindow extends VisWindow {
 			}
 		});
 
-		if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2)
+		if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2) {
 			titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
+		}
 	}
 
 }

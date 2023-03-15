@@ -9,12 +9,12 @@ import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 
-public class B2DebugRendererEngine extends EntitySystem {
+public class Box2DDebugRendererEngine extends EntitySystem {
     private final Box2DDebugRenderer renderer;
     private final Camera camera;
     private final World world;
 
-    public B2DebugRendererEngine() {
+    public Box2DDebugRendererEngine() {
         renderer = new Box2DDebugRenderer();
         camera = ServiceFactoryImpl.getScreenService().getCamera();
         world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
