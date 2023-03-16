@@ -10,13 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gdx.engine.event.ConfigChangedEvent;
-import com.gdx.engine.event.ConsoleEnabledEvent;
+import com.gdx.engine.event.ConfigConsoleChangedEvent;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.ConsoleConfig;
 import com.gdx.engine.screen.window.AudioWindow;
 import com.gdx.engine.screen.window.Box2DWindow;
 import com.gdx.engine.screen.window.ConsoleWindow;
+import com.gdx.engine.screen.window.DebugWindow;
 import com.gdx.engine.service.*;
 import com.gdx.engine.util.FileLoaderUtil;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
@@ -36,6 +36,7 @@ public class WindowEngine extends EntitySystem {
     private ConsoleWindow consoleWindow;
     private AudioWindow audioWindow;
     private Box2DWindow box2DWindow;
+    private DebugWindow debugWindow;
 
     public WindowEngine() {
         this.batch = ServiceFactoryImpl.getAssetService().getBatch();
@@ -48,7 +49,7 @@ public class WindowEngine extends EntitySystem {
 
         addKeyListener();
         createMenuBar();
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         configureListeners();
     }
 
@@ -165,6 +166,15 @@ public class WindowEngine extends EntitySystem {
                 }
             }
         }));
+        windowMenu.addItem(new MenuItem("Debug", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                if (debugWindow == null || debugWindow.getTouchable().name().equals("disabled")) {
+                    debugWindow = new DebugWindow();
+                    stage.addActor(debugWindow);
+                }
+            }
+        }));
 
         helpMenu.addItem(new MenuItem("About", new ChangeListener() {
             @Override
@@ -216,8 +226,9 @@ public class WindowEngine extends EntitySystem {
         return item;
     }
 
-    private void update(ApplicationConfig config) {
-        if (config.getConsoleConfig().isShowConsole()) {
+    private void updateConfig() {
+        ConsoleConfig consoleConfig = ServiceFactoryImpl.getConfigService().getConsoleConfig();
+        if (consoleConfig.isShowConsole()) {
             if (consoleWindow == null || consoleWindow.getTouchable().name().equals("disabled")) {
                 consoleWindow = new ConsoleWindow();
                 stage.addActor(consoleWindow);
@@ -232,13 +243,9 @@ public class WindowEngine extends EntitySystem {
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            update(e.getApplicationConfig());
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CONSOLE_CHANGED, (ConfigConsoleChangedEvent e) -> {
+            updateConfig();
         });
-
-        // Whenever the map is changed, remove previous light objects and update brightness
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONSOLE_ENABLED, (ConsoleEnabledEvent e) ->
-                stage.setKeyboardFocus(ConsoleWindow.getCmdTextField()));
     }
 
     @Override

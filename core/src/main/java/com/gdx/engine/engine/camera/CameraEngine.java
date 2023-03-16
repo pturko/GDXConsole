@@ -14,10 +14,10 @@ public class CameraEngine extends EntitySystem {
     private boolean isRendering;
 
     public CameraEngine() {
-        update();
+        updateConfig();
     }
 
-    private void update() {
+    private void updateConfig() {
         camera = ServiceFactoryImpl.getScreenService().getCamera();
         tiledMapData = ServiceFactoryImpl.getTiledMapService().getMapData();
         isRendering = ServiceFactoryImpl.getConfigService().getBox2DConfig().isRendering();

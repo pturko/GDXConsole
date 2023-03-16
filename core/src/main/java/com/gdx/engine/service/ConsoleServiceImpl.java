@@ -2,8 +2,7 @@ package com.gdx.engine.service;
 
 import com.badlogic.gdx.Gdx;
 import com.gdx.engine.console.ConsoleMsgLog;
-import com.gdx.engine.event.ConfigChangedEvent;
-import com.gdx.engine.event.ConsoleEnabledEvent;
+import com.gdx.engine.event.*;
 import com.gdx.engine.interfaces.service.ConsoleService;
 import com.gdx.engine.model.config.ConsoleCmd;
 import com.gdx.engine.state.AudioState;
@@ -23,8 +22,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class ConsoleServiceImpl implements ConsoleService {
     private static ConsoleServiceImpl consoleServiceInstance;
-    private static ConfigServiceImpl configService;
-    private static AssetServiceImpl assetService;
 
     public ConsoleServiceImpl() {}
 
@@ -35,9 +32,6 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void cmd(String cmd) {
-        configService = ServiceFactoryImpl.getConfigService();
-        assetService = ServiceFactoryImpl.getAssetService();
-
         List<String> options = Arrays.stream(cmd.split(StringUtils.SPACE))
                 .map(String::trim)
                 .collect(Collectors.toList());
@@ -53,10 +47,10 @@ public class ConsoleServiceImpl implements ConsoleService {
         switch (options.stream().findFirst().get().toUpperCase()) {
             case "ASSET":
                 if (part.get(1).equalsIgnoreCase("load")) {
-                    assetService.loadResources();
+                    ServiceFactoryImpl.getAssetService().loadResources();
                 }
                 if (part.get(1).equalsIgnoreCase("reload")) {
-                    assetService.loadResources();
+                    ServiceFactoryImpl.getAssetService().loadResources(); // TODO - should be reload existing one
                 }
                 break;
 
@@ -72,7 +66,7 @@ public class ConsoleServiceImpl implements ConsoleService {
 
             case "VER":
             case "VERSION":
-                log.info("Version: {}", configService.getVersion());
+                log.info("Version: {}", ServiceFactoryImpl.getConfigService().getVersion());
                 break;
 
             case "SCREEN":
@@ -80,25 +74,34 @@ public class ConsoleServiceImpl implements ConsoleService {
                 break;
 
             case "CFG":
+                ConfigServiceImpl configService = ServiceFactoryImpl.getConfigService();
                 if (part.get(1).equalsIgnoreCase("console")) {
                     if (part.get(2).equalsIgnoreCase("show")) {
+
                         configService.getConsoleConfig().setShowConsole(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getConsoleConfig().isShowConsole())
                         );
-                        // Send console enabled event
+                        // Sending console events event
+                        ServiceFactoryImpl.getEventService().sendEvent(new ConfigConsoleChangedEvent());
                         if (configService.getConsoleConfig().isShowConsole()) {
                             ServiceFactoryImpl.getEventService().sendEvent(new ConsoleEnabledEvent());
                         }
-                        log.info("display console: {}", configService.getConsoleConfig().isShowConsole());
                     }
                 }
-                if (part.get(1).equalsIgnoreCase("window")) {
-                    if (part.get(2).equalsIgnoreCase("showFPS")) {
+                if (part.get(1).equalsIgnoreCase("screen")) {
+                    if (part.get(2).equalsIgnoreCase("fps")) {
                         configService.getScreenConfig().getDebugConfig().setShowFPS(
                                 OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowFPS())
                         );
                         log.info("display fps: {}", configService.getScreenConfig().getDebugConfig().isShowFPS());
                     }
+                    if (part.get(2).equalsIgnoreCase("heap")) {
+                        configService.getScreenConfig().getDebugConfig().setShowHeap(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowHeap())
+                        );
+                        log.info("display heap: {}", configService.getScreenConfig().getDebugConfig().isShowHeap());
+                    }
+                    ServiceFactoryImpl.getEventService().sendEvent(new ConfigScreenChangedEvent());
                 }
                 if (part.get(1).equalsIgnoreCase("map")) {
                     if (part.get(2).equalsIgnoreCase("rendering")) {
@@ -121,6 +124,25 @@ public class ConsoleServiceImpl implements ConsoleService {
                         );
                         log.info("box2d static sprite rendering: {}", configService.getBox2DConfig().isStaticSpriteRendering());
                     }
+                    if (part.get(2).equalsIgnoreCase("anim")) {
+                        configService.getBox2DConfig().setAnimatedSpriteRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isAnimatedSpriteRendering())
+                        );
+                        log.info("box2d animated sprite rendering: {}", configService.getBox2DConfig().isAnimatedSpriteRendering());
+                    }
+                    if (part.get(2).equalsIgnoreCase("debug")) {
+                        configService.getBox2DConfig().setBox2DDebugRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().isBox2DDebugRendering())
+                        );
+                        log.info("box2d debug rendering: {}", configService.getBox2DConfig().isBox2DDebugRendering());
+                    }
+                    if (part.get(2).equalsIgnoreCase("lights")) {
+                        configService.getBox2DConfig().getBox2DLightsConfig().setRendering(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getBox2DConfig().getBox2DLightsConfig().isRendering())
+                        );
+                        log.info("box2d lights rendering: {}", configService.getBox2DConfig().getBox2DLightsConfig().isRendering());
+                    }
+                    ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
                 }
                 if (part.get(1).equalsIgnoreCase("audio")) {
                     if (part.get(2).equalsIgnoreCase("music")) {
@@ -135,21 +157,22 @@ public class ConsoleServiceImpl implements ConsoleService {
                         );
                         log.info("sound: {}", configService.getAudioConfig().isSound());
                     }
+                    ServiceFactoryImpl.getEventService().sendEvent(new ConfigAudioChangedEvent());
                 }
 
                 if (part.get(1).equalsIgnoreCase("update")) {
                     ServiceFactoryImpl.getConfigService().updateConfigs();
                 }
 
-                // Sending config changed events
-                ServiceFactoryImpl.getEventService().sendEvent(new ConfigChangedEvent(configService.getApplicationConfig()));
                 break;
 
             case "MUSIC":
-                if (part.get(1).equalsIgnoreCase("play") && configService.getAudioConfig().isMusic()) {
+                if (part.get(1).equalsIgnoreCase("play") &&
+                        ServiceFactoryImpl.getConfigService().getAudioConfig().isMusic()) {
                     ServiceFactoryImpl.getAudioService().music(AudioState.MUSIC_PLAY, part.get(2));
                 }
-                if (part.get(1).equalsIgnoreCase("playLoop") && configService.getAudioConfig().isMusic()) {
+                if (part.get(1).equalsIgnoreCase("playLoop") &&
+                        ServiceFactoryImpl.getConfigService().getAudioConfig().isMusic()) {
                     ServiceFactoryImpl.getAudioService().music(AudioState.MUSIC_PLAY_LOOP, part.get(2));
                 }
                 if (part.get(1).equalsIgnoreCase("stop")) {
@@ -161,7 +184,8 @@ public class ConsoleServiceImpl implements ConsoleService {
                 break;
 
             case "SOUND":
-                if (part.get(1).equalsIgnoreCase("play") && configService.getAudioConfig().isSound()) {
+                if (part.get(1).equalsIgnoreCase("play") &&
+                        ServiceFactoryImpl.getConfigService().getAudioConfig().isSound()) {
                     ServiceFactoryImpl.getAudioService().sfx(AudioState.SOUND_PLAY, part.get(2));
                 }
                 if (part.get(1).equalsIgnoreCase("stop")) {
@@ -175,12 +199,12 @@ public class ConsoleServiceImpl implements ConsoleService {
             case "CMD":
                 if (part.get(1).equalsIgnoreCase("profile")) {
                     runProfileCommands();
-                    log.info("Run commands for profile: {}", configService.getProfileString());
+                    log.info("Run commands for profile: {}", ServiceFactoryImpl.getConfigService().getProfileString());
                 }
                 break;
 
             case "PROFILE":
-                log.info("Profile: {}", configService.getProfileString());
+                log.info("Profile: {}", ServiceFactoryImpl.getConfigService().getProfileString());
                 break;
 
             case "MAP":
@@ -202,6 +226,10 @@ public class ConsoleServiceImpl implements ConsoleService {
                     log.info("UI loaded");
                 }
                 break;
+
+            case "CLR":
+                ConsoleWindow.clearMsg();
+                break;
         }
     }
 
@@ -211,8 +239,7 @@ public class ConsoleServiceImpl implements ConsoleService {
     }
 
     public void runProfileCommands() {
-        configService = ServiceFactoryImpl.getConfigService();
-        assetService = ServiceFactoryImpl.getAssetService();
+        ConfigServiceImpl configService = ServiceFactoryImpl.getConfigService();
         if (configService.getConsoleConfig().isStartCommands()) {
             ConsoleCmd consoleCmd = FileLoaderUtil.getConsoleCmd(
                     ServiceFactoryImpl.getAssetService().getConsoleCmdPathProfileFile(configService.getProfileString()));

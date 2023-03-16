@@ -6,9 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.gdx.engine.event.ConfigAudioChangedEvent;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.kotcrab.vis.ui.widget.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AudioWindow extends VisWindow {
 
 	private static final float W_POSITION_X = 460;
@@ -38,7 +42,10 @@ public class AudioWindow extends VisWindow {
 		musicCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConsoleService().cmd("cfg audio music " + musicCheckBox.isChecked());
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getAudioConfig().setMusic(musicCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigAudioChangedEvent());
+				log.info("music: {}", musicCheckBox.isChecked());
 			}
 		});
 
@@ -47,7 +54,10 @@ public class AudioWindow extends VisWindow {
 		soundCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConsoleService().cmd("cfg audio sound " + soundCheckBox.isChecked());
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getAudioConfig().setSound(soundCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigAudioChangedEvent());
+				log.info("sound: {}", soundCheckBox.isChecked());
 			}
 		});
 

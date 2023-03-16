@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.ConfigBox2DChangedEvent;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.Box2DConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 
 public class Box2DDebugRendererEngine extends EntitySystem {
@@ -19,18 +19,19 @@ public class Box2DDebugRendererEngine extends EntitySystem {
         camera = ServiceFactoryImpl.getScreenService().getCamera();
         world = ServiceFactoryImpl.getBox2DWorldService().getWorld();
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         configureListeners();
     }
 
-    private void update(ApplicationConfig config) {
-        this.setProcessing(config.getBox2DConfig().isBox2DDebugRendering());
+    private void updateConfig() {
+        Box2DConfig box2DConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig().getBox2DConfig();
+        this.setProcessing(box2DConfig.isBox2DDebugRendering());
     }
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
-                update(e.getApplicationConfig()));
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_BOX2D_CHANGED, (ConfigBox2DChangedEvent e) ->
+                updateConfig());
     }
 
     @Override

@@ -7,9 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.gdx.engine.event.ConfigChangedEvent;
-import com.gdx.engine.event.EventType;
-import com.gdx.engine.service.EventServiceImpl;
+import com.gdx.engine.event.ConfigBox2DChangedEvent;
+import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.kotcrab.vis.ui.widget.VisImageButton;
@@ -42,9 +41,9 @@ public class Box2DWindow extends VisWindow {
 		box2DRenderingCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().setRendering(box2DRenderingCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setRendering(box2DRenderingCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 
@@ -53,9 +52,9 @@ public class Box2DWindow extends VisWindow {
 		box2DEnableContactsCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().setEnableContacts(box2DEnableContactsCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setEnableContacts(box2DEnableContactsCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 
@@ -64,9 +63,9 @@ public class Box2DWindow extends VisWindow {
 		box2DDebugRenderingCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().setBox2DDebugRendering(box2DDebugRenderingCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setBox2DDebugRendering(box2DDebugRenderingCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 
@@ -75,9 +74,9 @@ public class Box2DWindow extends VisWindow {
 		box2DStaticSpriteRenderingCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().setStaticSpriteRendering(box2DStaticSpriteRenderingCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setStaticSpriteRendering(box2DStaticSpriteRenderingCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 
@@ -86,9 +85,9 @@ public class Box2DWindow extends VisWindow {
 		box2DAnimatedSpriteRenderingCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().setAnimatedSpriteRendering(box2DAnimatedSpriteRenderingCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setAnimatedSpriteRendering(box2DAnimatedSpriteRenderingCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 
@@ -97,9 +96,9 @@ public class Box2DWindow extends VisWindow {
 		box2DLightsRenderingCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				ServiceFactoryImpl.getConfigService().getBox2DConfig().getBox2DLightsConfig().setRendering(box2DLightsRenderingCheckBox.isChecked());
-				ServiceFactoryImpl.getEventService().sendEvent(
-						new ConfigChangedEvent(ServiceFactoryImpl.getConfigService().getApplicationConfig()));
+				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
+				applicationConfig.getBox2DConfig().setRendering(box2DLightsRenderingCheckBox.isChecked());
+				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});
 

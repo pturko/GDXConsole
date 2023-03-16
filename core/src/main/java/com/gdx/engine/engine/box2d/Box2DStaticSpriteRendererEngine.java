@@ -9,9 +9,9 @@ import com.gdx.engine.component.Mappers;
 import com.gdx.engine.component.graphics.SpriteComponent;
 import com.gdx.engine.component.graphics.TextureComponent;
 import com.gdx.engine.component.physics.B2BodyComponent;
-import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.ConfigBox2DChangedEvent;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.Box2DConfig;
 import com.gdx.engine.service.*;
 
 public class Box2DStaticSpriteRendererEngine extends IteratingSystem {
@@ -25,18 +25,19 @@ public class Box2DStaticSpriteRendererEngine extends IteratingSystem {
         batch = ServiceFactoryImpl.getAssetService().getBatch();
         camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         configureListeners();
     }
 
-    private void update(ApplicationConfig config) {
-        isRendering = config.getBox2DConfig().isStaticSpriteRendering();
+    private void updateConfig() {
+        Box2DConfig box2DConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig().getBox2DConfig();
+        isRendering = box2DConfig.isStaticSpriteRendering();
     }
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            update(e.getApplicationConfig());
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_BOX2D_CHANGED, (ConfigBox2DChangedEvent e) -> {
+            updateConfig();
         });
     }
 

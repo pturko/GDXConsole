@@ -34,18 +34,23 @@
 - CFG - config management
   - UPDATE - update application config
   - CONSOLE
-    - show - show/hide console (F2 key)
-  - WINDOW
-    - showFPS - show/hide FPS
+    - show - show/hide console (F2 key) [true/false/0/1]
+  - SCREEN
+    - fps - show/hide FPS  [true/false/0/1]
+    - heap - show/hide FPS [true/false/0/1]
   - MAP
-    - rendering - rendering tiled map
+    - rendering - rendering tiled map [true/false/0/1]
   - BOX2D
-    - rendering - rendering box2d world
-    - sprite - box2d static (non-animated) sprite rendering
+    - rendering - rendering box2d world [true/false/0/1]
+    - sprite - box2d static sprite rendering [true/false/0/1]
+    - anim - box2d animated sprite rendering [true/false/0/1]
+    - debug - box2d debug rendering [true/false/0/1]
+    - lights - box2d lights rendering [true/false/0/1]
   - AUDIO
-    - music - enable/disable music
-    - sound  - enable/disable sound
+    - music - enable/disable music [true/false/0/1]
+    - sound  - enable/disable sound [true/false/0/1]
   - UPDATE - reload application config (EXTERNAL_APPLICATION_CONFIG should be true)
+- CLR - clear console
 - MUSIC
   - play <name>
   - playLoop <name>

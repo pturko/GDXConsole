@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.component.Mappers;
 import com.gdx.engine.component.graphics.AnimationComponent;
 import com.gdx.engine.component.graphics.SpriteComponent;
-import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.ConfigBox2DChangedEvent;
 import com.gdx.engine.event.EventType;
-import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.Box2DConfig;
 import com.gdx.engine.service.*;
 
 public class Box2DAnimatedSpriteRendererEngine extends IteratingSystem {
@@ -22,21 +22,22 @@ public class Box2DAnimatedSpriteRendererEngine extends IteratingSystem {
     public Box2DAnimatedSpriteRendererEngine() {
         super(Family.all(AnimationComponent.class).get());
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         configureListeners();
     }
 
-    private void update(ApplicationConfig config) {
+    private void updateConfig() {
         batch = ServiceFactoryImpl.getAssetService().getBatch();
         camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        isRendering = config.getBox2DConfig().isAnimatedSpriteRendering();
+        Box2DConfig box2DConfig = ServiceFactoryImpl.getConfigService().getBox2DConfig();
+        isRendering = box2DConfig.isAnimatedSpriteRendering();
     }
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
-                update(e.getApplicationConfig()));
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_BOX2D_CHANGED, (ConfigBox2DChangedEvent e) ->
+                updateConfig());
     }
 
     @Override

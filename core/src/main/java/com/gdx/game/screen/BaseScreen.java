@@ -10,9 +10,10 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gdx.GdxGame;
-import com.gdx.engine.model.config.*;
+import com.gdx.engine.event.ConfigScreenChangedEvent;
+import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.ScreenConfig;
 import com.gdx.game.map.WorldContactListener;
-import com.gdx.engine.event.ConfigChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class BaseScreen implements Screen {
     public BaseScreen(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         createResources();
         cameraSetup();
         configureListeners();
@@ -72,12 +73,13 @@ public class BaseScreen implements Screen {
 
     private void configureListeners() {
         // Event reload application config
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) -> {
-            update(e.getApplicationConfig());
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_SCREEN_CHANGED, (ConfigScreenChangedEvent e) -> {
+            updateConfig();
         });
     }
 
-    private void update(ApplicationConfig config) {
+    private void updateConfig() {
+        ApplicationConfig config = ServiceFactoryImpl.getConfigService().getApplicationConfig();
         ScreenConfig screenConfig = config.getScreenConfig();
         float ppm = config.getBox2DConfig().getPpm();
 
@@ -96,8 +98,8 @@ public class BaseScreen implements Screen {
         stage.getViewport().setWorldSize(screenConfig.getWidth()/ppm,
                 screenConfig.getHeight()/ppm);
 
-        isShowFPS = config.getScreenConfig().getDebugConfig().isShowFPS();
-        isShowHeap = config.getScreenConfig().getDebugConfig().isShowHeap();
+        isShowFPS = screenConfig.getDebugConfig().isShowFPS();
+        isShowHeap = screenConfig.getDebugConfig().isShowHeap();
     }
 
     private void createInputProcessor() {
@@ -140,14 +142,14 @@ public class BaseScreen implements Screen {
                 frameCount = 0;
                 lastRender = System.nanoTime();
             }
-            debugFont.draw(spriteBatch, "fps:" + lastFPS, (screenWidth/2)-30, screenHeight-10);
+            debugFont.draw(spriteBatch, "FPS:" + lastFPS, (screenWidth/2)-30, screenHeight-10);
         }
     }
 
     void drawingHeap() {
         // Drawing Heap information
         if (isShowHeap) {
-            debugFont.draw(spriteBatch, "heap:" + Gdx.app.getJavaHeap(), (screenWidth/2)-70, screenHeight-30);
+            debugFont.draw(spriteBatch, "HEAP:" + Gdx.app.getJavaHeap(), (screenWidth/2)+60, screenHeight-10);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.gdx.engine.service;
 
-import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.*;
 import com.gdx.engine.interfaces.service.ConfigService;
 import com.gdx.engine.model.config.*;
 import com.gdx.engine.util.FileLoaderUtil;
@@ -15,7 +15,6 @@ import static com.gdx.engine.service.AssetServiceImpl.EXTERNAL_APPLICATION_CONFI
 public class ConfigServiceImpl implements ConfigService {
     private static ConfigServiceImpl configServiceInstance;
     private static ApplicationConfig applicationConfig;
-    private static EventServiceImpl eventService;
 
     //TODO - fix hardcoded filename
     private final String CONFIG_FILE= "asset/config/application.json";
@@ -37,7 +36,6 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     ConfigServiceImpl() {
-        eventService = ServiceFactoryImpl.getEventService();
     }
 
     @Override
@@ -49,9 +47,7 @@ public class ConfigServiceImpl implements ConfigService {
             if (!EXTERNAL_APPLICATION_CONFIG) {
                 log.warn("EXTERNAL_APPLICATION_CONFIG should be TRUE");
             }
-
-            // Sending config changed events
-            eventService.sendEvent(new ConfigChangedEvent(applicationConfig));
+            updateGlobalConfig();
         } catch (IOException e) {
             log.error("Can't update application configs!");
         }
@@ -135,4 +131,13 @@ public class ConfigServiceImpl implements ConfigService {
         return profile.name().toUpperCase();
     }
 
+    private static void updateGlobalConfig() {
+        // Sending config changed event for all components
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigAssetChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigAudioChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigConsoleChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigMapChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new ConfigScreenChangedEvent());
+    }
 }

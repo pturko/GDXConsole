@@ -10,8 +10,8 @@
     "height": 768,
     "fullScreen": false,
     "debugConfig": {
-      "showFPS": false,
-      "showHeap": false
+      "showFPS": true,
+      "showHeap": true
     },
     "cameraConfig": {
       "rendering": true,
@@ -31,10 +31,10 @@
     "showOnError": true,
     "showOnWarn": true,
     "startCommands": true,
-    "logLevel": "DEBUG"
+    "logLevel": "INFO"
   },
   "audioConfig": {
-    "music": true,
+    "music": false,
     "sound": false
   },
   "box2DConfig": {
@@ -55,7 +55,7 @@
       "y": -5
     },
     "box2DLightsConfig": {
-      "rendering": false,
+      "rendering": true,
       "ambientLight": 0.7,
       "lightNumberOfRays": 50,
       "lightDistance": 90

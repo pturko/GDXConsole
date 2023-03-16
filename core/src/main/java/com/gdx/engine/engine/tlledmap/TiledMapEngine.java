@@ -3,10 +3,10 @@ package com.gdx.engine.engine.tlledmap;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.gdx.engine.event.ConfigChangedEvent;
+import com.gdx.engine.event.ConfigMapChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.event.MapChangedEvent;
-import com.gdx.engine.model.config.ApplicationConfig;
+import com.gdx.engine.model.config.TiledMapConfig;
 import com.gdx.engine.service.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,19 +22,19 @@ public class TiledMapEngine extends EntitySystem {
                 ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm());
         camera = ServiceFactoryImpl.getScreenService().getCamera();
 
-        update(ServiceFactoryImpl.getConfigService().getApplicationConfig());
+        updateConfig();
         configureListeners();
     }
 
-    private void update(ApplicationConfig config) {
-        isRendering = config.getTiledMapConfig().isRendering();
-
+    private void updateConfig() {
+        TiledMapConfig tiledMapConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig().getTiledMapConfig();
+        isRendering = tiledMapConfig.isRendering();
     }
 
     private void configureListeners() {
         // Config changed event
-        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_CHANGED, (ConfigChangedEvent e) ->
-                update(e.getApplicationConfig()));
+        ServiceFactoryImpl.getEventService().addEventListener(EventType.CONFIG_MAP_CHANGED, (ConfigMapChangedEvent e) ->
+                updateConfig());
 
         // Whenever the map has been changed, set the OrthogonalTiledMapRenderer to render our new map
         ServiceFactoryImpl.getEventService().addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {

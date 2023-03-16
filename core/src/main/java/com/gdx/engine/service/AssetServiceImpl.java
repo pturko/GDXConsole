@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.SerializationException;
-import com.gdx.engine.event.AssetChangedEvent;
+import com.gdx.engine.event.AssetLoadedEvent;
 import com.gdx.engine.interfaces.service.AssetService;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.asset.*;
@@ -180,7 +180,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
         }
 
         log.info("Asset resources loaded");
-        ServiceFactoryImpl.getEventService().sendEvent(new AssetChangedEvent());
+        ServiceFactoryImpl.getEventService().sendEvent(new AssetLoadedEvent());
     }
 
     public Texture getTexture(String name) {

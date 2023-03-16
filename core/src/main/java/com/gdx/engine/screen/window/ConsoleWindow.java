@@ -126,7 +126,10 @@ public class ConsoleWindow extends VisWindow {
 		if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2) {
 			titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 		}
+	}
 
-
+	public static void clearMsg() {
+		consoleCommands.clear();
+		consoleTable.clear();
 	}
 }
