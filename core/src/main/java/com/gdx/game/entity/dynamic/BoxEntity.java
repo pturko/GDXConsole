@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gdx.engine.component.graphics.SpriteComponent;
 import com.gdx.engine.component.graphics.TextureComponent;
 import com.gdx.engine.component.physics.B2BodyComponent;
-import com.gdx.engine.model.map.MapEntityData;
+import com.gdx.engine.model.map.TiledMapLayerData;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.gdx.game.map.CategoryBits;
 
@@ -19,7 +19,7 @@ public class BoxEntity extends Entity implements Disposable {
     private final TextureComponent textureComponent;
     private final B2BodyComponent b2body;
 
-    public BoxEntity(MapEntityData mapEntity, float x, float y, float width, float height) {
+    public BoxEntity(TiledMapLayerData mapEntity, float x, float y, float width, float height) {
         ppm = ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm();
 
         itemWidth = width;

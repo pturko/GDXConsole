@@ -17,7 +17,7 @@ import com.kotcrab.vis.ui.widget.VisWindow;
 
 public class Box2DWindow extends VisWindow {
 
-	private static final float W_POSITION_X = 600;
+	private static final float W_POSITION_X = 550;
 	private static final float W_POSITION_Y = 356;
 
 	public Box2DWindow() {
@@ -97,7 +97,7 @@ public class Box2DWindow extends VisWindow {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
-				applicationConfig.getBox2DConfig().setRendering(box2DLightsRenderingCheckBox.isChecked());
+				applicationConfig.getBox2DConfig().getBox2DLightsConfig().setRendering(box2DLightsRenderingCheckBox.isChecked());
 				ServiceFactoryImpl.getEventService().sendEvent(new ConfigBox2DChangedEvent());
 			}
 		});

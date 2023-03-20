@@ -2,8 +2,9 @@
   "textureAtlasName": "",
   "textureName": "torch",
   "type": "TORCH",
-  "categoryBits": "",
-  "maskBits": "",
+  "categoryBits": 1,
+  "friction": 2,
+  "sensor": true,
   "mapEntityAnimation": {
     "frameDuration": 10,
     "firstFrameCount": 0,

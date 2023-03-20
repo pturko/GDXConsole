@@ -13,10 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.engine.event.ConfigConsoleChangedEvent;
 import com.gdx.engine.event.EventType;
 import com.gdx.engine.model.config.ConsoleConfig;
-import com.gdx.engine.screen.window.AudioWindow;
-import com.gdx.engine.screen.window.Box2DWindow;
-import com.gdx.engine.screen.window.ConsoleWindow;
-import com.gdx.engine.screen.window.DebugWindow;
+import com.gdx.engine.screen.window.*;
 import com.gdx.engine.service.*;
 import com.gdx.engine.util.FileLoaderUtil;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
@@ -37,6 +34,8 @@ public class WindowEngine extends EntitySystem {
     private AudioWindow audioWindow;
     private Box2DWindow box2DWindow;
     private DebugWindow debugWindow;
+    private MapDetailsWindow mapDetailsWindow;
+    private MapLayersWindow mapLayersWindow;
 
     public WindowEngine() {
         this.batch = ServiceFactoryImpl.getAssetService().getBatch();
@@ -60,8 +59,32 @@ public class WindowEngine extends EntitySystem {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown (InputEvent event, int keycode) {
+                boolean debug = false;
+                if (keycode == Input.Keys.F1) {
+                    debug = !debug;
+                    table.setDebug(debug, true);
+                    for (Actor actor : stage.getActors()) {
+                        if (actor instanceof Group) {
+                            Group group = (Group) actor;
+                            group.setDebug(debug, true);
+                        }
+                    }
+                    return true;
+                }
                 if (keycode == Input.Keys.F2) {
                     ServiceFactoryImpl.getConsoleService().cmd("cfg console show");
+                }
+                if (keycode == Input.Keys.F3) {
+                    if (mapDetailsWindow == null || mapDetailsWindow.getTouchable().name().equals("disabled")) {
+                        mapDetailsWindow = new MapDetailsWindow();
+                        stage.addActor(mapDetailsWindow);
+                    }
+                }
+                if (keycode == Input.Keys.F4) {
+                    if (mapLayersWindow == null || mapLayersWindow.getTouchable().name().equals("disabled")) {
+                        mapLayersWindow = new MapLayersWindow();
+                        stage.addActor(mapLayersWindow);
+                    }
                 }
                 if (keycode == Input.Keys.ENTER) {
                     ServiceFactoryImpl.getConsoleService().cmd(ConsoleWindow.getCmdTextField().getText());
@@ -145,8 +168,24 @@ public class WindowEngine extends EntitySystem {
         }));
 
         mapMenu.addSeparator();
-        mapMenu.addItem(new MenuItem("Layers"));
-        mapMenu.addItem(new MenuItem("Objects"));
+        mapMenu.addItem(new MenuItem("Details", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                if (mapDetailsWindow == null || mapDetailsWindow.getTouchable().name().equals("disabled")) {
+                    mapDetailsWindow = new MapDetailsWindow();
+                    stage.addActor(mapDetailsWindow);
+                }
+            }
+        }).setShortcut("F3"));
+        mapMenu.addItem(new MenuItem("Layers", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                if (mapLayersWindow == null || mapLayersWindow.getTouchable().name().equals("disabled")) {
+                    mapLayersWindow = new MapLayersWindow();
+                    stage.addActor(mapLayersWindow);
+                }
+            }
+        }).setShortcut("F4"));
 
         windowMenu.addItem(new MenuItem("Audio", new ChangeListener() {
             @Override
@@ -250,13 +289,13 @@ public class WindowEngine extends EntitySystem {
 
     @Override
     public void update(float delta) {
-            batch.setProjectionMatrix(camera.combined);
-            batch.begin();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
 
-            stage.act(Math.min(delta, 1 / 30f));
-            stage.draw();
+        stage.act(Math.min(delta, 1 / 30f));
+        stage.draw();
 
-            batch.end();
+        batch.end();
     }
 
 }

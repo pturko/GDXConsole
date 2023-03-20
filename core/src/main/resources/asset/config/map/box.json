@@ -2,8 +2,9 @@
   "textureAtlasName": "",
   "textureName": "box",
   "type": "BOX",
-  "categoryBits": "",
-  "maskBits": "Ground, Box",
+  "categoryBits": 1,
+  "friction": 2,
+  "sensor": true,
   "mapEntityAnimation": {
   }
 }

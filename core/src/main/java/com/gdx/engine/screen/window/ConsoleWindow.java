@@ -50,7 +50,7 @@ public class ConsoleWindow extends VisWindow {
 
 		consoleScrollPane = new VisScrollPane(consoleTable);
 		consoleScrollPane.setFlickScroll(true);
-		consoleScrollPane.setFadeScrollBars(true);
+		consoleScrollPane.setFadeScrollBars(false);
 
 		consoleTextEdit = new VisTextField();
 		VisTable bottomTable = new VisTable(true);
@@ -74,19 +74,20 @@ public class ConsoleWindow extends VisWindow {
 		pack();
 
 		// Init console with message queue
-		consoleCommands.forEach(msg->
-				consoleTable.add(new VisLabel(msg.getMessage(), msg.getColor()))
-						.left().expand().row());
+		consoleCommands.forEach(msg->consoleTable.add(new VisLabel(msg.getMessage(), msg.getColor()))
+				.left().expandX().bottom().row());
 	}
 
 	public static void addMessage(ConsoleMsgLog msg) {
 		if (consoleTextEdit != null) {
 			lastCommand = consoleTextEdit.getText();
 			consoleTable.add(new VisLabel(msg.getMessage(), msg.getColor()))
-					.left().expand().row();
+					.left().expandX().bottom().row();
 		}
-
 		consoleCommands.add(msg);
+
+		consoleScrollPane.layout();
+		consoleScrollPane.scrollTo(0, 0, 0, 0);
 	}
 
 	public static VisTextField getCmdTextField() {

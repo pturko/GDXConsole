@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="19">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="22">
  <tileset firstgid="1" name="test" tilewidth="16" tileheight="16" tilecount="1134" columns="42">
   <image source="test.jpg" width="674" height="444"/>
  </tileset>
  <layer id="1" name="Background" width="60" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwzEJAAAMA7DC/Iuqs9rYkUB6SVVVVVX16QFzYpbu
+   eJztlEtSwzAMQBUXmCl/hmMEQve9C7vehAVZ9QAs3RNwAw4Qn6CHQR5kUBW5dkNCh7SLN5mktqQn17IGwDJWCv57g5QA8IA8IhUR9vnfCkFJWNMfvp4JxjwhKlELr9vR82PyQ0Mulq1xIkdY45jztv5Imp7IyecUYr4hnhV5HIsXfOUeLY8z7X7l9Gdl2m78PZbLKXVzV+7L65d7ZLwS2ntixOKkkG48RrhPp8gTMkOeI8R8nagt5cHPWeMONuNVkXsseyZ7I2cGP+eUq+Ys+//bOxZizGHTObU+9V+Rd9if7VmGq/QNc64rfg5j+u+ZGepYwJfzFDlHLpBL5Aq5Rm6QW+qJ536H3riOZ+vJ6U8XluScs3Y+UA3SdUjfmpxfFWpaE94X9HxXqCPfc9B8u8bqk+VAcTXfNYyXoy/O0mK8bPOd/WN28X0pxoXm+Je+b0ZnX76xesbCoflK533XcvQdztXzCQnxqvI=
   </data>
  </layer>
- <objectgroup id="6" name="GROUND">
-  <object id="18" x="373.875" y="239">
-   <polyline points="-3.375,0.5 104.625,0.5"/>
-  </object>
+ <objectgroup id="7" name="BOX">
+  <object id="19" x="406.099" y="213.485"/>
+  <object id="20" x="420.667" y="147.5"/>
+  <object id="21" x="436.5" y="185"/>
  </objectgroup>
- <objectgroup id="2" name="WALL" visible="0"/>
- <objectgroup id="5" name="LIGHT_SOURCE"/>
- <objectgroup id="4" name="TORCH"/>
- <objectgroup id="3" name="BOX">
-  <object id="5" x="412.076" y="214.926" width="20" height="16">
-   <properties>
-    <property name="texture" value="box"/>
-   </properties>
+ <objectgroup id="6" name="GROUND">
+  <object id="18" x="389.438" y="239.667">
+   <polyline points="-2.9375,0.5 91.0625,0.5"/>
   </object>
  </objectgroup>
 </map>

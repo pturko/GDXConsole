@@ -193,6 +193,10 @@ public class AssetServiceImpl implements AssetService, Disposable {
     }
 
     public Texture getTexture(String textureAtlasOrSkinName, String name) {
+        if (textureAtlasOrSkinName == null && name == null) {
+            return getDefaultTexture();
+        }
+
         if (textureAtlasOrSkinName.equals(StringUtils.EMPTY) && textures.get(name) != null) {
             return textures.get(name).getTexture();
         } else {

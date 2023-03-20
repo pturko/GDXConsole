@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.component.graphics.AnimationComponent;
 import com.gdx.engine.component.graphics.SpriteComponent;
-import com.gdx.engine.model.map.MapEntityData;
+import com.gdx.engine.model.map.TiledMapLayerData;
 import com.gdx.engine.model.map.MapEntityAnimation;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.gdx.engine.util.AnimationUtils;
@@ -15,7 +15,7 @@ public class Torch extends Entity {
     private static float itemHeight;
     private static float ppm;
 
-    public Torch(MapEntityData mapEntity, float x, float y, float width, float height) {
+    public Torch(TiledMapLayerData mapEntity, float x, float y, float width, float height) {
         ppm = ServiceFactoryImpl.getConfigService().getBox2DConfig().getPpm();
 
         itemWidth = width;

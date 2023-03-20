@@ -42,8 +42,10 @@ public class Box2DLightsEngine extends EntitySystem {
         ServiceFactoryImpl.getEventService().addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
             rayHandler.removeAll();
             rayHandler.setAmbientLight(ambientLight);
-            TiledObjectUtils.createLightSources(rayHandler,
-                    e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
+            if (e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER) != null) {
+                TiledObjectUtils.createLightSources(rayHandler,
+                        e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
+            }
         });
     }
 

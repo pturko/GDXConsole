@@ -1,5 +1,7 @@
 package com.gdx.game.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.gdx.GdxGame;
 import com.gdx.engine.engine.box2d.*;
 import com.gdx.engine.engine.camera.CameraEngine;
@@ -36,6 +38,20 @@ public class GameScreen extends BaseScreen {
         clearScreen();
         engine.update(delta);
         update();
+
+        // Translate camera
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            camera.translate(-0.02f,0,0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            camera.translate(0.02f,0,0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            camera.translate(0, -0.02f,0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            camera.translate(0, 0.02f,0);
+        }
     }
 
     @Override

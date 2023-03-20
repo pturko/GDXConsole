@@ -2,8 +2,9 @@
   "textureAtlasName": "",
   "textureName": "",
   "type": "GROUND",
-  "categoryBits": "",
-  "maskBits": "",
+  "categoryBits": 1,
+  "friction": 2,
+  "sensor": true,
   "mapEntityAnimation": {
   }
 }
