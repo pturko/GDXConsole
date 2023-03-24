@@ -4,10 +4,11 @@
 
 ## Description
 <p>GDXConsole</p>
-<p>Console to simplify development of applications based on LibGDX</p>
-<p>Perform many operations dynamically in runtime</p>
+<p>Console to simplify development of applications based on LibGDX.</p>
+<p>Perform many operations dynamically in runtime including loading map without restart.</p>
 
-<p>For the opportunity to update config dynamically - external file loading should be used</p>
+<p>For the opportunity to update config dynamically - external file loading should be used.</p>
+<p>It is also allowed to load command scripts and a list of maps from the menu bar.</p>
 <p>AssetServiceImpl.EXTERNAL_APPLICATION_CONFIG = true</p>
 <p>application.json --> assetConfig.externalFiles = true</p>
 
@@ -15,7 +16,7 @@
 
 ## Features
 - Dynamic resource loading
-- Built-in console
+- Built-in console and menu bar
 - TiledMap support
 - Visual UI
 - Box2D and Box2DLight support

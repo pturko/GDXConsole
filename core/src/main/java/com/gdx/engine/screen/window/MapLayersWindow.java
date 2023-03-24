@@ -13,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MapLayersWindow extends VisWindow {
 
-	private static final float W_POSITION_X = 0;
-	private static final float W_POSITION_Y = 540;
+	private static final float W_POSITION_X = 548;
+	private static final float W_POSITION_Y = 180;
 
 	public MapLayersWindow() {
 		super("Map Layers");

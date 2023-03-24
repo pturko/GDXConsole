@@ -7,8 +7,9 @@ import lombok.Data;
 public class TiledMapLayerData {
     private String textureAtlasName;
     private String textureName;
-    private String bodyType;
-    private short categoryBits;
+    private boolean staticBody;
+    private String categoryBits;
+    private String maskBits;
     private float friction;
     private boolean sensor;
     private boolean isVisible;

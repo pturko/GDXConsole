@@ -1,5 +1,6 @@
 package com.gdx.engine.util;
 
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.apache.commons.lang3.StringUtils;
 
 public class OperationUtil {
@@ -15,4 +16,9 @@ public class OperationUtil {
             }
         }
     }
+
+    public static BodyDef.BodyType getBodyTypeDef(boolean staticBodyType) {
+        return staticBodyType ? BodyDef.BodyType.StaticBody : BodyDef.BodyType.DynamicBody;
+    }
+
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.engine.event.*;
 import com.gdx.engine.model.config.Box2DLightsConfig;
 import com.gdx.engine.service.*;
-import com.gdx.game.util.TiledObjectUtils;
 
 public class Box2DLightsEngine extends EntitySystem {
     private static final String LIGHT_SOURCE_MAP_LAYER = "LIGHT_SOURCE";
@@ -42,10 +41,10 @@ public class Box2DLightsEngine extends EntitySystem {
         ServiceFactoryImpl.getEventService().addEventListener(EventType.MAP_CHANGED, (MapChangedEvent e) -> {
             rayHandler.removeAll();
             rayHandler.setAmbientLight(ambientLight);
-            if (e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER) != null) {
-                TiledObjectUtils.createLightSources(rayHandler,
-                        e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
-            }
+//            if (e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER) != null) {
+//                TiledObjectUtils.createLightSources(rayHandler,
+//                        e.getTiledMap().getLayers().get(LIGHT_SOURCE_MAP_LAYER).getObjects());
+//            }
         });
     }
 

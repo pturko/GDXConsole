@@ -90,16 +90,16 @@ public class ConsoleServiceImpl implements ConsoleService {
                 }
                 if (part.get(1).equalsIgnoreCase("screen")) {
                     if (part.get(2).equalsIgnoreCase("fps")) {
-                        configService.getScreenConfig().getDebugConfig().setShowFPS(
-                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowFPS())
+                        configService.getScreenConfig().getDebugConfig().setFps(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isFps())
                         );
-                        log.info("display fps: {}", configService.getScreenConfig().getDebugConfig().isShowFPS());
+                        log.info("display fps: {}", configService.getScreenConfig().getDebugConfig().isFps());
                     }
                     if (part.get(2).equalsIgnoreCase("heap")) {
-                        configService.getScreenConfig().getDebugConfig().setShowHeap(
-                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isShowHeap())
+                        configService.getScreenConfig().getDebugConfig().setHeap(
+                                OperationUtil.getBooleanValue(part.get(3), configService.getScreenConfig().getDebugConfig().isHeap())
                         );
-                        log.info("display heap: {}", configService.getScreenConfig().getDebugConfig().isShowHeap());
+                        log.info("display heap: {}", configService.getScreenConfig().getDebugConfig().isHeap());
                     }
                     ServiceFactoryImpl.getEventService().sendEvent(new ConfigScreenChangedEvent());
                 }

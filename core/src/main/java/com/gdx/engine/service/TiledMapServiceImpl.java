@@ -1,6 +1,8 @@
 package com.gdx.engine.service;
 
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -12,17 +14,19 @@ import com.gdx.engine.model.map.TiledMapLayerData;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;
-import com.gdx.game.util.TiledObjectUtils;
+import com.gdx.game.util.TiledEntityBuilderUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Slf4j
 public class TiledMapServiceImpl implements TiledMapService {
     private static TiledMapServiceImpl tiledMapServiceInstance;
-    private static final TmxMapLoader tmxMapLoader = new TmxMapLoader();
+    private static TmxMapLoader tmxMapLoader;
 
     private static final String ASSET = "asset/";
     private static final String MAPS = "map/";
@@ -37,6 +41,11 @@ public class TiledMapServiceImpl implements TiledMapService {
         engine = ServiceFactoryImpl.getPooledEngineService().getEngine();
 
         tiledMapData = new TiledMapData();
+        if (ServiceFactoryImpl.getConfigService().getAssetConfig().isExternalFiles()) {
+            tmxMapLoader = new TmxMapLoader(new ExternalFileHandleResolver());
+        } else {
+            tmxMapLoader = new TmxMapLoader(new InternalFileHandleResolver());
+        }
     }
 
     public static synchronized TiledMapServiceImpl getInstance() {
@@ -82,7 +91,7 @@ public class TiledMapServiceImpl implements TiledMapService {
         }
 
         // Create bodies in the world according to each map layer
-        TiledObjectUtils.parseLayers(world, tiledMapData.getMapLayersData());
+        TiledEntityBuilderUtils.parseLayers(tiledMapData.getMapLayersData());
 
         // Set up tiled map data
         tiledMapData.setMapTileSize(tileWidth);
@@ -111,25 +120,30 @@ public class TiledMapServiceImpl implements TiledMapService {
 
         mapLayers.forEach(layer -> {
             String name = layer.getName();
-            String bodyType = (String) layer.getProperties().get("bodyType");
-            String textureAtlasName = (String) layer.getProperties().get("textureAtlasName");
-            String textureName = (String) layer.getProperties().get("textureName");
-            String categoryBits = (String) layer.getProperties().get("categoryBits");
-            String friction = (String) layer.getProperties().get("friction");
-            boolean sensor = (boolean) layer.getProperties().get("sensor");
-            log.info("Layer: '{}'({})", name, bodyType);
-            log.debug(" - collision: [{},{},{}]", categoryBits, friction, sensor);
+            MapProperties properties = layer.getProperties();
+
+            boolean staticBody = Optional.ofNullable(properties.get("staticBody", Boolean.class)).orElse(true);
+            String textureAtlasName = Optional.ofNullable((String)properties.get("textureAtlasName")).orElse(StringUtils.EMPTY);
+            String textureName = Optional.ofNullable((String)properties.get("textureName")).orElse(StringUtils.EMPTY);
+            String categoryBits = Optional.ofNullable((String)properties.get("categoryBits")).orElse(StringUtils.EMPTY);
+            String maskBits = Optional.ofNullable((String)properties.get("maskBits")).orElse(StringUtils.EMPTY);
+            float friction = Optional.ofNullable(properties.get("friction", Float.class)).orElse(0f);
+            boolean sensor = Optional.ofNullable(properties.get("sensor", Boolean.class)).orElse(false);
+
+            log.info("Layer: '{}' (isStatic: {})", name, staticBody);
+            log.debug(" - collision: [{},{},{},{}]", categoryBits, maskBits, friction, sensor);
             if (textureAtlasName != null && textureName != null) {
                 log.debug(" - texture: [{},{}]", textureAtlasName, textureName);
             }
 
             TiledMapLayerData mapLayerData = new TiledMapLayerData();
             mapLayerData.setVisible(layer.isVisible());
-            mapLayerData.setBodyType(bodyType);
+            mapLayerData.setStaticBody(staticBody);
             mapLayerData.setTextureAtlasName(textureAtlasName);
             mapLayerData.setTextureName(textureName);
-            mapLayerData.setCategoryBits(Short.parseShort(categoryBits));
-            mapLayerData.setFriction(Float.parseFloat(friction));
+            mapLayerData.setCategoryBits(categoryBits);
+            mapLayerData.setMaskBits(maskBits);
+            mapLayerData.setFriction(friction);
             mapLayerData.setSensor(sensor);
             mapLayerData.setEntities(layer.getObjects());
 
@@ -140,7 +154,6 @@ public class TiledMapServiceImpl implements TiledMapService {
     }
 
     private TiledMap loadMap(String mapName) {
-        // TODO - should load external/internal as well
         try {
             return tmxMapLoader.load( ASSET + MAPS + mapName.toLowerCase() + MAP_FILE_EXT);
         } catch(Exception e) {
@@ -171,7 +184,7 @@ public class TiledMapServiceImpl implements TiledMapService {
             engine.getEntities().forEach(e ->
                     engine.removeEntity(e));
 
-            TiledObjectUtils.clearLights();
+            TiledEntityBuilderUtils.clearLights();
         }
         tiledMapData = null;
     }

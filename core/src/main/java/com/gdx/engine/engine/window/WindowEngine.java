@@ -86,6 +86,10 @@ public class WindowEngine extends EntitySystem {
                         stage.addActor(mapLayersWindow);
                     }
                 }
+                if (keycode == Input.Keys.F5) {
+                    TiledMapServiceImpl tiledMapService = ServiceFactoryImpl.getTiledMapService();
+                    ServiceFactoryImpl.getTiledMapService().load(tiledMapService.getMapName());
+                }
                 if (keycode == Input.Keys.ENTER) {
                     ServiceFactoryImpl.getConsoleService().cmd(ConsoleWindow.getCmdTextField().getText());
                     ConsoleWindow.getCmdTextField().setText(StringUtils.EMPTY);
@@ -102,18 +106,22 @@ public class WindowEngine extends EntitySystem {
     }
 
     private void createMenuBar() {
-        menuBar = new MenuBar();
-        menuBar.setMenuListener(new MenuBar.MenuBarListener() {
-            @Override
-            public void menuOpened (Menu menu) {}
+        if (ServiceFactoryImpl.getConfigService().getScreenConfig().getDebugConfig().isMenuBar()) {
+            menuBar = new MenuBar();
+            menuBar.setMenuListener(new MenuBar.MenuBarListener() {
+                @Override
+                public void menuOpened(Menu menu) {
+                }
 
-            @Override
-            public void menuClosed (Menu menu) {}
-        });
-        table.add(menuBar.getTable()).expandX().fillX().row();
-        table.add().expand().fill();
+                @Override
+                public void menuClosed(Menu menu) {
+                }
+            });
+            table.add(menuBar.getTable()).expandX().fillX().row();
+            table.add().expand().fill();
 
-        createMenus();
+            createMenus();
+        }
     }
 
     private void createMenus () {
@@ -159,7 +167,7 @@ public class WindowEngine extends EntitySystem {
                 TiledMapServiceImpl tiledMapService = ServiceFactoryImpl.getTiledMapService();
                 ServiceFactoryImpl.getTiledMapService().load(tiledMapService.getMapName());
             }
-        }));
+        }).setShortcut("F5"));
         mapMenu.addItem(new MenuItem("Clear", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

@@ -44,24 +44,24 @@ public class DebugWindow extends VisWindow {
 		debugTable.defaults().left();
 
 		fpsCheckBox = new VisCheckBox("FPS");
-		fpsCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getScreenConfig().getDebugConfig().isShowFPS());
+		fpsCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getScreenConfig().getDebugConfig().isFps());
 		fpsCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
-				applicationConfig.getScreenConfig().getDebugConfig().setShowFPS(fpsCheckBox.isChecked());
+				applicationConfig.getScreenConfig().getDebugConfig().setFps(fpsCheckBox.isChecked());
 				ServiceFactoryImpl.getEventService().sendEvent(new ConfigScreenChangedEvent());
 				log.info("fps: {}", fpsCheckBox.isChecked());
 			}
 		});
 
 		heapCheckBox = new VisCheckBox("Heap");
-		heapCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getScreenConfig().getDebugConfig().isShowHeap());
+		heapCheckBox.setChecked(ServiceFactoryImpl.getConfigService().getScreenConfig().getDebugConfig().isHeap());
 		heapCheckBox.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				ApplicationConfig applicationConfig = ServiceFactoryImpl.getConfigService().getApplicationConfig();
-				applicationConfig.getScreenConfig().getDebugConfig().setShowHeap(heapCheckBox.isChecked());
+				applicationConfig.getScreenConfig().getDebugConfig().setHeap(heapCheckBox.isChecked());
 				ServiceFactoryImpl.getEventService().sendEvent(new ConfigScreenChangedEvent());
 				log.info("heap: {}", heapCheckBox.isChecked());
 			}

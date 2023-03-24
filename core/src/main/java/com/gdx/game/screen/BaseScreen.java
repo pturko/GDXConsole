@@ -37,8 +37,8 @@ public class BaseScreen implements Screen {
 
     private final String FONT_NAME = "sans_serif";
 
-    private boolean isShowFPS;
-    private boolean isShowHeap;
+    private boolean isFps;
+    private boolean isHeap;
 
     private BitmapFont debugFont;
 
@@ -98,8 +98,8 @@ public class BaseScreen implements Screen {
         stage.getViewport().setWorldSize(screenConfig.getWidth()/ppm,
                 screenConfig.getHeight()/ppm);
 
-        isShowFPS = screenConfig.getDebugConfig().isShowFPS();
-        isShowHeap = screenConfig.getDebugConfig().isShowHeap();
+        isFps = screenConfig.getDebugConfig().isFps();
+        isHeap = screenConfig.getDebugConfig().isHeap();
     }
 
     private void createInputProcessor() {
@@ -133,8 +133,8 @@ public class BaseScreen implements Screen {
     }
 
     void drawingFPS() {
-        // Drawing FPS information
-        if (isShowFPS) {
+        // Show FPS
+        if (isFps) {
             frameCount++;
             long now = System.nanoTime();
             if ((now - lastRender) >= FPSUpdateInterval * 1000000000) {
@@ -147,8 +147,8 @@ public class BaseScreen implements Screen {
     }
 
     void drawingHeap() {
-        // Drawing Heap information
-        if (isShowHeap) {
+        // Show Heap
+        if (isHeap) {
             debugFont.draw(spriteBatch, "HEAP:" + Gdx.app.getJavaHeap(), (screenWidth/2)+60, screenHeight-10);
         }
     }

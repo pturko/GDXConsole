@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class DebugConfig implements Serializable {
-    private boolean showFPS;
-    private boolean showHeap;
+    private boolean fps;
+    private boolean heap;
+    private boolean menuBar;
 }

@@ -9,11 +9,29 @@
   </data>
  </layer>
  <objectgroup id="7" name="BOX">
+  <properties>
+   <property name="categoryBits" value="2"/>
+   <property name="friction" type="float" value="2"/>
+   <property name="maskBits" value="3"/>
+   <property name="sensor" type="bool" value="true"/>
+   <property name="staticBody" type="bool" value="false"/>
+   <property name="textureAtlasName" value=""/>
+   <property name="textureName" value="box"/>
+  </properties>
   <object id="19" x="406.099" y="213.485"/>
   <object id="20" x="420.667" y="147.5"/>
   <object id="21" x="436.5" y="185"/>
  </objectgroup>
  <objectgroup id="6" name="GROUND">
+  <properties>
+   <property name="categoryBits" value="2"/>
+   <property name="friction" type="float" value="2"/>
+   <property name="maskBits" value="2"/>
+   <property name="sensor" type="bool" value="true"/>
+   <property name="staticBody" type="bool" value="true"/>
+   <property name="textureAtlasName" value=""/>
+   <property name="textureName" value=""/>
+  </properties>
   <object id="18" x="389.438" y="239.667">
    <polyline points="-2.9375,0.5 91.0625,0.5"/>
   </object>

@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" class="Box" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="25">
+<map version="1.9" tiledversion="1.9.2" class="Box" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="30">
  <tileset firstgid="1" name="test" tilewidth="16" tileheight="16" tilecount="1134" columns="42">
   <image source="test.jpg" width="674" height="444"/>
  </tileset>
  <layer id="1" name="Background" width="60" height="20">
-  <properties>
-   <property name="bodyType" value="static"/>
-   <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
-   <property name="sensor" type="bool" value="false"/>
-  </properties>
   <data encoding="base64" compression="zlib">
    eJzt0rENgCAQBdCTMAChVAexNU5ijQORsJOuY+kRzkisIdf84uWA6n4+aSBKAAAAAAAAAA2Nhmhisynn+q69Ww+eczlLdPCMbLFl5jft3XoIptgkq5O8sepae8eW3QbpMs+TXebrehXae7bwdpdz7vKfs/uX1SvkfQAypM6V
   </data>
  </layer>
  <objectgroup id="6" name="GROUND">
   <properties>
-   <property name="bodyType" value="static"/>
-   <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
+   <property name="categoryBits" value="2"/>
+   <property name="friction" type="float" value="2"/>
+   <property name="maskBits" value="2"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="staticBody" type="bool" value="true"/>
+   <property name="textureAtlasName" value=""/>
+   <property name="textureName" value=""/>
   </properties>
   <object id="18" x="373.875" y="239">
    <polyline points="-3.375,0.5 104.625,0.5"/>
@@ -27,19 +24,19 @@
  </objectgroup>
  <objectgroup id="2" name="WALL" visible="0">
   <properties>
-   <property name="bodyType" value="static"/>
+   <property name="bodyType" value="dynamic"/>
    <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
+   <property name="friction" type="float" value="2"/>
+   <property name="maskBits" value="1"/>
    <property name="sensor" type="bool" value="true"/>
   </properties>
-  <object id="8" x="539.604" y="300.318" width="68.1254" height="17.0313"/>
-  <object id="11" x="179.146" y="270.281" width="112.376" height="63.7711"/>
+  <object id="27" x="396" y="113" width="30.5" height="32"/>
  </objectgroup>
  <objectgroup id="5" name="LIGHT_SOURCE" visible="0">
   <properties>
    <property name="bodyType" value="static"/>
    <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
+   <property name="friction" type="float" value="2"/>
    <property name="sensor" type="bool" value="true"/>
   </properties>
   <object id="15" x="344" y="200"/>
@@ -49,26 +46,25 @@
   <properties>
    <property name="bodyType" value="static"/>
    <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
+   <property name="friction" type="float" value="2"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="textureAtlasName" value=""/>
+   <property name="textureName" value="box"/>
   </properties>
   <object id="13" x="500" y="210" width="32" height="92"/>
   <object id="14" x="310" y="210" width="32" height="92"/>
  </objectgroup>
  <objectgroup id="3" name="BOX">
   <properties>
-   <property name="bodyType" value="dynamic"/>
-   <property name="categoryBits" value="1"/>
-   <property name="friction" value="2"/>
+   <property name="categoryBits" value="2"/>
+   <property name="friction" type="float" value="2"/>
+   <property name="maskBits" value="3"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="staticBody" type="bool" value="false"/>
    <property name="textureAtlasName" value=""/>
    <property name="textureName" value="box"/>
   </properties>
-  <object id="5" x="401.667" y="72.6667" width="20" height="16">
-   <properties>
-    <property name="texture" value="box"/>
-   </properties>
-  </object>
-  <object id="17" x="444.5" y="9" width="20" height="16"/>
+  <object id="5" x="395.167" y="200.667" width="20" height="16"/>
+  <object id="29" x="407.5" y="165" width="20" height="16"/>
  </objectgroup>
 </map>

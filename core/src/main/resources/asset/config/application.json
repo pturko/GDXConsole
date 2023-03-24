@@ -10,8 +10,9 @@
     "height": 768,
     "fullScreen": false,
     "debugConfig": {
-      "showFPS": true,
-      "showHeap": true
+      "fps": false,
+      "heap": false,
+      "menuBar": true
     },
     "cameraConfig": {
       "rendering": true,
@@ -31,11 +32,11 @@
     "showOnError": true,
     "showOnWarn": true,
     "startCommands": true,
-    "logLevel": "INFO"
+    "logLevel": "DEBUG"
   },
   "audioConfig": {
-    "music": false,
-    "sound": false
+    "music": true,
+    "sound": true
   },
   "box2DConfig": {
     "rendering": true,
