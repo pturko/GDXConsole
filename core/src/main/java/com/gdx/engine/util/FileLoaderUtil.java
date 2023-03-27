@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Json;
 import com.gdx.engine.model.AssetResources;
 import com.gdx.engine.model.config.ApplicationConfig;
 import com.gdx.engine.model.config.ConsoleCmd;
-import com.gdx.engine.model.map.TiledMapLayerData;
+import com.gdx.engine.model.map.SpriteAnimation;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,13 +30,13 @@ public class FileLoaderUtil {
         return JSON.fromJson(AssetResources.class, jsonString);
     }
 
-    public static TiledMapLayerData getMapEntity(String fileName) {
+    public static SpriteAnimation getSpriteAnimation(String fileName) {
         Json JSON = new Json();
-        String jsonString = getFileHandle(fileName).readString();
+        String jsonString = getFileHandle(ServiceFactoryImpl.getAssetService().getLayerConfigPath(fileName)).readString();
         try {
-            return JSON.fromJson(TiledMapLayerData.class, jsonString);
+            return JSON.fromJson(SpriteAnimation.class, jsonString);
         } catch(Exception e) {
-            log.error("Can't convert map data '{}' to object", fileName);
+            log.error("Can't load animation config '{}'. {}", fileName, e);
         }
         return null;
     }
@@ -61,17 +61,6 @@ public class FileLoaderUtil {
         } else {
             return Gdx.files.internal(filePath);
         }
-    }
-
-    @Deprecated
-    public static TiledMapLayerData loadLayerConfig(String name) {
-        TiledMapLayerData mapEntity = null;
-        try {
-            mapEntity = FileLoaderUtil.getMapEntity(ServiceFactoryImpl.getAssetService().getLayerConfigPath(name));
-        } catch (Exception e) {
-            log.warn("Layer config file not found: {}", name + ".json");
-        }
-        return mapEntity;
     }
 
     public static FileHandle[] getCmdFileList() {

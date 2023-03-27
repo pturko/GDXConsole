@@ -3,7 +3,7 @@ package com.gdx.engine.model.map;
 import lombok.Data;
 
 @Data
-public class MapEntityAnimation {
+public class SpriteAnimation {
     private float frameDuration;
     private int firstFrameCount;
     private int lastFrameCount;

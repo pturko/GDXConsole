@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gdx.engine.component.graphics.AnimationComponent;
 import com.gdx.engine.component.graphics.SpriteComponent;
 import com.gdx.engine.model.map.TiledMapLayerData;
-import com.gdx.engine.model.map.MapEntityAnimation;
+import com.gdx.engine.model.map.SpriteAnimation;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.gdx.engine.util.AnimationUtils;
 
@@ -24,7 +24,7 @@ public class Torch extends Entity {
         Texture texture = ServiceFactoryImpl.getAssetService().getTexture(
                 mapEntity.getTextureAtlasName(), mapEntity.getTextureName());
 
-        MapEntityAnimation mapEntityAnimation = mapEntity.getMapEntityAnimation();
+        SpriteAnimation mapEntityAnimation = mapEntity.getSpriteAnimation();
         AnimationComponent<TextureRegion> animation = AnimationUtils.createAnimation(texture,
                 mapEntityAnimation.getFrameDuration() / ppm,
                 mapEntityAnimation.getFirstFrameCount(),

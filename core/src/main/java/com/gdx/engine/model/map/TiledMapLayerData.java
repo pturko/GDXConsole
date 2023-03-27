@@ -13,6 +13,6 @@ public class TiledMapLayerData {
     private float friction;
     private boolean sensor;
     private boolean isVisible;
-    private MapEntityAnimation mapEntityAnimation;
+    private SpriteAnimation spriteAnimation;
     private MapObjects entities;
 }

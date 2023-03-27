@@ -51,7 +51,8 @@ public class AssetServiceImpl implements AssetService, Disposable {
     private static final String CONFIG_FOLDER = "config/";
     private static final String CONFIG_CONSOLE_STARTUP_CMD = "consoleCmd/startup-";
     private static final String CONFIG_CONSOLE_CMD = "consoleCmd/";
-    private static final String CONFIG_LAYER_FOLDER = "map/";
+    private static final String CONFIG_SPRITE_ANIMATION_FOLDER = "animation/";
+    private static final String CONFIG_MAP_FOLDER = "map/";
     private static final String CONFIG_RESOURCES = "resources/";
     private static final String FONT = "font/";
     private static final String IMAGE_PIXMAP = "image/pixmap/";
@@ -406,7 +407,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
     }
 
     public String getConsoleMapPathFolder() {
-        return ASSET + CONFIG_LAYER_FOLDER;
+        return ASSET + CONFIG_MAP_FOLDER;
     }
 
     public String getConsoleCmdPathFile(String fileName) {
@@ -414,7 +415,7 @@ public class AssetServiceImpl implements AssetService, Disposable {
     }
 
     public String getLayerConfigPath(String name) {
-        return ASSET + CONFIG_FOLDER + CONFIG_LAYER_FOLDER + name + RESOURCE_FILE_EXT;
+        return ASSET + CONFIG_FOLDER + CONFIG_SPRITE_ANIMATION_FOLDER + name + RESOURCE_FILE_EXT;
     }
 
     public String getSkinPath(String name) {

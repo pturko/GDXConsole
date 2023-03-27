@@ -14,6 +14,7 @@ import com.gdx.engine.model.map.TiledMapLayerData;
 import com.gdx.engine.model.map.TiledMapData;
 import com.gdx.engine.event.MapChangedEvent;
 import com.gdx.engine.interfaces.service.TiledMapService;
+import com.gdx.engine.util.FileLoaderUtil;
 import com.gdx.game.util.TiledEntityBuilderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -129,12 +130,11 @@ public class TiledMapServiceImpl implements TiledMapService {
             String maskBits = Optional.ofNullable((String)properties.get("maskBits")).orElse(StringUtils.EMPTY);
             float friction = Optional.ofNullable(properties.get("friction", Float.class)).orElse(0f);
             boolean sensor = Optional.ofNullable(properties.get("sensor", Boolean.class)).orElse(false);
+            String animationConfig = Optional.ofNullable((String)properties.get("animationConfig")).orElse(StringUtils.EMPTY);
 
             log.info("Layer: '{}' (isStatic: {})", name, staticBody);
             log.debug(" - collision: [{},{},{},{}]", categoryBits, maskBits, friction, sensor);
-            if (textureAtlasName != null && textureName != null) {
-                log.debug(" - texture: [{},{}]", textureAtlasName, textureName);
-            }
+            log.debug(" - texture: [{},{},{}]", textureAtlasName, textureName, animationConfig);
 
             TiledMapLayerData mapLayerData = new TiledMapLayerData();
             mapLayerData.setVisible(layer.isVisible());
@@ -146,6 +146,9 @@ public class TiledMapServiceImpl implements TiledMapService {
             mapLayerData.setFriction(friction);
             mapLayerData.setSensor(sensor);
             mapLayerData.setEntities(layer.getObjects());
+            if (!animationConfig.equals(StringUtils.EMPTY)) {
+                mapLayerData.setSpriteAnimation(FileLoaderUtil.getSpriteAnimation(animationConfig));
+            }
 
             tiledMapLayerData.put(layer.getName(), mapLayerData);
         });
@@ -172,8 +175,7 @@ public class TiledMapServiceImpl implements TiledMapService {
             tiledMapData.getTiledMap().dispose();
 
             // Destroy all entity and bodies
-            engine.getEntities().forEach(e ->
-                    engine.removeEntity(e));
+            engine.getEntities().forEach(engine::removeEntity);
 
             Array<Body> bodies = new Array<>();
             world.getBodies(bodies);
@@ -181,8 +183,7 @@ public class TiledMapServiceImpl implements TiledMapService {
                     world.destroyBody(bodies.get(i)));
 
             // Destroy entities
-            engine.getEntities().forEach(e ->
-                    engine.removeEntity(e));
+            engine.getEntities().forEach(engine::removeEntity);
 
             TiledEntityBuilderUtils.clearLights();
         }
