@@ -142,7 +142,15 @@ public class WindowEngine extends EntitySystem {
             }
         }).setShortcut("F2"));
         consoleMenu.addSeparator();
+        consoleMenu.addItem(new MenuItem("Reload config", new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                ServiceFactoryImpl.getConfigService().updateConfigs();
+            }
+        }));
         consoleMenu.addItem(createConsoleMenu());
+        consoleMenu.addSeparator();
+
 
         assetMenu.addItem(new MenuItem("Load", new ChangeListener() {
             @Override

@@ -23,12 +23,12 @@
       },
       "cameraViewportConfig": {
         "width": 6,
-        "height": 3
+        "height": 4
       }
     }
   },
   "consoleConfig": {
-    "showConsole": true,
+    "showConsole": false,
     "showOnError": true,
     "showOnWarn": true,
     "startCommands": true,

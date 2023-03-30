@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.gdx.engine.console.ConsoleMsgLog;
+import com.gdx.engine.service.PreferenceServiceImpl;
 import com.gdx.engine.service.ServiceFactoryImpl;
 import com.kotcrab.vis.ui.util.TableUtils;
 import com.kotcrab.vis.ui.widget.*;
@@ -18,19 +19,22 @@ import java.util.List;
 
 public class ConsoleWindow extends VisWindow {
 	private static final List<ConsoleMsgLog> consoleCommands = new ArrayList<>();
-
+	private static final String PREFERENCE_WINDOW_CONSOLE_X = "ConsoleWindowX";
+	private static final String PREFERENCE_WINDOW_CONSOLE_Y = "ConsoleWindowY";
 	private static VisTextField consoleTextEdit;
 	private static VisTable consoleTable;
 	private static VisScrollPane consoleScrollPane;
 	private static String lastCommand;
 
-	private static final float W_POSITION_X = 5;
-	private static final float W_POSITION_Y = 5;
 	private static final float W_WIDTH = 400;
 	private static final float W_HEIGHT = 450;
 
 	public ConsoleWindow() {
 		super(StringUtils.EMPTY);
+
+		PreferenceServiceImpl preferenceService = ServiceFactoryImpl.getPreferenceService();
+		float W_POSITION_X = preferenceService.getFloat(PREFERENCE_WINDOW_CONSOLE_X, 5f);
+		float W_POSITION_Y = preferenceService.getFloat(PREFERENCE_WINDOW_CONSOLE_Y, 5f);
 
 		lastCommand = StringUtils.EMPTY;
 

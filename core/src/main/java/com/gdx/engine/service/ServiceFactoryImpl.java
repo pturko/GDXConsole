@@ -41,4 +41,9 @@ public class ServiceFactoryImpl {
     public static UIServiceImpl getUIService() {
         return UIServiceImpl.getInstance();
     }
+
+    public static PreferenceServiceImpl getPreferenceService() {
+        return PreferenceServiceImpl.getInstance();
+    }
+
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" class="Box" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="30">
+<map version="1.9" tiledversion="1.9.2" class="Box" orientation="orthogonal" renderorder="right-down" width="120" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="32">
  <tileset firstgid="1" name="test" tilewidth="16" tileheight="16" tilecount="1134" columns="42">
   <image source="test.jpg" width="674" height="444"/>
  </tileset>
- <layer id="1" name="Background" width="60" height="20">
+ <layer id="1" name="Background" width="120" height="60">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup id="6" name="GROUND">
@@ -18,11 +18,17 @@
    <property name="textureAtlasName" value=""/>
    <property name="textureName" value=""/>
   </properties>
-  <object id="18" x="373.875" y="239">
-   <polyline points="-3.375,0.5 104.625,0.5"/>
+  <object id="18" x="434.922" y="818">
+   <polyline points="-1.92188,0.5 59.5781,0.5"/>
+  </object>
+  <object id="30" x="388.5" y="865.5">
+   <polyline points="-1.85938,0.5 57.6406,0.5"/>
+  </object>
+  <object id="31" x="500.5" y="850.5">
+   <polyline points="-1.85938,0.5 57.6406,0.5"/>
   </object>
  </objectgroup>
- <objectgroup id="2" name="WALL" visible="0">
+ <objectgroup id="2" name="WALL">
   <properties>
    <property name="categoryBits" value="2"/>
    <property name="friction" type="float" value="2"/>
@@ -32,17 +38,17 @@
    <property name="textureAtlasName" value=""/>
    <property name="textureName" value="box"/>
   </properties>
-  <object id="27" x="420" y="196.5" width="64.5" height="43.5"/>
+  <object id="27" x="507" y="808" width="40" height="40"/>
  </objectgroup>
- <objectgroup id="5" name="LIGHT_SOURCE" visible="0">
+ <objectgroup id="5" name="LIGHT_SOURCE">
   <properties>
    <property name="bodyType" value="static"/>
    <property name="categoryBits" value="1"/>
    <property name="friction" type="float" value="2"/>
    <property name="sensor" type="bool" value="true"/>
   </properties>
-  <object id="15" x="344" y="200"/>
-  <object id="16" x="530" y="200"/>
+  <object id="15" x="336" y="859"/>
+  <object id="16" x="45.5" y="861.5"/>
  </objectgroup>
  <objectgroup id="4" name="TORCH">
   <properties>
@@ -55,10 +61,10 @@
    <property name="textureAtlasName" value=""/>
    <property name="textureName" value="torch"/>
   </properties>
-  <object id="13" x="500" y="210" width="32" height="92"/>
-  <object id="14" x="310" y="210" width="32" height="92"/>
+  <object id="13" x="15" y="861.5" width="32" height="92"/>
+  <object id="14" x="303.5" y="859" width="32" height="92"/>
  </objectgroup>
- <objectgroup id="3" name="BOX" visible="0">
+ <objectgroup id="3" name="BOX">
   <properties>
    <property name="categoryBits" value="2"/>
    <property name="friction" type="float" value="2"/>
@@ -68,7 +74,7 @@
    <property name="textureAtlasName" value=""/>
    <property name="textureName" value="box"/>
   </properties>
-  <object id="5" x="395.167" y="204.667" width="20" height="12"/>
-  <object id="29" x="407.5" y="169" width="20" height="12"/>
+  <object id="5" x="437.167" y="690.667" width="20" height="20"/>
+  <object id="29" x="397.5" y="721" width="20" height="20"/>
  </objectgroup>
 </map>
